@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OtoWoKoto - 音声文字起こし</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-area:hover {
+            border-color: #666;
+            background: #f9f9f9;
+        }
+        .upload-area.dragover {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .button-group button {
+            flex: 1;
+            margin-top: 0;
+        }
+        .btn-copy {
+            background: #2196F3;
+        }
+        .btn-copy:hover {
+            background: #1976D2;
+        }
+        .btn-download {
+            background: #FF9800;
+        }
+        .btn-download:hover {
+            background: #F57C00;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            display: none;
+        }
+        .result-content {
+            white-space: pre-wrap;
+            line-height: 1.6;
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .error {
+            color: red;
+            padding: 10px;
+            background: #ffe6e6;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4CAF50;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .info-text {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .plan-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .plan-standard {
+            background: #E3F2FD;
+            color: #1976D2;
+        }
+        .plan-pro {
+            background: #FFF3E0;
+            color: #F57C00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 OtoWoKoto</h1>
+        <p style="text-align: center; color: #666;">音声ファイルをアップロードして文字起こし</p>
+        
+        <div class="upload-area" id="uploadArea">
+            <p>📁 ここに音声ファイルをドロップ</p>
+            <p style="font-size: 14px; color: #666;">または</p>
+            <input type="file" id="fileInput" accept="audio/*" style="display: none;">
+            <button type="button" onclick="document.getElementById('fileInput').click()" style="width: auto; padding: 8px 20px; background: #2196F3;">ファイルを選択</button>
+        </div>
+
+        <div id="fileInfo" class="info-text"></div>
+
+        <label for="apiKey">APIキー:</label>
+        <input type="text" id="apiKey" value="test_token_pro_001" placeholder="test_token_pro_001">
+
+        <button id="transcribeBtn" disabled>文字起こし実行</button>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>処理中... お待ちください</p>
+        </div>
+
+        <div class="error" id="errorMsg"></div>
+
+        <div class="result" id="result">
+            <h3>📝 文字起こし結果<span id="planBadge"></span></h3>
+            <div id="transcriptText" class="result-content"></div>
+            
+            <div class="button-group">
+                <button onclick="copyToClipboard()" class="btn-copy">📋 コピー</button>
+                <button onclick="downloadTranscript()" class="btn-download">💾 ダウンロード</button>
+            </div>
+            
+            <div id="summarySection" style="display: none; margin-top: 20px;">
+                <h3>✨ AI要約（Proプラン）</h3>
+                <div id="summaryText" class="result-content" style="background: #fff3cd;"></div>
+                <div class="button-group">
+                    <button onclick="copySummary()" class="btn-copy">📋 要約をコピー</button>
+                    <button onclick="downloadSummary()" class="btn-download">💾 要約をダウンロード</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedFile = null;
+        const SERVICE_URL = 'https://otowo-koto-srv-tojtealeeq-an.a.run.app';
+
+        // ファイル選択
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            selectedFile = e.target.files[0];
+            if (selectedFile) {
+                updateFileInfo();
+                document.getElementById('transcribeBtn').disabled = false;
+            }
+        });
+
+        // ドラッグ&ドロップ
+        const uploadArea = document.getElementById('uploadArea');
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            selectedFile = e.dataTransfer.files[0];
+            updateFileInfo();
+            document.getElementById('transcribeBtn').disabled = false;
+        });
+
+        function updateFileInfo() {
+            const fileInfo = document.getElementById('fileInfo');
+            const sizeMB = (selectedFile.size / 1024 / 1024).toFixed(2);
+            fileInfo.textContent = `選択: ${selectedFile.name} (${sizeMB} MB)`;
+        }
+
+        // 文字起こし実行
+        document.getElementById('transcribeBtn').addEventListener('click', async function() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (!apiKey) {
+                showError('APIキーを入力してください');
+                return;
+            }
+            if (!selectedFile) {
+                showError('ファイルを選択してください');
+                return;
+            }
+
+            this.disabled = true;
+            document.getElementById('loading').style.display = 'block';
+            hideError();
+            document.getElementById('result').style.display = 'none';
+
+            try {
+                // ファイルをBase64に変換
+                const base64Audio = await fileToBase64(selectedFile);
+
+                // API呼び出し（プラン指定を削除）
+                const response = await fetch(`${SERVICE_URL}/api/transcribe`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-KEY': apiKey
+                    },
+                    body: JSON.stringify({
+                        job_id: `WEB-${Date.now()}`,
+                        audio: {
+                            data_base64: base64Audio.split(',')[1],
+                            duration_sec: 60
+                        },
+                        options: {
+                            language: 'ja',
+                            speaker_diarization: false
+                        }
+                        // plan は送らない（バックエンドが自動判定）
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // 文字起こし結果
+                    document.getElementById('transcriptText').textContent = result.transcript;
+                    document.getElementById('result').style.display = 'block';
+
+                    // プランバッジ表示
+                    const planType = result.plan_type || 'standard';
+                    const planBadge = document.getElementById('planBadge');
+                    planBadge.textContent = planType === 'pro' ? 'Pro' : 'Standard';
+                    planBadge.className = `plan-badge plan-${planType}`;
+
+                    // AI要約（Proプランの場合）
+                    if (result.derived_outputs && result.derived_outputs.summary) {
+                        document.getElementById('summaryText').textContent = result.derived_outputs.summary;
+                        document.getElementById('summarySection').style.display = 'block';
+                    } else {
+                        document.getElementById('summarySection').style.display = 'none';
+                    }
+                } else {
+                    showError(result.error.message || 'エラーが発生しました');
+                }
+
+            } catch (error) {
+                showError('エラー: ' + error.message);
+            } finally {
+                this.disabled = false;
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function showError(msg) {
+            const errorDiv = document.getElementById('errorMsg');
+            errorDiv.textContent = msg;
+            errorDiv.style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('errorMsg').style.display = 'none';
+        }
+
+        // コピー機能
+        function copyToClipboard() {
+            const text = document.getElementById('transcriptText').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('📋 コピーしました！');
+            });
+        }
+
+        function copySummary() {
+            const text = document.getElementById('summaryText').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('📋 要約をコピーしました！');
+            });
+        }
+
+        // ダウンロード機能
+        function downloadTranscript() {
+            const text = document.getElementById('transcriptText').textContent;
+            const filename = `transcript_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.txt`;
+            downloadTextFile(text, filename);
+        }
+
+        function downloadSummary() {
+            const text = document.getElementById('summaryText').textContent;
+            const filename = `summary_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.txt`;
+            downloadTextFile(text, filename);
+        }
+
+        function downloadTextFile(text, filename) {
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
