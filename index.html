@@ -17,10 +17,64 @@
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
         }
         h1 {
             color: #333;
             text-align: center;
+        }
+        /* 設定ボタン */
+        .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px 10px;
+            color: #666;
+            width: auto;
+            margin: 0;
+        }
+        .settings-btn:hover {
+            color: #333;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+        /* 設定メニュー */
+        .settings-menu {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            z-index: 1000;
+            min-width: 200px;
+        }
+        .settings-menu.show {
+            display: block;
+        }
+        .settings-menu-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s;
+        }
+        .settings-menu-item:last-child {
+            border-bottom: none;
+        }
+        .settings-menu-item:hover {
+            background: #f8f8f8;
+        }
+        .settings-menu-item span {
+            font-size: 16px;
         }
         .upload-area {
             border: 2px dashed #ccc;
@@ -103,6 +157,15 @@
             margin-top: 10px;
             display: none;
         }
+        .warning {
+            color: #856404;
+            padding: 10px;
+            background: #fff3cd;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+            border: 1px solid #ffeaa7;
+        }
         .loading {
             text-align: center;
             padding: 20px;
@@ -156,13 +219,103 @@
             background: #FFF3E0;
             color: #F57C00;
         }
+        /* 利用量表示 */
+        .usage-info {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f0f8ff;
+            border-radius: 10px;
+            border: 1px solid #b3d9ff;
+            display: none;
+        }
+        .usage-info h3 {
+            margin: 0 0 15px 0;
+            font-size: 16px;
+            color: #333;
+        }
+        .usage-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        .usage-stats-label {
+            color: #666;
+        }
+        .usage-stats-value {
+            font-weight: bold;
+            color: #333;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .progress-fill.warning-bar {
+            background: linear-gradient(90deg, #FF9800, #F57C00);
+        }
+        .progress-fill.danger {
+            background: linear-gradient(90deg, #f44336, #d32f2f);
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- 設定ボタン -->
+        <button class="settings-btn" id="settingsBtn" onclick="toggleSettingsMenu()">⚙️</button>
+        
+        <!-- 設定メニュー -->
+        <div class="settings-menu" id="settingsMenu">
+            <div class="settings-menu-item" onclick="openCustomerPortal()">
+                <span>💳</span>
+                <span>プラン管理</span>
+            </div>
+            <div class="settings-menu-item" onclick="openAddonCheckout()">
+                <span>➕</span>
+                <span>追加課金</span>
+            </div>
+            <div class="settings-menu-item" onclick="resetSettings()">
+                <span>🔄</span>
+                <span>設定をリセット</span>
+            </div>
+        </div>
+
         <h1>🎤 OtoWoKoto</h1>
         <p style="text-align: center; color: #666;">音声ファイルをアップロードして文字起こし</p>
         
+        <label for="apiKey">APIキー:</label>
+        <input type="text" id="apiKey" value="test_token_pro_001" placeholder="test_token_pro_001">
+
+        <!-- 利用量表示（実行前に表示） -->
+        <div class="usage-info" id="usageInfo">
+            <h3>📊 利用状況</h3>
+            <div class="usage-stats">
+                <span class="usage-stats-label">プラン:</span>
+                <span class="usage-stats-value" id="usagePlan">-</span>
+            </div>
+            <div class="usage-stats">
+                <span class="usage-stats-label">残り時間:</span>
+                <span class="usage-stats-value" id="usageRemaining">-</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="usageProgress">0%</div>
+            </div>
+        </div>
+
         <div class="upload-area" id="uploadArea">
             <p>📁 ここに音声ファイルをドロップ</p>
             <p style="font-size: 14px; color: #666;">または</p>
@@ -171,9 +324,8 @@
         </div>
 
         <div id="fileInfo" class="info-text"></div>
-
-        <label for="apiKey">APIキー:</label>
-        <input type="text" id="apiKey" value="test_token_pro_001" placeholder="test_token_pro_001">
+        
+        <div class="warning" id="warningMsg"></div>
 
         <button id="transcribeBtn" disabled>文字起こし実行</button>
 
@@ -206,14 +358,110 @@
 
     <script>
         let selectedFile = null;
+        let usageData = null;
         const SERVICE_URL = 'https://otowo-koto-srv-tojtealeeq-an.a.run.app';
+
+        // ページ読み込み時にAPIキーから利用量を取得
+        window.addEventListener('load', async function() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (apiKey) {
+                await fetchUsageInfo(apiKey);
+            }
+            
+            // メニュー外クリックで閉じる
+            document.addEventListener('click', function(e) {
+                const menu = document.getElementById('settingsMenu');
+                const btn = document.getElementById('settingsBtn');
+                if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                    menu.classList.remove('show');
+                }
+            });
+        });
+
+        // 設定メニューの開閉
+        function toggleSettingsMenu() {
+            const menu = document.getElementById('settingsMenu');
+            menu.classList.toggle('show');
+        }
+
+        // Stripe Customer Portal を開く
+        async function openCustomerPortal() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (!apiKey) {
+                alert('APIキーを入力してください');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${SERVICE_URL}/api/customer-portal`, {
+                    method: 'GET',
+                    headers: {
+                        'X-API-KEY': apiKey
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.url) {
+                    // Stripe Customer Portal へ遷移
+                    window.open(data.url, '_blank');
+                } else {
+                    alert('プラン管理画面を開けませんでした: ' + (data.detail || 'エラー'));
+                }
+            } catch (error) {
+                alert('エラーが発生しました: ' + error.message);
+            }
+
+            document.getElementById('settingsMenu').classList.remove('show');
+        }
+
+        // 追加課金 Checkout を開く
+        async function openAddonCheckout() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (!apiKey) {
+                alert('APIキーを入力してください');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${SERVICE_URL}/api/checkout/addon`, {
+                    method: 'GET',
+                    headers: {
+                        'X-API-KEY': apiKey
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.url) {
+                    // Stripe Checkout へ遷移
+                    window.open(data.url, '_blank');
+                } else {
+                    alert('追加課金ページを開けませんでした: ' + (data.detail || 'エラー'));
+                }
+            } catch (error) {
+                alert('エラーが発生しました: ' + error.message);
+            }
+
+            document.getElementById('settingsMenu').classList.remove('show');
+        }
+
+        // 設定をリセット
+        function resetSettings() {
+            if (confirm('設定をリセットしますか？（現在はAPIキーのみ）')) {
+                // 将来の拡張用（現在はAPIキーのみ）
+                localStorage.clear();
+                alert('設定をリセットしました');
+            }
+            document.getElementById('settingsMenu').classList.remove('show');
+        }
 
         // ファイル選択
         document.getElementById('fileInput').addEventListener('change', function(e) {
             selectedFile = e.target.files[0];
             if (selectedFile) {
                 updateFileInfo();
-                document.getElementById('transcribeBtn').disabled = false;
+                checkUsageBeforeTranscribe();
             }
         });
 
@@ -234,13 +482,127 @@
             uploadArea.classList.remove('dragover');
             selectedFile = e.dataTransfer.files[0];
             updateFileInfo();
-            document.getElementById('transcribeBtn').disabled = false;
+            checkUsageBeforeTranscribe();
         });
 
         function updateFileInfo() {
             const fileInfo = document.getElementById('fileInfo');
             const sizeMB = (selectedFile.size / 1024 / 1024).toFixed(2);
             fileInfo.textContent = `選択: ${selectedFile.name} (${sizeMB} MB)`;
+        }
+
+        // APIキー変更時に利用量を取得
+        document.getElementById('apiKey').addEventListener('blur', async function() {
+            const apiKey = this.value.trim();
+            if (apiKey) {
+                await fetchUsageInfo(apiKey);
+                if (selectedFile) {
+                    checkUsageBeforeTranscribe();
+                }
+            }
+        });
+
+        // 利用量情報取得
+        async function fetchUsageInfo(apiKey) {
+            try {
+                const response = await fetch(`${SERVICE_URL}/me`, {
+                    method: 'GET',
+                    headers: {
+                        'X-API-KEY': apiKey
+                    }
+                });
+
+                if (response.ok) {
+                    usageData = await response.json();
+                    updateUsageDisplay(usageData);
+                } else {
+                    hideUsageDisplay();
+                    usageData = null;
+                }
+            } catch (error) {
+                console.error('Failed to fetch usage info:', error);
+                hideUsageDisplay();
+                usageData = null;
+            }
+        }
+
+        // 利用量表示を更新
+        function updateUsageDisplay(data) {
+            const usageInfo = document.getElementById('usageInfo');
+            const planElement = document.getElementById('usagePlan');
+            const remainingElement = document.getElementById('usageRemaining');
+            const progressElement = document.getElementById('usageProgress');
+
+            // プラン表示
+            const planType = data.plan_type || 'standard';
+            planElement.textContent = planType === 'pro' ? 'Pro' : 'Standard';
+            planElement.style.color = planType === 'pro' ? '#F57C00' : '#1976D2';
+
+            // 残り時間表示
+            const remaining = Math.floor(data.remaining_seconds || 0);
+            const max = Math.floor(data.max_seconds_per_month || 0);
+            const used = max - remaining;
+            
+            const remainingHours = Math.floor(remaining / 3600);
+            const remainingMinutes = Math.floor((remaining % 3600) / 60);
+            const remainingSeconds = remaining % 60;
+            
+            remainingElement.textContent = `${remaining.toLocaleString()}秒 / ${max.toLocaleString()}秒 (${remainingHours}h ${remainingMinutes}m ${remainingSeconds}s)`;
+
+            // 使用率計算
+            const usagePercent = max > 0 ? ((used / max) * 100).toFixed(1) : 0;
+            
+            // プログレスバー更新
+            progressElement.style.width = `${usagePercent}%`;
+            progressElement.textContent = `${usagePercent}%`;
+
+            // 色分け（使用率に応じて）
+            progressElement.classList.remove('warning-bar', 'danger');
+            if (usagePercent >= 90) {
+                progressElement.classList.add('danger');
+            } else if (usagePercent >= 70) {
+                progressElement.classList.add('warning-bar');
+            }
+
+            // 表示
+            usageInfo.style.display = 'block';
+        }
+
+        // 利用量表示を非表示
+        function hideUsageDisplay() {
+            document.getElementById('usageInfo').style.display = 'none';
+        }
+
+        // ファイル選択時に利用量チェック
+        function checkUsageBeforeTranscribe() {
+            const warningMsg = document.getElementById('warningMsg');
+            const transcribeBtn = document.getElementById('transcribeBtn');
+            
+            if (!usageData || !selectedFile) {
+                transcribeBtn.disabled = !selectedFile;
+                warningMsg.style.display = 'none';
+                return;
+            }
+
+            // ファイルサイズから推定時間を計算（簡易：1MB = 60秒と仮定）
+            const estimatedSeconds = Math.ceil((selectedFile.size / 1024 / 1024) * 60);
+            const remaining = usageData.remaining_seconds || 0;
+
+            if (estimatedSeconds > remaining) {
+                // 超過警告
+                const overage = estimatedSeconds - remaining;
+                warningMsg.textContent = `⚠️ 警告: 推定処理時間（約${estimatedSeconds}秒）が残り時間（${Math.floor(remaining)}秒）を超過します。約${Math.floor(overage)}秒分の超過が見込まれます。`;
+                warningMsg.style.display = 'block';
+                transcribeBtn.disabled = false; // 実行は可能（警告のみ）
+            } else if (estimatedSeconds > remaining * 0.8) {
+                // 残り時間が少ない警告
+                warningMsg.textContent = `⚠️ 注意: 残り時間が少なくなっています。推定処理時間: 約${estimatedSeconds}秒`;
+                warningMsg.style.display = 'block';
+                transcribeBtn.disabled = false;
+            } else {
+                warningMsg.style.display = 'none';
+                transcribeBtn.disabled = false;
+            }
         }
 
         // 文字起こし実行
@@ -259,12 +621,13 @@
             document.getElementById('loading').style.display = 'block';
             hideError();
             document.getElementById('result').style.display = 'none';
+            document.getElementById('warningMsg').style.display = 'none';
 
             try {
                 // ファイルをBase64に変換
                 const base64Audio = await fileToBase64(selectedFile);
 
-                // API呼び出し（プラン指定を削除）
+                // API呼び出し
                 const response = await fetch(`${SERVICE_URL}/api/transcribe`, {
                     method: 'POST',
                     headers: {
@@ -281,7 +644,6 @@
                             language: 'ja',
                             speaker_diarization: false
                         }
-                        // plan は送らない（バックエンドが自動判定）
                     })
                 });
 
@@ -305,6 +667,9 @@
                     } else {
                         document.getElementById('summarySection').style.display = 'none';
                     }
+
+                    // 利用量を再取得
+                    await fetchUsageInfo(apiKey);
                 } else {
                     showError(result.error.message || 'エラーが発生しました');
                 }
