@@ -1,0 +1,21 @@
+PS C:\work\OtoWoKoto-UI>
+PS C:\work\OtoWoKoto-UI> firebase deploy --only hosting
+(node:13696) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+=== Deploying to 'otowo-koto-26f'...
+
+i  deploying hosting
+i  hosting[otowo-koto-26f]: beginning deploy...
+i  hosting[otowo-koto-26f]: found 33 files in .
++  hosting[otowo-koto-26f]: file upload complete
+i  hosting[otowo-koto-26f]: finalizing version...
++  hosting[otowo-koto-26f]: version finalized
+i  hosting[otowo-koto-26f]: releasing new version...
++  hosting[otowo-koto-26f]: release complete
+
++  Deploy complete!
+
+Project Console: https://console.firebase.google.com/project/otowo-koto-26f/overview
+Hosting URL: https://otowo-koto-26f.web.app
+PS C:\work\OtoWoKoto-UI>
