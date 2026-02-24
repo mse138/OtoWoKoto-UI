@@ -342,6 +342,11 @@
             
             <div class="button-group">
                 <button onclick="copyToClipboard()" class="btn-copy">📋 コピー</button>
+            <div id="downloadLinkSection" style="display: none; margin-top: 15px; padding: 12px; background: #e8f5e9; border-radius: 8px; border: 1px solid #a5d6a7;">
+                <p style="margin: 0 0 8px 0; font-size: 14px; color: #2e7d32;">📥 ファイルダウンロード（60分以内）</p>
+                <a id="downloadLink" href="#" target="_blank" style="display: inline-block; background: #4CAF50; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 14px;">結果ファイルをダウンロード</a>
+                <p style="margin: 8px 0 0 0; font-size: 12px; color: #666;">⚠️ このリンクは60分間のみ有効です</p>
+            </div>
                 <button onclick="downloadTranscript()" class="btn-download">💾 ダウンロード</button>
             </div>
             
@@ -666,6 +671,14 @@
                         document.getElementById('summarySection').style.display = 'block';
                     } else {
                         document.getElementById('summarySection').style.display = 'none';
+                    }
+
+                    // ダウンロードリンク（Cloud Storage署名付きURL）
+                    if (result.download_url) {
+                        document.getElementById("downloadLink").href = result.download_url;
+                        document.getElementById("downloadLinkSection").style.display = "block";
+                    } else {
+                        document.getElementById("downloadLinkSection").style.display = "none";
                     }
 
                     // 利用量を再取得
