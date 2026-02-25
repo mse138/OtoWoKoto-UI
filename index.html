@@ -673,9 +673,10 @@
                         document.getElementById('summarySection').style.display = 'none';
                     }
 
-                    // ダウンロードリンク（Cloud Storage署名付きURL）
+                    // ダウンロードリンク（プロキシ経由で即時削除）
                     if (result.download_url) {
-                        document.getElementById("downloadLink").href = result.download_url;
+                        const fullDownloadUrl = `${SERVICE_URL}${result.download_url}`;
+                        document.getElementById("downloadLink").href = fullDownloadUrl;
                         document.getElementById("downloadLinkSection").style.display = "block";
                     } else {
                         document.getElementById("downloadLinkSection").style.display = "none";
