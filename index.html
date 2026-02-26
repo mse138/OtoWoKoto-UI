@@ -364,6 +364,72 @@
     <script>
         let selectedFile = null;
         let usageData = null;
+        // =========================================
+        // 多言語対応
+        // =========================================
+        const LANGUAGES = {
+            ja: {
+                title: 'OtoWoKoto - 音声文字起こし',
+                heading: '🎤 OtoWoKoto',
+                apiKeyLabel: 'APIキー:',
+                usageHeading: '📊 利用状況',
+                remainingLabel: '残り時間:',
+                selectFile: 'ファイルを選択',
+                transcribeBtn: '文字起こし実行',
+                resultHeading: '📝 文字起こし結果',
+                dropArea: 'ここに音声ファイルをドロップ',
+                dropOr: 'または',
+                errNoApiKey: 'APIキーを入力してください',
+                errNoFile: 'ファイルを選択してください',
+                warnOverage: (est, rem, over) => `⚠️ 警告: 推定処理時間（約${est}秒）が残り時間（${rem}秒）を超過します。約${over}秒分の超過が見込まれます。`,
+                warnLow: (est) => `⚠️ 注意: 残り時間が少なくなっています。推定処理時間: 約${est}秒`,
+            },
+            en: {
+                title: 'OtoWoKoto - Voice Transcription',
+                heading: '🎤 OtoWoKoto',
+                apiKeyLabel: 'API Key:',
+                usageHeading: '📊 Usage',
+                remainingLabel: 'Remaining:',
+                selectFile: 'Select File',
+                transcribeBtn: 'Transcribe',
+                resultHeading: '📝 Transcription Result',
+                dropArea: 'Drop audio file here',
+                dropOr: 'or',
+                errNoApiKey: 'Please enter your API key',
+                errNoFile: 'Please select a file',
+                warnOverage: (est, rem, over) => `⚠️ Warning: Estimated time (${est}s) exceeds remaining (${rem}s) by ~${over}s.`,
+                warnLow: (est) => `⚠️ Note: Remaining time is low. Estimated: ~${est}s`,
+            }
+        };
+
+        // URLパスから言語を決定（/en → en、それ以外 → ja）
+        // ブラウザ言語設定も考慮（パスなしの場合）
+        function detectLang() {
+            const path = window.location.pathname;
+            if (path === '/en' || path === '/en/') return 'en';
+            if (path === '/ja' || path === '/ja/') return 'ja';
+            // パスなしの場合はブラウザ言語で自動判定
+            return navigator.language.startsWith('ja') ? 'ja' : 'en';
+        }
+
+        const lang = detectLang();
+        const L = LANGUAGES[lang];
+
+        // 言語に応じてUI文言を適用
+        function applyLang() {
+            document.title = L.title;
+            document.querySelector('h1').textContent = L.heading;
+            document.querySelector('label[for="apiKey"]').textContent = L.apiKeyLabel;
+            document.querySelector('#usageInfo h3').textContent = L.usageHeading;
+            document.querySelector('.usage-stats-label').textContent = L.remainingLabel;
+            document.querySelector('#transcribeBtn').textContent = L.transcribeBtn;
+            document.querySelector('.upload-area p').textContent = L.dropArea;
+            document.querySelector('.upload-area .info-text').textContent = L.dropOr;
+            document.querySelector('button[onclick*="fileInput"]').textContent = L.selectFile;
+        }
+
+        document.addEventListener('DOMContentLoaded', applyLang);
+
         const SERVICE_URL = 'https://api.koto.otowolab.com';
 
         // ページ読み込み時にAPIキーから利用量を取得
@@ -596,12 +662,12 @@
             if (estimatedSeconds > remaining) {
                 // 超過警告
                 const overage = estimatedSeconds - remaining;
-                warningMsg.textContent = `⚠️ 警告: 推定処理時間（約${estimatedSeconds}秒）が残り時間（${Math.floor(remaining)}秒）を超過します。約${Math.floor(overage)}秒分の超過が見込まれます。`;
+                warningMsg.textContent = L.warnOverage(estimatedSeconds, Math.floor(remaining), Math.floor(overage));
                 warningMsg.style.display = 'block';
                 transcribeBtn.disabled = false; // 実行は可能（警告のみ）
             } else if (estimatedSeconds > remaining * 0.8) {
                 // 残り時間が少ない警告
-                warningMsg.textContent = `⚠️ 注意: 残り時間が少なくなっています。推定処理時間: 約${estimatedSeconds}秒`;
+                warningMsg.textContent = L.warnLow(estimatedSeconds);
                 warningMsg.style.display = 'block';
                 transcribeBtn.disabled = false;
             } else {
@@ -614,11 +680,11 @@
         document.getElementById('transcribeBtn').addEventListener('click', async function() {
             const apiKey = document.getElementById('apiKey').value.trim();
             if (!apiKey) {
-                showError('APIキーを入力してください');
+                showError(L.errNoApiKey);
                 return;
             }
             if (!selectedFile) {
-                showError('ファイルを選択してください');
+                showError(L.errNoFile);
                 return;
             }
 
