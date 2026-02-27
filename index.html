@@ -1,825 +1,830 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OtoWoKoto - 音声文字起こし</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: relative;
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        /* 設定ボタン */
-        .settings-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 5px 10px;
-            color: #666;
-            width: auto;
-            margin: 0;
-        }
-        .settings-btn:hover {
-            color: #333;
-            background: #f0f0f0;
-            border-radius: 5px;
-        }
-        /* 設定メニュー */
-        .settings-menu {
-            position: absolute;
-            top: 60px;
-            right: 20px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: none;
-            z-index: 1000;
-            min-width: 200px;
-        }
-        .settings-menu.show {
-            display: block;
-        }
-        .settings-menu-item {
-            padding: 12px 20px;
-            cursor: pointer;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: background 0.2s;
-        }
-        .settings-menu-item:last-child {
-            border-bottom: none;
-        }
-        .settings-menu-item:hover {
-            background: #f8f8f8;
-        }
-        .settings-menu-item span {
-            font-size: 16px;
-        }
-        .upload-area {
-            border: 2px dashed #ccc;
-            border-radius: 10px;
-            padding: 40px;
-            text-align: center;
-            margin: 20px 0;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .upload-area:hover {
-            border-color: #666;
-            background: #f9f9f9;
-        }
-        .upload-area.dragover {
-            border-color: #4CAF50;
-            background: #e8f5e9;
-        }
-        button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            margin-top: 20px;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background: #45a049;
-        }
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .button-group button {
-            flex: 1;
-            margin-top: 0;
-        }
-        .btn-copy {
-            background: #2196F3;
-        }
-        .btn-copy:hover {
-            background: #1976D2;
-        }
-        .btn-download {
-            background: #FF9800;
-        }
-        .btn-download:hover {
-            background: #F57C00;
-        }
-        .result {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 5px;
-            display: none;
-        }
-        .result-content {
-            white-space: pre-wrap;
-            line-height: 1.6;
-            background: white;
-            padding: 15px;
-            border-radius: 5px;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .error {
-            color: red;
-            padding: 10px;
-            background: #ffe6e6;
-            border-radius: 5px;
-            margin-top: 10px;
-            display: none;
-        }
-        .warning {
-            color: #856404;
-            padding: 10px;
-            background: #fff3cd;
-            border-radius: 5px;
-            margin-top: 10px;
-            display: none;
-            border: 1px solid #ffeaa7;
-        }
-        .loading {
-            text-align: center;
-            padding: 20px;
-            display: none;
-        }
-        .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #4CAF50;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .info-text {
-            font-size: 14px;
-            color: #666;
-            margin-top: 5px;
-        }
-        label {
-            display: block;
-            margin-top: 15px;
-            margin-bottom: 5px;
-            font-weight: 500;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-        .plan-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-        .plan-standard {
-            background: #E3F2FD;
-            color: #1976D2;
-        }
-        .plan-pro {
-            background: #FFF3E0;
-            color: #F57C00;
-        }
-        /* 利用量表示 */
-        .usage-info {
-            margin: 20px 0;
-            padding: 20px;
-            background: #f0f8ff;
-            border-radius: 10px;
-            border: 1px solid #b3d9ff;
-            display: none;
-        }
-        .usage-info h3 {
-            margin: 0 0 15px 0;
-            font-size: 16px;
-            color: #333;
-        }
-        .usage-stats {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-        .usage-stats-label {
-            color: #666;
-        }
-        .usage-stats-value {
-            font-weight: bold;
-            color: #333;
-        }
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background: #e0e0e0;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4CAF50, #45a049);
-            transition: width 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .progress-fill.warning-bar {
-            background: linear-gradient(90deg, #FF9800, #F57C00);
-        }
-        .progress-fill.danger {
-            background: linear-gradient(90deg, #f44336, #d32f2f);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OtoWoKoto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --surface2:  #1c2333;
+      --border:    #2a3444;
+      --teal:      #38d9c0;
+      --teal-dim:  rgba(56,217,192,0.12);
+      --teal-glow: rgba(56,217,192,0.35);
+      --text:      #e6edf3;
+      --text-muted:#7d8590;
+      --warn:      #f0a83a;
+      --danger:    #f05a5a;
+      --radius:    14px;
+      --radius-sm: 8px;
+      --mono:      'DM Mono', monospace;
+      --sans:      'Outfit', sans-serif;
+      --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 16px;
+    }
+    .app {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-bottom: 32px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0 4px;
+    }
+    .logo { display: flex; align-items: baseline; gap: 6px; }
+    .logo-mark {
+      font-family: var(--mono);
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--teal);
+      letter-spacing: -0.5px;
+    }
+    .logo-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 0.08em; font-weight: 300; }
+    .menu-btn {
+      background: none; border: none; cursor: pointer; color: var(--text-muted);
+      padding: 6px; border-radius: var(--radius-sm);
+      transition: color var(--transition), background var(--transition);
+      display: flex; flex-direction: column; gap: 4px; align-items: center;
+    }
+    .menu-btn span { display: block; width: 18px; height: 1.5px; background: currentColor; }
+    .menu-btn:hover { color: var(--text); background: var(--surface2); }
+    .menu-wrap { position: relative; }
+    .dropdown {
+      position: absolute; top: calc(100% + 6px); right: 0;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); min-width: 180px; overflow: hidden;
+      display: none; z-index: 100; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .dropdown.open { display: block; animation: fadeIn 0.15s ease; }
+    .dropdown a {
+      display: block; padding: 11px 16px; font-size: 13px;
+      color: var(--text-muted); text-decoration: none; cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+      border-bottom: 1px solid var(--border);
+    }
+    .dropdown a:last-child { border-bottom: none; }
+    .dropdown a:hover { background: var(--border); color: var(--text); }
+
+    /* Tabs */
+    .tabs {
+      display: grid; grid-template-columns: 1fr 1fr;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 4px; gap: 4px;
+    }
+    .tab {
+      padding: 9px; border: none; background: none;
+      border-radius: calc(var(--radius) - 2px);
+      font-family: var(--sans); font-size: 13px; font-weight: 500;
+      color: var(--text-muted); cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .tab.active { background: var(--teal-dim); color: var(--teal); box-shadow: inset 0 0 0 1px var(--teal-glow); }
+    .tab:not(.active):hover { background: var(--surface2); color: var(--text); }
+
+    /* Usage bar */
+    .usage-bar-wrap {
+      padding: 12px 16px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius); display: none;
+    }
+    .usage-bar-wrap.visible { display: block; }
+    .usage-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .usage-plan { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); font-family: var(--mono); }
+    .usage-time { font-size: 12px; font-family: var(--mono); color: var(--text-muted); }
+    .usage-time.warn { color: var(--warn); }
+    .usage-time.danger { color: var(--danger); }
+    .bar-bg { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--teal); border-radius: 2px; transition: width 0.6s ease, background 0.3s; }
+    .bar-fill.warn { background: var(--warn); }
+    .bar-fill.danger { background: var(--danger); }
+
+    /* Messages */
+    .msg { padding: 11px 14px; border-radius: var(--radius-sm); font-size: 13px; display: none; line-height: 1.5; }
+    .msg.visible { display: block; }
+    .msg.error { background: rgba(240,90,90,0.1); border: 1px solid rgba(240,90,90,0.3); color: #f09090; }
+    .msg.warning { background: rgba(240,168,58,0.1); border: 1px solid rgba(240,168,58,0.3); color: var(--warn); }
+
+    /* Drop Zone */
+    .drop-zone {
+      padding: 28px 20px; text-align: center; cursor: pointer;
+      border: 1.5px dashed var(--border); border-radius: var(--radius);
+      background: var(--surface); transition: border-color var(--transition), background var(--transition);
+      position: relative;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .drop-zone:hover, .drop-zone.dragover { border-color: var(--teal); background: var(--teal-dim); }
+    .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .drop-icon {
+      width: 44px; height: 44px; margin: 0 auto 12px; border-radius: 50%;
+      background: var(--teal-dim); display: flex; align-items: center; justify-content: center;
+      color: var(--teal); font-size: 20px;
+    }
+    .drop-label { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+    .drop-label strong { color: var(--text); display: block; margin-bottom: 2px; }
+    .file-selected {
+      margin-top: 10px; font-family: var(--mono); font-size: 11px; color: var(--teal);
+      background: var(--teal-dim); border-radius: 6px; padding: 5px 10px;
+      display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    /* Record area */
+    .record-area {
+      padding: 28px 20px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); display: flex; flex-direction: column; align-items: center; gap: 20px;
+    }
+    .waveform-wrap { width: 100%; height: 64px; }
+    #waveCanvas { width: 100%; height: 100%; border-radius: var(--radius-sm); }
+    .record-btn-wrap { position: relative; width: 80px; height: 80px; }
+    .ripple {
+      position: absolute; inset: -12px; border-radius: 50%;
+      border: 1.5px solid var(--teal); opacity: 0;
+    }
+    .recording .ripple { animation: ripple 1.6s ease-out infinite; }
+    .recording .ripple:nth-child(2) { animation-delay: 0.8s; }
+    @keyframes ripple {
+      0%   { transform: scale(0.85); opacity: 0.6; }
+      100% { transform: scale(1.4);  opacity: 0; }
+    }
+    .record-btn {
+      width: 80px; height: 80px; border-radius: 50%;
+      border: 2px solid var(--border); background: var(--surface2);
+      color: var(--text-muted); font-size: 28px; cursor: pointer;
+      transition: all var(--transition);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; z-index: 1;
+    }
+    .record-btn:hover:not(:disabled) { border-color: var(--teal); color: var(--teal); background: var(--teal-dim); box-shadow: 0 0 24px var(--teal-glow); }
+    .record-btn.recording { border-color: var(--danger); color: var(--danger); background: rgba(240,90,90,0.1); box-shadow: 0 0 24px rgba(240,90,90,0.3); }
+    .timers { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .elapsed { font-family: var(--mono); font-size: 22px; font-weight: 400; color: var(--text); letter-spacing: 0.05em; }
+    .countdown { font-family: var(--mono); font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
+    .countdown.warn { color: var(--warn); }
+
+    /* Submit btn */
+    .submit-btn {
+      width: 100%; padding: 14px; background: var(--teal); color: #0d1117;
+      border: none; border-radius: var(--radius); font-family: var(--sans);
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: opacity var(--transition), box-shadow var(--transition), transform var(--transition);
+      letter-spacing: 0.02em;
+    }
+    .submit-btn:hover:not(:disabled) { box-shadow: 0 0 28px var(--teal-glow); transform: translateY(-1px); }
+    .submit-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* Status card */
+    .status-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px; display: none;
+    }
+    .status-card.visible { display: block; }
+    .status-steps { display: flex; flex-direction: column; gap: 10px; }
+    .step { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--text-muted); transition: color var(--transition); }
+    .step.active { color: var(--text); }
+    .step.done   { color: var(--teal); }
+    .step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background var(--transition); }
+    .step.active .step-dot { background: var(--text); animation: pulse 1s infinite; }
+    .step.done  .step-dot  { background: var(--teal); }
+    @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.4); } }
+
+    /* Result card */
+    .result-card {
+      background: var(--surface); border: 1px solid var(--teal-glow);
+      border-radius: var(--radius); padding: 20px; display: none; animation: fadeIn 0.3s ease;
+    }
+    .result-card.visible { display: block; }
+    .result-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .result-icon {
+      width: 36px; height: 36px; border-radius: 50%; background: var(--teal-dim);
+      display: flex; align-items: center; justify-content: center; color: var(--teal); font-size: 16px;
+    }
+    .result-title { font-size: 14px; font-weight: 600; color: var(--text); }
+    .result-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+    .dl-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 12px; background: var(--teal-dim);
+      border: 1px solid var(--teal-glow); border-radius: var(--radius-sm);
+      color: var(--teal); font-family: var(--sans); font-size: 13px; font-weight: 600;
+      text-decoration: none; cursor: pointer; transition: background var(--transition), box-shadow var(--transition);
+    }
+    .dl-btn:hover { background: rgba(56,217,192,0.2); box-shadow: 0 0 20px var(--teal-glow); }
+    .result-note { margin-top: 10px; font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.5; }
+    .again-btn {
+      margin-top: 12px; width: 100%; padding: 10px; background: none;
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text-muted); font-family: var(--sans); font-size: 13px;
+      cursor: pointer; transition: all var(--transition);
+    }
+    .again-btn:hover { border-color: var(--text-muted); color: var(--text); }
+
+    /* Options */
+    .option-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 16px; cursor: pointer; user-select: none;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); transition: border-color var(--transition);
+    }
+    .option-toggle:hover { border-color: var(--teal); }
+    .option-toggle-left { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--text-muted); }
+    .option-arrow { font-size: 11px; color: var(--text-muted); transition: transform var(--transition); font-family: var(--mono); }
+    .option-arrow.open { transform: rotate(90deg); color: var(--teal); }
+    .option-panel {
+      display: none; background: var(--surface); border: 1px solid var(--border);
+      border-top: none; border-radius: 0 0 var(--radius) var(--radius);
+      padding: 16px; margin-top: -10px; padding-top: 20px;
+    }
+    .option-panel.open { display: block; animation: slideDown 0.2s ease; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    .opt-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 0; border-bottom: 1px solid var(--border);
+    }
+    .opt-row:last-child { border-bottom: none; }
+    .opt-label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); }
+    .opt-label.muted { color: var(--text-muted); }
+    .lock-icon { font-size: 10px; color: var(--text-muted); opacity: 0.6; }
+    .toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track {
+      position: absolute; inset: 0; background: var(--border);
+      border-radius: 10px; cursor: pointer; transition: background var(--transition);
+    }
+    .toggle input:checked + .toggle-track { background: var(--teal); }
+    .toggle-track::after {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 14px; height: 14px; background: white; border-radius: 50%;
+      transition: transform var(--transition);
+    }
+    .toggle input:checked + .toggle-track::after { transform: translateX(16px); }
+    .toggle input:disabled + .toggle-track { opacity: 0.35; cursor: not-allowed; }
+    .radio-group { display: flex; gap: 6px; }
+    .radio-opt {
+      padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border);
+      font-size: 11px; font-family: var(--mono); color: var(--text-muted);
+      cursor: pointer; transition: all var(--transition);
+    }
+    .radio-opt.active { border-color: var(--teal); color: var(--teal); background: var(--teal-dim); }
+    .radio-opt.disabled { opacity: 0.35; cursor: not-allowed; }
+    .opt-section-label {
+      font-size: 10px; font-family: var(--mono); color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.1em; margin: 12px 0 8px;
+    }
+    .format-group { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .format-btn {
+      padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+      background: none; font-family: var(--sans); font-size: 12px; color: var(--text-muted);
+      cursor: pointer; transition: all var(--transition); text-align: center;
+    }
+    .format-btn.active { border-color: var(--teal); color: var(--teal); background: var(--teal-dim); }
+    .email-display {
+      margin-top: 14px; padding: 10px 12px; background: var(--surface2);
+      border-radius: var(--radius-sm); border: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .email-display span { font-size: 11px; font-family: var(--mono); color: var(--text-muted); }
+    .email-display .email-val { color: var(--text); font-size: 12px; }
+
+    /* ===== fileModeを縦いっぱいに使う ===== */
+    #fileMode {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 340px;   /* ← ここで全体の最低高さを底上げ */
+    }
+    /* drop-zoneを可能な限り広げる */
+    .drop-zone {
+      flex: 1;
+      min-height: 240px;   /* 最低限これだけは確保 */
+    }
+    /* record-areaも揃える */
+    .record-area {
+      min-height: 340px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    footer { text-align: center; font-size: 11px; font-family: var(--mono); color: var(--text-muted); opacity: 0.5; padding-top: 4px; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- 設定ボタン -->
-        <button class="settings-btn" id="settingsBtn" onclick="toggleSettingsMenu()">⚙️</button>
-        
-        <!-- 設定メニュー -->
-        <div class="settings-menu" id="settingsMenu">
-            <div class="settings-menu-item" onclick="openCustomerPortal()">
-                <span>💳</span>
-                <span>プラン管理</span>
-            </div>
-            <div class="settings-menu-item" onclick="openAddonCheckout()">
-                <span>➕</span>
-                <span>追加課金</span>
-            </div>
-            <div class="settings-menu-item" onclick="resetSettings()">
-                <span>🔄</span>
-                <span>設定をリセット</span>
-            </div>
-        </div>
+<div class="app">
 
-        <h1>🎤 OtoWoKoto</h1>
-        <p style="text-align: center; color: #666;">音声ファイルをアップロードして文字起こし</p>
-        
-        <label for="apiKey">APIキー:</label>
-        <input type="text" id="apiKey" value="test_token_pro_001" placeholder="test_token_pro_001">
-
-        <!-- 利用量表示（実行前に表示） -->
-        <div class="usage-info" id="usageInfo">
-            <h3>📊 利用状況</h3>
-            <div class="usage-stats">
-                <span class="usage-stats-label">プラン:</span>
-                <span class="usage-stats-value" id="usagePlan">-</span>
-            </div>
-            <div class="usage-stats">
-                <span class="usage-stats-label">残り時間:</span>
-                <span class="usage-stats-value" id="usageRemaining">-</span>
-            </div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="usageProgress">0%</div>
-            </div>
-        </div>
-
-        <div class="upload-area" id="uploadArea">
-            <p>📁 ここに音声ファイルをドロップ</p>
-            <p style="font-size: 14px; color: #666;">または</p>
-            <input type="file" id="fileInput" accept="audio/*" style="display: none;">
-            <button type="button" onclick="document.getElementById('fileInput').click()" style="width: auto; padding: 8px 20px; background: #2196F3;">ファイルを選択</button>
-        </div>
-
-        <div id="fileInfo" class="info-text"></div>
-        
-        <div class="warning" id="warningMsg"></div>
-
-        <button id="transcribeBtn" disabled>文字起こし実行</button>
-
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>処理中... お待ちください</p>
-        </div>
-
-        <div class="error" id="errorMsg"></div>
-
-        <div class="result" id="result">
-            <h3>📝 文字起こし結果<span id="planBadge"></span></h3>
-            <div id="transcriptText" class="result-content"></div>
-            
-            <div class="button-group">
-                <button onclick="copyToClipboard()" class="btn-copy">📋 コピー</button>
-            <div id="downloadLinkSection" style="display: none; margin-top: 15px; padding: 12px; background: #e8f5e9; border-radius: 8px; border: 1px solid #a5d6a7;">
-                <p style="margin: 0 0 8px 0; font-size: 14px; color: #2e7d32;">📥 ファイルダウンロード（60分以内）</p>
-                <a id="downloadLink" href="#" target="_blank" style="display: inline-block; background: #4CAF50; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 14px;">結果ファイルをダウンロード</a>
-                <p style="margin: 8px 0 0 0; font-size: 12px; color: #666;">⚠️ このリンクは60分間のみ有効です</p>
-            </div>
-                <button onclick="downloadTranscript()" class="btn-download">💾 ダウンロード</button>
-            </div>
-            
-            <div id="summarySection" style="display: none; margin-top: 20px;">
-                <h3>✨ AI要約（Proプラン）</h3>
-                <div id="summaryText" class="result-content" style="background: #fff3cd;"></div>
-                <div class="button-group">
-                    <button onclick="copySummary()" class="btn-copy">📋 要約をコピー</button>
-                    <button onclick="downloadSummary()" class="btn-download">💾 要約をダウンロード</button>
-                </div>
-            </div>
-        </div>
+  <header>
+    <div class="logo">
+      <span class="logo-mark">OtoWoKoto</span>
+      <span class="logo-sub">by otowolab</span>
     </div>
+    <div class="menu-wrap">
+      <button class="menu-btn" id="menuBtn">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="dropdown" id="dropdown">
+        <a id="menuPortal">📋 プラン管理</a>
+        <a id="menuAddon">➕ 追加購入</a>
+        <a id="menuAbout">ℹ️ about</a>
+        <a id="menuReset">🔄 設定リセット</a>
+      </div>
+    </div>
+  </header>
 
-    <script>
-        let selectedFile = null;
-        let usageData = null;
-        // =========================================
-        // 多言語対応
-        // =========================================
-        const LANGUAGES = {
-            ja: {
-                title: 'OtoWoKoto - 音声文字起こし',
-                heading: '🎤 OtoWoKoto',
-                apiKeyLabel: 'APIキー:',
-                usageHeading: '📊 利用状況',
-                remainingLabel: '残り時間:',
-                selectFile: 'ファイルを選択',
-                transcribeBtn: '文字起こし実行',
-                resultHeading: '📝 文字起こし結果',
-                dropArea: 'ここに音声ファイルをドロップ',
-                dropOr: 'または',
-                errNoApiKey: 'APIキーを入力してください',
-                errNoFile: 'ファイルを選択してください',
-                warnOverage: (est, rem, over) => `⚠️ 警告: 推定処理時間（約${est}秒）が残り時間（${rem}秒）を超過します。約${over}秒分の超過が見込まれます。`,
-                warnLow: (est) => `⚠️ 注意: 残り時間が少なくなっています。推定処理時間: 約${est}秒`,
-            },
-            en: {
-                title: 'OtoWoKoto - Voice Transcription',
-                heading: '🎤 OtoWoKoto',
-                apiKeyLabel: 'API Key:',
-                usageHeading: '📊 Usage',
-                remainingLabel: 'Remaining:',
-                selectFile: 'Select File',
-                transcribeBtn: 'Transcribe',
-                resultHeading: '📝 Transcription Result',
-                dropArea: 'Drop audio file here',
-                dropOr: 'or',
-                errNoApiKey: 'Please enter your API key',
-                errNoFile: 'Please select a file',
-                warnOverage: (est, rem, over) => `⚠️ Warning: Estimated time (${est}s) exceeds remaining (${rem}s) by ~${over}s.`,
-                warnLow: (est) => `⚠️ Note: Remaining time is low. Estimated: ~${est}s`,
-            }
-        };
+  <div class="tabs">
+    <button class="tab active" id="tabFile">📁 音声ファイル</button>
+    <button class="tab" id="tabLive">🎙️ ライブ録音</button>
+  </div>
 
-        // URLパスから言語を決定（/en → en、それ以外 → ja）
-        // ブラウザ言語設定も考慮（パスなしの場合）
-        function detectLang() {
-            const path = window.location.pathname;
-            if (path === '/en' || path === '/en/') return 'en';
-            if (path === '/ja' || path === '/ja/') return 'ja';
-            // パスなしの場合はブラウザ言語で自動判定
-            return navigator.language.startsWith('ja') ? 'ja' : 'en';
-        }
+  <div class="msg error" id="msgError"></div>
+  <div class="msg warning" id="msgWarn"></div>
 
-        const lang = detectLang();
-        const L = LANGUAGES[lang];
+  <!-- File mode -->
+  <div id="fileMode">
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="fileInput" accept="audio/*,video/*">
+      <div class="drop-icon">🎵</div>
+      <div class="drop-label">
+        <strong>音声ファイルをドロップ</strong>
+        または タップして選択
+      </div>
+      <div class="file-selected" id="fileName" style="display:none"></div>
+    </div>
+    <button class="submit-btn" id="submitBtn" style="margin-top:0; flex-shrink:0;" disabled>文字起こし</button>
+  </div>
 
-        // 言語に応じてUI文言を適用
-        function applyLang() {
-            document.title = L.title;
-            document.querySelector('h1').textContent = L.heading;
-            document.querySelector('label[for="apiKey"]').textContent = L.apiKeyLabel;
-            document.querySelector('#usageInfo h3').textContent = L.usageHeading;
-            document.querySelector('.usage-stats-label').textContent = L.remainingLabel;
-            document.querySelector('#transcribeBtn').textContent = L.transcribeBtn;
-            document.querySelector('.upload-area p').textContent = L.dropArea;
-            document.querySelector('.upload-area .info-text').textContent = L.dropOr;
-            document.querySelector('button[onclick*="fileInput"]').textContent = L.selectFile;
-        }
+  <!-- Live mode -->
+  <div id="liveMode" style="display:none">
+    <div class="record-area">
+      <div class="waveform-wrap">
+        <canvas id="waveCanvas"></canvas>
+      </div>
+      <div class="record-btn-wrap" id="recordBtnWrap">
+        <div class="ripple"></div>
+        <div class="ripple"></div>
+        <button class="record-btn" id="recordBtn">🎙️</button>
+      </div>
+      <div class="timers">
+        <div class="elapsed" id="elapsed">00:00:00</div>
+        <div class="countdown" id="countdown">残り —</div>
+      </div>
+    </div>
+  </div>
 
-        document.addEventListener('DOMContentLoaded', applyLang);
 
-        const SERVICE_URL = 'https://api.koto.otowolab.com';
+  <!-- Processing -->
+  <div class="status-card" id="statusCard">
+    <div class="status-steps">
+      <div class="step" id="step1"><div class="step-dot"></div>音声を解析中</div>
+      <div class="step" id="step2"><div class="step-dot"></div>文字起こし処理</div>
+      <div class="step" id="step3"><div class="step-dot"></div>レポート生成</div>
+      <div class="step" id="step4"><div class="step-dot"></div>ファイルを保存</div>
+    </div>
+  </div>
 
-        // ページ読み込み時にAPIキーから利用量を取得
-        window.addEventListener('load', async function() {
-            const apiKey = document.getElementById('apiKey').value.trim();
-            if (apiKey) {
-                await fetchUsageInfo(apiKey);
-            }
-            
-            // メニュー外クリックで閉じる
-            document.addEventListener('click', function(e) {
-                const menu = document.getElementById('settingsMenu');
-                const btn = document.getElementById('settingsBtn');
-                if (!menu.contains(e.target) && !btn.contains(e.target)) {
-                    menu.classList.remove('show');
-                }
-            });
-        });
+  <!-- Result -->
+  <div class="result-card" id="resultCard">
+    <div class="result-header">
+      <div class="result-icon">✅</div>
+      <div>
+        <div class="result-title">処理が完了しました</div>
+        <div class="result-sub">メールにDLリンクを送信しました</div>
+      </div>
+    </div>
+    <a class="dl-btn" id="dlBtn" download>⬇️ 結果ファイルをダウンロード</a>
+    <p class="result-note">有効期限: <strong>60分</strong> ／ DL後に自動削除</p>
+    <button class="again-btn" id="againBtn">もう一度実行する</button>
+  </div>
 
-        // 設定メニューの開閉
-        function toggleSettingsMenu() {
-            const menu = document.getElementById('settingsMenu');
-            menu.classList.toggle('show');
-        }
+  <!-- Options -->
+  <div>
+    <div class="option-toggle" id="optToggle">
+      <div class="option-toggle-left"><span>⚙️</span><span>オプション</span></div>
+      <span class="option-arrow" id="optArrow">›</span>
+    </div>
+    <div class="option-panel" id="optPanel">
+      <div class="opt-row">
+        <span class="opt-label">文字起こし全文</span>
+        <label class="toggle"><input type="checkbox" id="optTranscript" checked><div class="toggle-track"></div></label>
+      </div>
+      <div class="opt-row">
+        <span class="opt-label">要約</span>
+        <label class="toggle"><input type="checkbox" id="optSummary"><div class="toggle-track"></div></label>
+      </div>
+      <div class="opt-row" id="rowDepth" style="opacity:0.4">
+        <span class="opt-label muted">要約深度 <span class="lock-icon">🔒</span></span>
+        <div class="radio-group">
+          <div class="radio-opt disabled">簡潔</div>
+          <div class="radio-opt active disabled">標準</div>
+          <div class="radio-opt disabled">詳細</div>
+        </div>
+      </div>
+      <div class="opt-row">
+        <span class="opt-label">タイムスタンプ</span>
+        <label class="toggle"><input type="checkbox" id="optTimestamp"><div class="toggle-track"></div></label>
+      </div>
+      <div class="opt-row" id="rowStructure" style="opacity:0.4">
+        <span class="opt-label muted">構成出力 <span class="lock-icon">🔒</span></span>
+        <label class="toggle"><input type="checkbox" id="optStructure" disabled><div class="toggle-track"></div></label>
+      </div>
+      <div class="opt-row" id="rowDiarize" style="opacity:0.4">
+        <span class="opt-label muted">話者分け <span class="lock-icon">🔒</span></span>
+        <label class="toggle"><input type="checkbox" id="optDiarize" disabled><div class="toggle-track"></div></label>
+      </div>
+      <div class="opt-row" id="rowTranslate" style="opacity:0.4">
+        <span class="opt-label muted">翻訳 <span class="lock-icon">🔒</span></span>
+        <label class="toggle"><input type="checkbox" id="optTranslate" disabled><div class="toggle-track"></div></label>
+      </div>
+      <div class="opt-section-label">出力形式</div>
+      <div class="format-group">
+        <button class="format-btn active" id="fmtText">📄 テキスト</button>
+        <button class="format-btn" id="fmtReport">📊 レポート</button>
+      </div>
+      <div class="email-display">
+        <span>📧</span>
+        <span class="email-val" id="emailDisplay">—</span>
+      </div>
+    </div>
+  </div>
 
-        // Stripe Customer Portal を開く
-        async function openCustomerPortal() {
-            const apiKey = document.getElementById('apiKey').value.trim();
-            if (!apiKey) {
-                alert('APIキーを入力してください');
-                return;
-            }
+  <div class="usage-bar-wrap" id="usageBar">
+    <div class="usage-row">
+      <span class="usage-plan" id="usagePlan">—</span>
+      <span class="usage-time" id="usageTime">—</span>
+    </div>
+    <div class="bar-bg"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+  </div>
+  <footer style="display:none">otowolab.com</footer>
+</div>
 
-            try {
-                const response = await fetch(`${SERVICE_URL}/api/customer-portal`, {
-                    method: 'GET',
-                    headers: {
-                        'X-API-KEY': apiKey
-                    }
-                });
+<script>
+const SERVICE_URL = 'https://api.koto.otowolab.com';
+let apiKey = new URLSearchParams(window.location.search).get('key') || '';
+let selectedFile = null;
+let isRecording = false;
+let mediaRecorder = null;
+let recordedChunks = [];
+let elapsedSec = 0;
+let elapsedTimer = null;
+let waveAnimFrame = null;
+let analyser = null;
+let audioCtx = null;
+let usageData = null;
+let currentFormat = 'text';
+let activeTab = 'file';
+let stepTimer = null;
 
-                const data = await response.json();
+document.addEventListener('DOMContentLoaded', () => {
+  // 音声ファイルエリアとライブ録音エリアの高さを同期
 
-                if (response.ok && data.url) {
-                    // Stripe Customer Portal へ遷移
-                    window.open(data.url, '_blank');
-                } else {
-                    alert('プラン管理画面を開けませんでした: ' + (data.detail || 'エラー'));
-                }
-            } catch (error) {
-                alert('エラーが発生しました: ' + error.message);
-            }
+  initMenu();
+  initTabs();
+  initDropZone();
+  initOptions();
+  initRecordBtn();
+  document.getElementById('submitBtn').addEventListener('click', runTranscribe);
+  document.getElementById('againBtn').addEventListener('click', resetUI);
+  if (apiKey) fetchUsage();
+});
 
-            document.getElementById('settingsMenu').classList.remove('show');
-        }
+// Menu
+function initMenu() {
+  const btn = document.getElementById('menuBtn');
+  const dd  = document.getElementById('dropdown');
+  btn.addEventListener('click', e => { e.stopPropagation(); dd.classList.toggle('open'); });
+  document.addEventListener('click', () => dd.classList.remove('open'));
+  document.getElementById('menuPortal').addEventListener('click', openPortal);
+  document.getElementById('menuAddon').addEventListener('click', openAddon);
+  document.getElementById('menuAbout').addEventListener('click', () => alert('OtoWoKoto\nZero Retention Voice Transcription\nby otowolab.com'));
+  document.getElementById('menuReset').addEventListener('click', () => { if(confirm('設定をリセットしますか？')) location.href = location.pathname; });
+}
 
-        // 追加課金 Checkout を開く
-        async function openAddonCheckout() {
-            const apiKey = document.getElementById('apiKey').value.trim();
-            if (!apiKey) {
-                alert('APIキーを入力してください');
-                return;
-            }
+async function openPortal() {
+  if (!apiKey) return showError('APIキーが設定されていません');
+  try { const r = await apiFetch('/api/customer-portal'); if(r.url) window.open(r.url,'_blank'); } catch(e) { showError('ポータルを開けませんでした'); }
+}
+async function openAddon() {
+  if (!apiKey) return showError('APIキーが設定されていません');
+  try { const r = await apiFetch('/api/checkout/addon'); if(r.url) window.open(r.url,'_blank'); } catch(e) { showError('追加購入ページを開けませんでした'); }
+}
 
-            try {
-                const response = await fetch(`${SERVICE_URL}/api/checkout/addon`, {
-                    method: 'GET',
-                    headers: {
-                        'X-API-KEY': apiKey
-                    }
-                });
+// Tabs
+function initTabs() {
+  document.getElementById('tabFile').addEventListener('click', () => switchTab('file'));
+  document.getElementById('tabLive').addEventListener('click', () => switchTab('live'));
+}
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('tabFile').classList.toggle('active', tab==='file');
+  document.getElementById('tabLive').classList.toggle('active', tab==='live');
+  document.getElementById('fileMode').style.display = tab==='file' ? '' : 'none';
+  document.getElementById('liveMode').style.display = tab==='live' ? '' : 'none';
+  updateSubmitBtn();
+  hideMessages();
+}
 
-                const data = await response.json();
+// Drop zone
+function initDropZone() {
+  const zone  = document.getElementById('dropZone');
+  const input = document.getElementById('fileInput');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('dragover'); if(e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]); });
+  input.addEventListener('change', () => { if(input.files[0]) setFile(input.files[0]); });
+}
+function setFile(f) {
+  selectedFile = f;
+  const el = document.getElementById('fileName');
+  el.textContent = f.name; el.style.display = 'inline-block';
+  updateSubmitBtn(); hideMessages();
+  // 残り時間0のチェック
+  if (usageData && usageData.remaining_seconds <= 0) {
+    showError('今月の利用時間が上限に達しています。追加購入またはプラン変更をご検討ください。');
+    document.getElementById('submitBtn').disabled = true;
+  }
+}
 
-                if (response.ok && data.url) {
-                    // Stripe Checkout へ遷移
-                    window.open(data.url, '_blank');
-                } else {
-                    alert('追加課金ページを開けませんでした: ' + (data.detail || 'エラー'));
-                }
-            } catch (error) {
-                alert('エラーが発生しました: ' + error.message);
-            }
+// Live Recording
+function initRecordBtn() {
+  document.getElementById('recordBtn').addEventListener('click', toggleRecord);
+  drawIdleWave();
+}
+async function toggleRecord() {
+  if (!isRecording) await startRecord(); else await stopRecord();
+}
+async function startRecord() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioCtx = new AudioContext();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    audioCtx.createMediaStreamSource(stream).connect(analyser);
+    mediaRecorder = new MediaRecorder(stream);
+    recordedChunks = [];
+    mediaRecorder.ondataavailable = e => { if(e.data.size>0) recordedChunks.push(e.data); };
+    mediaRecorder.start(100);
+    isRecording = true; elapsedSec = 0;
+    const btn = document.getElementById('recordBtn');
+    btn.textContent = '⏹️'; btn.classList.add('recording');
+    document.getElementById('recordBtnWrap').classList.add('recording');
+    document.getElementById('submitBtn').disabled = true;
+    elapsedTimer = setInterval(() => { elapsedSec++; updateTimers(); }, 1000);
+    drawLiveWave();
+  } catch(e) { showError('マイクへのアクセスが拒否されました'); }
+}
+async function stopRecord() {
+  return new Promise(resolve => {
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+      selectedFile = new File([blob], `rec_${Date.now()}.webm`, { type: 'audio/webm' });
+      resolve();
+    };
+    mediaRecorder.stop();
+    mediaRecorder.stream.getTracks().forEach(t => t.stop());
+    isRecording = false;
+    clearInterval(elapsedTimer);
+    cancelAnimationFrame(waveAnimFrame);
+    const btn = document.getElementById('recordBtn');
+    btn.textContent = '🎙️'; btn.classList.remove('recording');
+    document.getElementById('recordBtnWrap').classList.remove('recording');
+    drawIdleWave(); updateSubmitBtn();
+  });
+}
+function updateTimers() {
+  const fmt = s => [Math.floor(s/3600),Math.floor((s%3600)/60),s%60].map(n=>String(n).padStart(2,'0')).join(':');
+  document.getElementById('elapsed').textContent = fmt(elapsedSec);
+  if (usageData) {
+    const rem = Math.max(0, Math.floor(usageData.remaining_seconds) - elapsedSec);
+    const el = document.getElementById('countdown');
+    el.textContent = `残り ${fmt(rem)}`;
+    el.className = 'countdown' + (rem < 300 ? ' warn' : '');
+  }
+}
+function drawIdleWave() {
+  const canvas = document.getElementById('waveCanvas');
+  if (!canvas.offsetWidth) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * devicePixelRatio;
+  canvas.height = canvas.offsetHeight * devicePixelRatio;
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+  const w = canvas.offsetWidth, h = canvas.offsetHeight;
+  let t = 0;
+  function draw() {
+    if (isRecording) return;
+    ctx.clearRect(0,0,w,h);
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(56,217,192,0.25)';
+    ctx.lineWidth = 1.5;
+    for (let x=0; x<w; x++) {
+      const y = h/2 + Math.sin((x/w)*Math.PI*4+t)*6*Math.sin(x/w*Math.PI);
+      x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    t += 0.04;
+    waveAnimFrame = requestAnimationFrame(draw);
+  }
+  cancelAnimationFrame(waveAnimFrame);
+  draw();
+}
+function drawLiveWave() {
+  const canvas = document.getElementById('waveCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * devicePixelRatio;
+  canvas.height = canvas.offsetHeight * devicePixelRatio;
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+  const w = canvas.offsetWidth, h = canvas.offsetHeight;
+  const data = new Uint8Array(analyser.frequencyBinCount);
+  function draw() {
+    if (!isRecording) return;
+    analyser.getByteTimeDomainData(data);
+    ctx.clearRect(0,0,w,h);
+    ctx.beginPath();
+    ctx.strokeStyle = '#38d9c0';
+    ctx.lineWidth = 1.5;
+    const step = w / data.length;
+    data.forEach((v,i) => { const x=i*step, y=(v/128)*h/2; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.stroke();
+    waveAnimFrame = requestAnimationFrame(draw);
+  }
+  cancelAnimationFrame(waveAnimFrame);
+  draw();
+}
 
-            document.getElementById('settingsMenu').classList.remove('show');
-        }
+// Options
+function initOptions() {
+  document.getElementById('optToggle').addEventListener('click', () => {
+    document.getElementById('optPanel').classList.toggle('open');
+    document.getElementById('optArrow').classList.toggle('open');
+  });
+  document.getElementById('fmtText').addEventListener('click', () => setFormat('text'));
+  document.getElementById('fmtReport').addEventListener('click', () => setFormat('report'));
+}
+function setFormat(fmt) {
+  currentFormat = fmt;
+  document.getElementById('fmtText').classList.toggle('active', fmt==='text');
+  document.getElementById('fmtReport').classList.toggle('active', fmt==='report');
+}
 
-        // 設定をリセット
-        function resetSettings() {
-            if (confirm('設定をリセットしますか？（現在はAPIキーのみ）')) {
-                // 将来の拡張用（現在はAPIキーのみ）
-                localStorage.clear();
-                alert('設定をリセットしました');
-            }
-            document.getElementById('settingsMenu').classList.remove('show');
-        }
+// Usage
+async function fetchUsage() {
+  try {
+    const d = await apiFetch('/me');
+    usageData = d;
+    updateUsageBar();
+    updateProOptions();
+    document.getElementById('emailDisplay').textContent = d.email || '—';
+  } catch(e) {}
+}
+function updateUsageBar() {
+  if (!usageData) return;
+  document.getElementById('usageBar').classList.add('visible');
+  const max = usageData.max_seconds_per_month || 1;
+  const rem = usageData.remaining_seconds || 0;
+  const pct = Math.min(100, ((max-rem)/max)*100);
+  const h = Math.floor(rem/3600), m = Math.floor((rem%3600)/60);
+  document.getElementById('usagePlan').textContent = (usageData.plan_type||'standard').toUpperCase();
+  const timeEl = document.getElementById('usageTime');
+  timeEl.textContent = `残 ${h}h ${m}m`;
+  const fill = document.getElementById('barFill');
+  fill.style.width = pct + '%';
+  fill.className = 'bar-fill' + (pct>=90?' danger':pct>=70?' warn':'');
+  timeEl.className = 'usage-time' + (pct>=90?' danger':pct>=70?' warn':'');
+}
+function updateProOptions() {
+  if (!usageData || usageData.plan_type !== 'pro') return;
+  ['rowDepth','rowStructure','rowDiarize','rowTranslate'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.opacity = '1';
+    el.querySelectorAll('input').forEach(i => i.disabled = false);
+    el.querySelectorAll('.radio-opt,.format-btn').forEach(i => i.classList.remove('disabled'));
+  });
+}
 
-        // ファイル選択
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            selectedFile = e.target.files[0];
-            if (selectedFile) {
-                updateFileInfo();
-                checkUsageBeforeTranscribe();
-            }
-        });
+// Submit
+function updateSubmitBtn() {
+  document.getElementById('submitBtn').disabled = !selectedFile;
+}
 
-        // ドラッグ&ドロップ
-        const uploadArea = document.getElementById('uploadArea');
-        
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.classList.add('dragover');
-        });
-        
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.classList.remove('dragover');
-        });
-        
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            selectedFile = e.dataTransfer.files[0];
-            updateFileInfo();
-            checkUsageBeforeTranscribe();
-        });
+async function runTranscribe() {
+  if (!selectedFile) return;
+  if (!apiKey) return showError('URLが正しくありません（APIキーが見つかりません）');
+  hideMessages();
+  setUIState('processing');
+  try {
+    const base64   = await fileToBase64(selectedFile);
+    const duration = await getAudioDuration(selectedFile);
+    const body = {
+      job_id: `WEB-${Date.now()}`,
+      audio: { data_base64: base64.split(',')[1], duration_sec: duration },
+      options: { language: 'ja', speaker_diarization: document.getElementById('optDiarize')?.checked || false }
+    };
+    animateSteps();
+    const result = await apiFetch('/api/transcribe', { method:'POST', body: JSON.stringify(body) });
+    if (result.success) {
+      setUIState('done');
+      if (result.download_url) {
+        const dl = document.getElementById('dlBtn');
+        dl.href = `${SERVICE_URL}${result.download_url}`;
+        dl.style.display = 'flex';
+      } else {
+        document.getElementById('dlBtn').style.display = 'none';
+      }
+      fetchUsage();
+    } else {
+      setUIState('idle');
+      showError(result.error?.message || 'エラーが発生しました');
+    }
+  } catch(e) { setUIState('idle'); showError('通信エラーが発生しました'); }
+}
 
-        function updateFileInfo() {
-            const fileInfo = document.getElementById('fileInfo');
-            const sizeMB = (selectedFile.size / 1024 / 1024).toFixed(2);
-            fileInfo.textContent = `選択: ${selectedFile.name} (${sizeMB} MB)`;
-        }
+function animateSteps() {
+  const steps = ['step1','step2','step3','step4'];
+  let i = 0;
+  steps.forEach(s => { const el=document.getElementById(s); el.classList.remove('active','done'); });
+  document.getElementById('step1').classList.add('active');
+  stepTimer = setInterval(() => {
+    if (i < steps.length-1) {
+      document.getElementById(steps[i]).classList.replace('active','done');
+      i++;
+      document.getElementById(steps[i]).classList.add('active');
+    }
+  }, 2500);
+}
 
-        // APIキー変更時に利用量を取得
-        document.getElementById('apiKey').addEventListener('blur', async function() {
-            const apiKey = this.value.trim();
-            if (apiKey) {
-                await fetchUsageInfo(apiKey);
-                if (selectedFile) {
-                    checkUsageBeforeTranscribe();
-                }
-            }
-        });
+function setUIState(state) {
+  const statusCard = document.getElementById('statusCard');
+  const resultCard = document.getElementById('resultCard');
+  const submitBtn  = document.getElementById('submitBtn');
+  statusCard.classList.remove('visible');
+  resultCard.classList.remove('visible');
+  if (state === 'processing') {
+    submitBtn.disabled = true;
+    document.getElementById('fileMode').style.display = 'none';
+    document.getElementById('liveMode').style.display = 'none';
+    statusCard.classList.add('visible');
+  } else if (state === 'done') {
+    clearInterval(stepTimer);
+    ['step1','step2','step3','step4'].forEach(s => {
+      const el = document.getElementById(s);
+      el.classList.remove('active'); el.classList.add('done');
+    });
+    setTimeout(() => { statusCard.classList.remove('visible'); resultCard.classList.add('visible'); }, 600);
+  } else {
+    submitBtn.disabled = !selectedFile;
+    document.getElementById('fileMode').style.display = activeTab==='file' ? '' : 'none';
+    document.getElementById('liveMode').style.display = activeTab==='live' ? '' : 'none';
+  }
+}
 
-        // 利用量情報取得
-        async function fetchUsageInfo(apiKey) {
-            try {
-                const response = await fetch(`${SERVICE_URL}/me`, {
-                    method: 'GET',
-                    headers: {
-                        'X-API-KEY': apiKey
-                    }
-                });
+function resetUI() {
+  selectedFile = null;
+  document.getElementById('fileName').style.display = 'none';
+  document.getElementById('fileInput').value = '';
+  setUIState('idle');
+  updateSubmitBtn();
+  hideMessages();
+}
 
-                if (response.ok) {
-                    usageData = await response.json();
-                    updateUsageDisplay(usageData);
-                } else {
-                    hideUsageDisplay();
-                    usageData = null;
-                }
-            } catch (error) {
-                console.error('Failed to fetch usage info:', error);
-                hideUsageDisplay();
-                usageData = null;
-            }
-        }
-
-        // 利用量表示を更新
-        function updateUsageDisplay(data) {
-            const usageInfo = document.getElementById('usageInfo');
-            const planElement = document.getElementById('usagePlan');
-            const remainingElement = document.getElementById('usageRemaining');
-            const progressElement = document.getElementById('usageProgress');
-
-            // プラン表示
-            const planType = data.plan_type || 'standard';
-            planElement.textContent = planType === 'pro' ? 'Pro' : 'Standard';
-            planElement.style.color = planType === 'pro' ? '#F57C00' : '#1976D2';
-
-            // 残り時間表示
-            const remaining = Math.floor(data.remaining_seconds || 0);
-            const max = Math.floor(data.max_seconds_per_month || 0);
-            const used = max - remaining;
-            
-            const remainingHours = Math.floor(remaining / 3600);
-            const remainingMinutes = Math.floor((remaining % 3600) / 60);
-            const remainingSeconds = remaining % 60;
-            
-            remainingElement.textContent = `${remaining.toLocaleString()}秒 / ${max.toLocaleString()}秒 (${remainingHours}h ${remainingMinutes}m ${remainingSeconds}s)`;
-
-            // 使用率計算
-            const usagePercent = max > 0 ? ((used / max) * 100).toFixed(1) : 0;
-            
-            // プログレスバー更新
-            progressElement.style.width = `${usagePercent}%`;
-            progressElement.textContent = `${usagePercent}%`;
-
-            // 色分け（使用率に応じて）
-            progressElement.classList.remove('warning-bar', 'danger');
-            if (usagePercent >= 90) {
-                progressElement.classList.add('danger');
-            } else if (usagePercent >= 70) {
-                progressElement.classList.add('warning-bar');
-            }
-
-            // 表示
-            usageInfo.style.display = 'block';
-        }
-
-        // 利用量表示を非表示
-        function hideUsageDisplay() {
-            document.getElementById('usageInfo').style.display = 'none';
-        }
-
-        // ファイル選択時に利用量チェック
-        function checkUsageBeforeTranscribe() {
-            const warningMsg = document.getElementById('warningMsg');
-            const transcribeBtn = document.getElementById('transcribeBtn');
-            
-            if (!usageData || !selectedFile) {
-                transcribeBtn.disabled = !selectedFile;
-                warningMsg.style.display = 'none';
-                return;
-            }
-
-            // ファイルサイズから推定時間を計算（簡易：1MB = 60秒と仮定）
-            const estimatedSeconds = Math.ceil((selectedFile.size / 1024 / 1024) * 60);
-            const remaining = usageData.remaining_seconds || 0;
-
-            if (estimatedSeconds > remaining) {
-                // 超過警告
-                const overage = estimatedSeconds - remaining;
-                warningMsg.textContent = L.warnOverage(estimatedSeconds, Math.floor(remaining), Math.floor(overage));
-                warningMsg.style.display = 'block';
-                transcribeBtn.disabled = false; // 実行は可能（警告のみ）
-            } else if (estimatedSeconds > remaining * 0.8) {
-                // 残り時間が少ない警告
-                warningMsg.textContent = L.warnLow(estimatedSeconds);
-                warningMsg.style.display = 'block';
-                transcribeBtn.disabled = false;
-            } else {
-                warningMsg.style.display = 'none';
-                transcribeBtn.disabled = false;
-            }
-        }
-
-        // 文字起こし実行
-        document.getElementById('transcribeBtn').addEventListener('click', async function() {
-            const apiKey = document.getElementById('apiKey').value.trim();
-            if (!apiKey) {
-                showError(L.errNoApiKey);
-                return;
-            }
-            if (!selectedFile) {
-                showError(L.errNoFile);
-                return;
-            }
-
-            this.disabled = true;
-            document.getElementById('loading').style.display = 'block';
-            hideError();
-            document.getElementById('result').style.display = 'none';
-            document.getElementById('warningMsg').style.display = 'none';
-
-            try {
-                // ファイルをBase64に変換
-                const base64Audio = await fileToBase64(selectedFile);
-
-                // API呼び出し
-                const response = await fetch(`${SERVICE_URL}/api/transcribe`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-API-KEY': apiKey
-                    },
-                    body: JSON.stringify({
-                        job_id: `WEB-${Date.now()}`,
-                        audio: {
-                            data_base64: base64Audio.split(',')[1],
-                            duration_sec: 60
-                        },
-                        options: {
-                            language: 'ja',
-                            speaker_diarization: false
-                        }
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    // 文字起こし結果
-                    document.getElementById('transcriptText').textContent = result.transcript;
-                    document.getElementById('result').style.display = 'block';
-
-                    // プランバッジ表示
-                    const planType = result.plan_type || 'standard';
-                    const planBadge = document.getElementById('planBadge');
-                    planBadge.textContent = planType === 'pro' ? 'Pro' : 'Standard';
-                    planBadge.className = `plan-badge plan-${planType}`;
-
-                    // AI要約（Proプランの場合）
-                    if (result.derived_outputs && result.derived_outputs.summary) {
-                        document.getElementById('summaryText').textContent = result.derived_outputs.summary;
-                        document.getElementById('summarySection').style.display = 'block';
-                    } else {
-                        document.getElementById('summarySection').style.display = 'none';
-                    }
-
-                    // ダウンロードリンク（プロキシ経由で即時削除）
-                    if (result.download_url) {
-                        const fullDownloadUrl = `${SERVICE_URL}${result.download_url}`;
-                        document.getElementById("downloadLink").href = fullDownloadUrl;
-                        document.getElementById("downloadLinkSection").style.display = "block";
-                    } else {
-                        document.getElementById("downloadLinkSection").style.display = "none";
-                    }
-
-                    // 利用量を再取得
-                    await fetchUsageInfo(apiKey);
-                } else {
-                    showError(result.error.message || 'エラーが発生しました');
-                }
-
-            } catch (error) {
-                showError('エラー: ' + error.message);
-            } finally {
-                this.disabled = false;
-                document.getElementById('loading').style.display = 'none';
-            }
-        });
-
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function showError(msg) {
-            const errorDiv = document.getElementById('errorMsg');
-            errorDiv.textContent = msg;
-            errorDiv.style.display = 'block';
-        }
-
-        function hideError() {
-            document.getElementById('errorMsg').style.display = 'none';
-        }
-
-        // コピー機能
-        function copyToClipboard() {
-            const text = document.getElementById('transcriptText').textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                alert('📋 コピーしました！');
-            });
-        }
-
-        function copySummary() {
-            const text = document.getElementById('summaryText').textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                alert('📋 要約をコピーしました！');
-            });
-        }
-
-        // ダウンロード機能
-        function downloadTranscript() {
-            const text = document.getElementById('transcriptText').textContent;
-            const filename = `transcript_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.txt`;
-            downloadTextFile(text, filename);
-        }
-
-        function downloadSummary() {
-            const text = document.getElementById('summaryText').textContent;
-            const filename = `summary_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.txt`;
-            downloadTextFile(text, filename);
-        }
-
-        function downloadTextFile(text, filename) {
-            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-    </script>
+// Helpers
+async function apiFetch(path, opts={}) {
+  const res = await fetch(`${SERVICE_URL}${path}`, {
+    ...opts,
+    headers: { 'Content-Type':'application/json', 'X-API-KEY': apiKey, ...(opts.headers||{}) }
+  });
+  return res.json();
+}
+function fileToBase64(file) {
+  return new Promise((res,rej) => { const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); });
+}
+function getAudioDuration(file) {
+  return new Promise(res => {
+    const a = new Audio();
+    a.src = URL.createObjectURL(file);
+    a.onloadedmetadata = () => { URL.revokeObjectURL(a.src); res(isFinite(a.duration)?a.duration:60); };
+    a.onerror = () => res(60);
+  });
+}
+function showError(msg) { const el=document.getElementById('msgError'); el.textContent=msg; el.classList.add('visible'); }
+function showWarn(msg)  { const el=document.getElementById('msgWarn');  el.textContent=msg; el.classList.add('visible'); }
+function hideMessages() { document.getElementById('msgError').classList.remove('visible'); document.getElementById('msgWarn').classList.remove('visible'); }
+</script>
 </body>
 </html>
