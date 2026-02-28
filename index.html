@@ -263,6 +263,7 @@
     .opt-row:last-child { border-bottom: none; }
     .opt-label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); }
     .opt-label.muted { color: var(--text-muted); }
+
     .lock-icon { font-size: 10px; color: var(--text-muted); opacity: 0.6; }
     .toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
     .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
@@ -286,6 +287,11 @@
     }
     .radio-opt.active { border-color: var(--teal); color: var(--teal); background: var(--teal-dim); }
     .radio-opt.disabled { opacity: 0.35; cursor: not-allowed; }
+    /* Pro gated UI */
+    .locked {
+      opacity: 0.4;
+      pointer-events: none;
+    }
     .opt-section-label {
       font-size: 10px; font-family: var(--mono); color: var(--text-muted);
       text-transform: uppercase; letter-spacing: 0.1em; margin: 12px 0 8px;
@@ -429,7 +435,7 @@
         <span class="opt-label">要約</span>
         <label class="toggle"><input type="checkbox" id="optSummary"><div class="toggle-track"></div></label>
       </div>
-      <div class="opt-row" id="rowDepth" style="opacity:0.4">
+      <div class="opt-row locked" id="rowDepth" data-pro="true">
         <span class="opt-label muted">要約深度 <span class="lock-icon">🔒</span></span>
         <div class="radio-group">
           <div class="radio-opt disabled">簡潔</div>
@@ -441,15 +447,15 @@
         <span class="opt-label">タイムスタンプ</span>
         <label class="toggle"><input type="checkbox" id="optTimestamp"><div class="toggle-track"></div></label>
       </div>
-      <div class="opt-row" id="rowStructure" style="opacity:0.4">
+      <div class="opt-row locked" id="rowStructure" data-pro="true">      
         <span class="opt-label muted">構成出力 <span class="lock-icon">🔒</span></span>
         <label class="toggle"><input type="checkbox" id="optStructure" disabled><div class="toggle-track"></div></label>
       </div>
-      <div class="opt-row" id="rowDiarize" style="opacity:0.4">
+      <div class="opt-row locked" id="rowDiarize" data-pro="true">
         <span class="opt-label muted">話者分け <span class="lock-icon">🔒</span></span>
         <label class="toggle"><input type="checkbox" id="optDiarize" disabled><div class="toggle-track"></div></label>
       </div>
-      <div class="opt-row" id="rowTranslate" style="opacity:0.4">
+      <div class="opt-row locked" id="rowTranslate" data-pro="true">
         <span class="opt-label muted">翻訳 <span class="lock-icon">🔒</span></span>
         <label class="toggle"><input type="checkbox" id="optTranslate" disabled><div class="toggle-track"></div></label>
       </div>
@@ -457,6 +463,23 @@
       <div class="format-group">
         <button class="format-btn active" id="fmtText">📄 テキスト</button>
         <button class="format-btn" id="fmtReport">📊 レポート</button>
+
+        <!-- Report Template Select -->
+        <div id="reportTemplateWrap" style="display:none; margin-top:10px;">
+          <div class="opt-section-label">レポートテンプレート</div>
+          <select id="reportTemplateSelect" style="
+            width:100%;
+            padding:8px;
+            border-radius:8px;
+            border:1px solid var(--border);
+            background:var(--surface2);
+            color:var(--text);
+            font-size:12px;
+          ">
+            <option value="common">Common</option>
+          </select>
+        </div>
+        
       </div>
       <div class="email-display">
         <span>📧</span>
@@ -491,14 +514,115 @@ let usageData = null;
 let currentFormat = 'text';
 let activeTab = 'file';
 let stepTimer = null;
+let label = 'standard';
+// ===== Plan / Feature gating (Standard vs Pro) =====
+let currentUser = {
+  plan: 'standard'  // 'standard' | 'pro'
+};
+
+function applyPlanUI() {
+  const isPro = currentUser.plan === 'pro';
+  const proElements = document.querySelectorAll('[data-pro="true"]');
+
+  proElements.forEach(el => {
+    // locked class toggle
+    el.classList.toggle('locked', !isPro);
+
+    el.querySelectorAll('.opt-label').forEach(label => {
+      label.classList.toggle('muted', !isPro);
+    });
+    
+    // enable/disable inputs inside
+    el.querySelectorAll('input').forEach(inp => {
+      inp.disabled = !isPro;
+    });
+
+    // enable/disable pseudo radios
+    el.querySelectorAll('.radio-opt').forEach(opt => {
+      opt.classList.toggle('disabled', !isPro);
+    });
+  });
+}
+
+// ===== Locale Detection =====
+const locale = location.pathname.startsWith('/en') ? 'en' : 'ja';
+
+// ===== I18N Dictionary =====
+const I18N = {
+  ja: {
+    appName: "OtoWoKoto",
+    fileTab: "📁 音声ファイル",
+    liveTab: "🎙️ ライブ録音",
+    dropTitle: "音声ファイルをドロップ",
+    dropSub: "または タップして選択",
+    submit: "文字起こし",
+    processing1: "音声を解析中",
+    processing2: "文字起こし処理",
+    processing3: "レポート生成",
+    processing4: "ファイルを保存",
+    doneTitle: "処理が完了しました",
+    doneSub: "メールにDLリンクを送信しました",
+    download: "⬇️ 結果ファイルをダウンロード",
+    again: "もう一度実行する",
+    options: "オプション",
+    remaining: "残り"
+  },
+  en: {
+    appName: "EchoLess",
+    fileTab: "📁 Audio File",
+    liveTab: "🎙️ Live Recording",
+    dropTitle: "Drop audio file here",
+    dropSub: "or click to select",
+    submit: "Transcribe",
+    processing1: "Analyzing audio",
+    processing2: "Transcribing",
+    processing3: "Generating report",
+    processing4: "Saving file",
+    doneTitle: "Processing Completed",
+    doneSub: "Download link sent via email",
+    download: "⬇️ Download Result",
+    again: "Run Again",
+    options: "Options",
+    remaining: "Remaining"
+  }
+};
+function applyI18N() {
+  const t = I18N[locale];
+
+  document.documentElement.lang = locale;
+  document.querySelector('.logo-mark').textContent = t.appName;
+
+  document.getElementById('tabFile').textContent = t.fileTab;
+  document.getElementById('tabLive').textContent = t.liveTab;
+
+  document.querySelector('.drop-label strong').textContent = t.dropTitle;
+  document.querySelector('.drop-label').childNodes[2].nodeValue = " " + t.dropSub;
+
+  document.getElementById('submitBtn').textContent = t.submit;
+
+  document.getElementById('step1').lastChild.textContent = t.processing1;
+  document.getElementById('step2').lastChild.textContent = t.processing2;
+  document.getElementById('step3').lastChild.textContent = t.processing3;
+  document.getElementById('step4').lastChild.textContent = t.processing4;
+
+  document.querySelector('.result-title').textContent = t.doneTitle;
+  document.querySelector('.result-sub').textContent = t.doneSub;
+  document.getElementById('dlBtn').textContent = t.download;
+  document.getElementById('againBtn').textContent = t.again;
+
+  document.querySelector('.option-toggle-left span:last-child').textContent = t.options;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   // 音声ファイルエリアとライブ録音エリアの高さを同期
+
+  applyI18N();
 
   initMenu();
   initTabs();
   initDropZone();
   initOptions();
+  applyPlanUI();
   initRecordBtn();
   document.getElementById('submitBtn').addEventListener('click', runTranscribe);
   document.getElementById('againBtn').addEventListener('click', resetUI);
@@ -676,11 +800,37 @@ function initOptions() {
   });
   document.getElementById('fmtText').addEventListener('click', () => setFormat('text'));
   document.getElementById('fmtReport').addEventListener('click', () => setFormat('report'));
+  
+  // ▼ 要約深度 radio の active 切替
+  document.querySelectorAll('#rowDepth .radio-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      // Proでない場合は無視
+      if (currentUser.plan !== 'pro') return;
+
+      // disabledが付いている場合は無視
+      if (opt.classList.contains('disabled')) return;
+
+      // 兄弟から active を外す
+      const group = opt.closest('.radio-group');
+      group.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('active'));
+
+      // クリックされた要素に active 付与
+      opt.classList.add('active');
+    });
+  });
 }
 function setFormat(fmt) {
   currentFormat = fmt;
+
   document.getElementById('fmtText').classList.toggle('active', fmt==='text');
   document.getElementById('fmtReport').classList.toggle('active', fmt==='report');
+
+  const wrap = document.getElementById('reportTemplateWrap');
+  if (fmt === 'report') {
+    wrap.style.display = 'block';
+  } else {
+    wrap.style.display = 'none';
+  }
 }
 
 // Usage
@@ -688,6 +838,23 @@ async function fetchUsage() {
   try {
     const d = await apiFetch('/me');
     usageData = d;
+
+    // plan_type を内部フラグへ反映（将来Firestore/Stripeでもここを変えるだけ）
+    // currentUser.plan = (d.plan_type === 'pro') ? 'pro' : 'standard';
+
+    if (d.plan_type === 'pro') {
+      currentUser.plan = 'pro';
+    } else if (d.remaining_count > 0) {
+      currentUser.plan = 'trial';
+    } else {
+      currentUser.plan = 'standard';
+    }
+
+    if (currentUser.plan === 'trial' && usageData.remaining_count <= 0) {
+      showError('無料利用回数が上限に達しました。プラン変更をご検討ください。');
+      document.getElementById('submitBtn').disabled = true;
+    }
+
     updateUsageBar();
     updateProOptions();
     document.getElementById('emailDisplay').textContent = d.email || '—';
@@ -700,7 +867,14 @@ function updateUsageBar() {
   const rem = usageData.remaining_seconds || 0;
   const pct = Math.min(100, ((max-rem)/max)*100);
   const h = Math.floor(rem/3600), m = Math.floor((rem%3600)/60);
-  document.getElementById('usagePlan').textContent = (usageData.plan_type||'standard').toUpperCase();
+  // document.getElementById('usagePlan').textContent = (usageData.plan_type||'standard').toUpperCase();
+  if (currentUser.plan === 'pro') {
+    label = 'PRO';
+  } else if (currentUser.plan === 'trial') {
+    label = `TRIAL (${usageData.remaining_count} left)`;
+  }
+  document.getElementById('usagePlan').textContent = label;
+
   const timeEl = document.getElementById('usageTime');
   timeEl.textContent = `残 ${h}h ${m}m`;
   const fill = document.getElementById('barFill');
@@ -709,13 +883,7 @@ function updateUsageBar() {
   timeEl.className = 'usage-time' + (pct>=90?' danger':pct>=70?' warn':'');
 }
 function updateProOptions() {
-  if (!usageData || usageData.plan_type !== 'pro') return;
-  ['rowDepth','rowStructure','rowDiarize','rowTranslate'].forEach(id => {
-    const el = document.getElementById(id);
-    el.style.opacity = '1';
-    el.querySelectorAll('input').forEach(i => i.disabled = false);
-    el.querySelectorAll('.radio-opt,.format-btn').forEach(i => i.classList.remove('disabled'));
-  });
+  applyPlanUI();
 }
 
 // Submit
@@ -734,7 +902,7 @@ async function runTranscribe() {
     const body = {
       job_id: `WEB-${Date.now()}`,
       audio: { data_base64: base64.split(',')[1], duration_sec: duration },
-      options: { language: 'ja', speaker_diarization: document.getElementById('optDiarize')?.checked || false }
+      options: { language: locale, speaker_diarization: document.getElementById('optDiarize')?.checked || false }
     };
     animateSteps();
     const result = await apiFetch('/api/transcribe', { method:'POST', body: JSON.stringify(body) });
@@ -825,6 +993,7 @@ function getAudioDuration(file) {
 function showError(msg) { const el=document.getElementById('msgError'); el.textContent=msg; el.classList.add('visible'); }
 function showWarn(msg)  { const el=document.getElementById('msgWarn');  el.textContent=msg; el.classList.add('visible'); }
 function hideMessages() { document.getElementById('msgError').classList.remove('visible'); document.getElementById('msgWarn').classList.remove('visible'); }
+
 </script>
 </body>
 </html>
