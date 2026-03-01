@@ -12,28 +12,35 @@
        New York — コンクリート、ネオン、無骨な強さ
     ============================== */
     :root, [data-theme="modern"] {
-      --bg:          #0e0e0e;
-      --surface:     #1a1a1a;
-      --surface2:    #242424;
-      --border:      #333333;
+      --bg:          #0f0f12;
+      --surface:     #1a1a1e;
+      --surface2:    #242428;
+      --border:      #303038;
       --accent:      #e8d44d;
-      --accent-dim:  rgba(232,212,77,0.10);
-      --accent-glow: rgba(232,212,77,0.30);
-      --text:        #f0f0f0;
-      --text-muted:  #888888;
+      --accent-dim:  rgba(232,212,77,0.08);
+      --accent-glow: rgba(232,212,77,0.22);
+      --text:        #f1f3f5;
+      --text-muted:  #82828c;
       --warn:        #f0a83a;
       --danger:      #e05555;
       --radius:      4px;
       --radius-sm:   2px;
       --mono:        'IBM Plex Mono', 'DM Mono', monospace;
       --sans:        'Outfit', sans-serif;
-      --transition:  0.18s cubic-bezier(0.4,0,0.2,1);
+      /* モーション統一: 150ms ease-in-out */
+      --transition:       0.15s ease-in-out;
+      --transition-slow:  0.28s ease-in-out;
+      --transition-fast:  0.08s ease-in-out;
       --teal:        var(--accent);
       --teal-dim:    var(--accent-dim);
       --teal-glow:   var(--accent-glow);
       /* NY固有 */
       --ny-yellow:   #e8d44d;
-      --ny-concrete: #2a2a2a;
+      --ny-concrete: #2a2a2e;
+      /* shadow */
+      --shadow-sm:   0 1px 4px rgba(0,0,0,0.4);
+      --shadow-md:   0 4px 16px rgba(0,0,0,0.5);
+      --shadow-glow: 0 0 20px var(--accent-glow);
     }
 
     /* NY固有スタイル */
@@ -133,14 +140,14 @@
        沙羅 — 冬の富士、静寂の藍
     ============================== */
     [data-theme="sara"] {
-      --bg:          #f0ece3;
-      --surface:     #e8e2d6;
-      --surface2:    #ddd7ca;
-      --border:      #c8bfad;
+      --bg:          #f2ede4;
+      --surface:     #ece6da;
+      --surface2:    #e0d9cc;
+      --border:      #ccc4b2;
       --accent:      #2a4a7f;
-      --accent-dim:  rgba(42,74,127,0.10);
-      --accent-glow: rgba(42,74,127,0.28);
-      --text:        #1a1a1a;
+      --accent-dim:  rgba(42,74,127,0.08);
+      --accent-glow: rgba(42,74,127,0.20);
+      --text:        #1c1c1c;
       --text-muted:  #7a7060;
       --warn:        #b85c00;
       --danger:      #a02020;
@@ -148,14 +155,19 @@
       --radius-sm:   6px;
       --mono:        'IBM Plex Mono', 'DM Mono', monospace;
       --sans:        'Noto Sans JP', 'Outfit', sans-serif;
-      --transition:  0.28s cubic-bezier(0.4,0,0.2,1);
+      --transition:       0.15s ease-in-out;
+      --transition-slow:  0.30s ease-in-out;
+      --transition-fast:  0.08s ease-in-out;
       --teal:        var(--accent);
       --teal-dim:    var(--accent-dim);
       --teal-glow:   var(--accent-glow);
       /* sara固有 */
       --crimson:     #9b2335;
-      --snow:        #f8f6f2;
+      --snow:        #faf7f2;
       --indigo-deep: #1a2f54;
+      --shadow-sm:   0 1px 4px rgba(0,0,0,0.08);
+      --shadow-md:   0 4px 16px rgba(0,0,0,0.12);
+      --shadow-glow: 0 0 16px var(--accent-glow);
     }
 
     /* sara固有スタイル */
@@ -282,8 +294,8 @@
       max-width: 420px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      padding-bottom: 32px;
+      gap: 12px;
+      padding-bottom: 40px;
     }
 
     /* Header */
@@ -291,17 +303,17 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 0 4px;
+      padding: 10px 0 6px;
     }
     .logo { display: flex; align-items: baseline; gap: 6px; }
     .logo-mark {
       font-family: var(--mono);
-      font-size: 20px;
-      font-weight: 500;
+      font-size: 22px;
+      font-weight: 600;
       color: var(--teal);
-      letter-spacing: -0.5px;
+      letter-spacing: -0.3px;
     }
-    .logo-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 0.08em; font-weight: 300; }
+    .logo-sub { font-size: 10px; color: var(--text-muted); letter-spacing: 0.14em; font-weight: 400; text-transform: uppercase; }
     .menu-btn {
       background: none; border: none; cursor: pointer; color: var(--text-muted);
       padding: 6px; border-radius: var(--radius-sm);
@@ -317,46 +329,61 @@
       border-radius: var(--radius); min-width: 180px; overflow: hidden;
       display: none; z-index: 100; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
     }
-    .dropdown.open { display: block; animation: fadeIn 0.15s ease; }
+    .dropdown.open { display: block; animation: fadeIn 0.15s ease-in-out; }
     .dropdown a {
       display: block; padding: 11px 16px; font-size: 13px;
       color: var(--text-muted); text-decoration: none; cursor: pointer;
-      transition: background var(--transition), color var(--transition);
+      transition: background var(--transition), color var(--transition),
+                  padding-left var(--transition);
       border-bottom: 1px solid var(--border);
     }
     .dropdown a:last-child { border-bottom: none; }
-    .dropdown a:hover { background: var(--border); color: var(--text); }
+    .dropdown a:hover {
+      background: var(--accent-dim);
+      color: var(--text);
+      padding-left: 20px;
+    }
 
     /* Tabs */
     .tabs {
       display: grid; grid-template-columns: 1fr 1fr;
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 4px; gap: 4px;
+      box-shadow: var(--shadow-sm);
     }
     .tab {
       padding: 9px; border: none; background: none;
       border-radius: calc(var(--radius) - 2px);
-      font-family: var(--sans); font-size: 13px; font-weight: 500;
+      font-family: var(--sans); font-size: 13px; font-weight: 600; letter-spacing: 0.01em;
       color: var(--text-muted); cursor: pointer;
-      transition: background var(--transition), color var(--transition);
+      transition: background var(--transition), color var(--transition),
+                  box-shadow var(--transition), transform var(--transition-fast);
       display: flex; align-items: center; justify-content: center; gap: 6px;
     }
-    .tab.active { background: var(--teal-dim); color: var(--teal); box-shadow: inset 0 0 0 1px var(--teal-glow); }
-    .tab:not(.active):hover { background: var(--surface2); color: var(--text); }
+    .tab.active {
+      background: var(--teal-dim); color: var(--teal);
+      box-shadow: inset 0 0 0 1px var(--teal-glow);
+    }
+    .tab:not(.active):hover {
+      background: var(--surface2); color: var(--text);
+      transform: translateY(-1px);
+    }
+    .tab:active { transform: translateY(0); }
 
     /* Usage bar */
     .usage-bar-wrap {
-      padding: 12px 16px; background: var(--surface);
+      padding: 14px 16px; background: var(--surface);
       border: 1px solid var(--border); border-radius: var(--radius); display: none;
+      box-shadow: var(--shadow-sm);
     }
     .usage-bar-wrap.visible { display: block; }
     .usage-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .usage-plan { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--teal); font-family: var(--mono); }
+    .usage-plan { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-family: var(--mono); }
     .usage-time { font-size: 12px; font-family: var(--mono); color: var(--text-muted); }
     .usage-time.warn { color: var(--warn); }
     .usage-time.danger { color: var(--danger); }
     .bar-bg { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
-    .bar-fill { height: 100%; background: var(--teal); border-radius: 2px; transition: width 0.6s ease, background 0.3s; }
+    .bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.8s ease-in-out, background var(--transition-slow); }
     .bar-fill.warn { background: var(--warn); }
     .bar-fill.danger { background: var(--danger); }
 
@@ -370,19 +397,26 @@
     .drop-zone {
       padding: 28px 20px; text-align: center; cursor: pointer;
       border: 1.5px dashed var(--border); border-radius: var(--radius);
-      background: var(--surface); transition: border-color var(--transition), background var(--transition);
+      background: var(--surface);
+      transition: border-color var(--transition), background var(--transition),
+                  box-shadow var(--transition-slow);
       position: relative;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
+      box-shadow: var(--shadow-sm);
     }
-    .drop-zone:hover, .drop-zone.dragover { border-color: var(--teal); background: var(--teal-dim); }
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: var(--shadow-md);
+    }
     .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
     .drop-icon {
       width: 44px; height: 44px; margin: 0 auto 12px; border-radius: 50%;
       background: var(--teal-dim); display: flex; align-items: center; justify-content: center;
       color: var(--teal); font-size: 20px;
     }
-    .drop-label { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
-    .drop-label strong { color: var(--text); display: block; margin-bottom: 2px; }
+    .drop-label { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    .drop-label strong { color: var(--text); display: block; margin-bottom: 4px; font-size: 15px; font-weight: 600; letter-spacing: 0.01em; }
     .file-selected {
       margin-top: 10px; font-family: var(--mono); font-size: 11px; color: var(--teal);
       background: var(--teal-dim); border-radius: 6px; padding: 5px 10px;
@@ -393,6 +427,7 @@
     .record-area {
       padding: 28px 20px; background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius); display: flex; flex-direction: column; align-items: center; gap: 20px;
+      box-shadow: var(--shadow-sm);
     }
     .waveform-wrap { width: 100%; height: 64px; }
     #waveCanvas { width: 100%; height: 100%; border-radius: var(--radius-sm); }
@@ -411,14 +446,24 @@
       width: 80px; height: 80px; border-radius: 50%;
       border: 2px solid var(--border); background: var(--surface2);
       color: var(--text-muted); font-size: 28px; cursor: pointer;
-      transition: all var(--transition);
+      transition: all var(--transition), transform var(--transition);
       display: flex; align-items: center; justify-content: center;
       position: relative; z-index: 1;
+      box-shadow: var(--shadow-sm);
     }
-    .record-btn:hover:not(:disabled) { border-color: var(--teal); color: var(--teal); background: var(--teal-dim); box-shadow: 0 0 24px var(--teal-glow); }
-    .record-btn.recording { border-color: var(--danger); color: var(--danger); background: rgba(240,90,90,0.1); box-shadow: 0 0 24px rgba(240,90,90,0.3); }
+    .record-btn:hover:not(:disabled) {
+      border-color: var(--accent); color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: var(--shadow-glow);
+      transform: scale(1.04);
+    }
+    .record-btn.recording {
+      border-color: var(--danger); color: var(--danger);
+      background: rgba(240,90,90,0.1);
+      box-shadow: 0 0 24px rgba(240,90,90,0.3);
+    }
     .timers { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-    .elapsed { font-family: var(--mono); font-size: 22px; font-weight: 400; color: var(--text); letter-spacing: 0.05em; }
+    .elapsed { font-family: var(--mono); font-size: 26px; font-weight: 300; color: var(--text); letter-spacing: 0.08em; }
     .countdown { font-family: var(--mono); font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
     .countdown.warn { color: var(--warn); }
 
@@ -427,65 +472,121 @@
       width: 100%; padding: 14px; background: var(--teal); color: #0d1117;
       border: none; border-radius: var(--radius); font-family: var(--sans);
       font-size: 15px; font-weight: 600; cursor: pointer;
-      transition: opacity var(--transition), box-shadow var(--transition), transform var(--transition);
-      letter-spacing: 0.02em;
+      transition: opacity var(--transition), box-shadow var(--transition),
+                  transform var(--transition), background var(--transition);
+      letter-spacing: 0.06em;
+      outline: none;
     }
-    .submit-btn:hover:not(:disabled) { box-shadow: 0 0 28px var(--teal-glow); transform: translateY(-1px); }
+    .submit-btn:hover:not(:disabled) {
+      box-shadow: var(--shadow-glow);
+      transform: translateY(-2px);
+    }
+    .submit-btn:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+    .submit-btn:focus-visible {
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
     .submit-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
 
     /* Status card */
     .status-card {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 20px; display: none;
+      border-radius: var(--radius); padding: 22px 20px; display: none;
     }
-    .status-card.visible { display: block; }
-    .status-steps { display: flex; flex-direction: column; gap: 10px; }
-    .step { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--text-muted); transition: color var(--transition); }
-    .step.active { color: var(--text); }
-    .step.done   { color: var(--teal); }
+    .status-card.visible { display: block; animation: fadeIn 0.2s ease-in-out; }
+    .status-steps { display: flex; flex-direction: column; gap: 13px; }
+    .step { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--text-muted); transition: color var(--transition), font-weight var(--transition); }
+    .step.active { color: var(--text); font-weight: 600; }
+    .step.done   { color: var(--accent); }
     .step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background var(--transition); }
     .step.active .step-dot { background: var(--text); animation: pulse 1s infinite; }
     .step.done  .step-dot  { background: var(--teal); }
     @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.4); } }
 
+    /* Close notice */
+    .close-notice {
+      margin-top: 16px; padding: 11px 14px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 10px;
+      opacity: 0;
+      transition: opacity 0.4s ease-in-out;
+      pointer-events: none;
+    }
+    .close-notice.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .close-notice-icon {
+      font-size: 14px; flex-shrink: 0; margin-top: 1px;
+    }
+    .close-notice-text {
+      font-size: 12px; color: var(--text-muted); line-height: 1.6;
+    }
+    .close-notice-text strong {
+      display: block; color: var(--text); font-size: 12px;
+      font-weight: 600; margin-bottom: 2px;
+    }
+
     /* Result card */
     .result-card {
-      background: var(--surface); border: 1px solid var(--teal-glow);
-      border-radius: var(--radius); padding: 20px; display: none; animation: fadeIn 0.3s ease;
+      background: var(--surface); border: 1px solid var(--accent-glow);
+      border-radius: var(--radius); padding: 20px; display: none;
+      animation: fadeInScale 0.3s ease-in-out;
     }
     .result-card.visible { display: block; }
-    .result-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .result-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
     .result-icon {
       width: 36px; height: 36px; border-radius: 50%; background: var(--teal-dim);
       display: flex; align-items: center; justify-content: center; color: var(--teal); font-size: 16px;
     }
-    .result-title { font-size: 14px; font-weight: 600; color: var(--text); }
+    .result-title { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: 0.01em; }
     .result-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
     .dl-btn {
       display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; padding: 12px; background: var(--teal-dim);
-      border: 1px solid var(--teal-glow); border-radius: var(--radius-sm);
-      color: var(--teal); font-family: var(--sans); font-size: 13px; font-weight: 600;
-      text-decoration: none; cursor: pointer; transition: background var(--transition), box-shadow var(--transition);
+      width: 100%; padding: 12px; background: var(--accent-dim);
+      border: 1px solid var(--accent-glow); border-radius: var(--radius-sm);
+      color: var(--accent); font-family: var(--sans); font-size: 13px; font-weight: 600;
+      text-decoration: none; cursor: pointer;
+      transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
     }
-    .dl-btn:hover { background: rgba(56,217,192,0.2); box-shadow: 0 0 20px var(--teal-glow); }
+    .dl-btn:hover {
+      background: var(--accent-dim);
+      box-shadow: var(--shadow-glow);
+      transform: translateY(-1px);
+    }
+    .dl-btn:active { transform: translateY(0); }
     .result-note { margin-top: 10px; font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.5; }
     .again-btn {
       margin-top: 12px; width: 100%; padding: 10px; background: none;
       border: 1px solid var(--border); border-radius: var(--radius-sm);
       color: var(--text-muted); font-family: var(--sans); font-size: 13px;
       cursor: pointer; transition: all var(--transition);
+      outline: none;
     }
-    .again-btn:hover { border-color: var(--text-muted); color: var(--text); }
+    .again-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+      background: var(--accent-dim);
+    }
+    .again-btn:active { transform: scale(0.98); }
+    .again-btn:focus-visible { box-shadow: 0 0 0 3px var(--accent-glow); }
 
     /* Options */
     .option-toggle {
       display: flex; align-items: center; justify-content: space-between;
       padding: 11px 16px; cursor: pointer; user-select: none;
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); transition: border-color var(--transition);
+      border-radius: var(--radius);
+      transition: border-color var(--transition), background var(--transition),
+                  box-shadow var(--transition);
     }
-    .option-toggle:hover { border-color: var(--teal); }
+    .option-toggle:hover {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: var(--shadow-sm);
+    }
     .option-toggle-left { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--text-muted); }
     .option-arrow { font-size: 11px; color: var(--text-muted); transition: transform var(--transition); font-family: var(--mono); }
     .option-arrow.open { transform: rotate(90deg); color: var(--teal); }
@@ -494,12 +595,22 @@
       border-top: none; border-radius: 0 0 var(--radius) var(--radius);
       padding: 16px; margin-top: -10px; padding-top: 20px;
     }
-    .option-panel.open { display: block; animation: slideDown 0.2s ease; }
-    @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    .option-panel.open { display: block; animation: slideDown 0.22s ease-in-out; }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.97); }
+      to   { opacity: 1; transform: scale(1); }
+    }
     .opt-row {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 9px 0; border-bottom: 1px solid var(--border);
+      padding: 11px 0; border-bottom: 1px solid var(--border);
     }
     .opt-row:last-child { border-bottom: none; }
     .opt-label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); }
@@ -526,7 +637,16 @@
       font-size: 11px; font-family: var(--mono); color: var(--text-muted);
       cursor: pointer; transition: all var(--transition);
     }
-    .radio-opt.active { border-color: var(--teal); color: var(--teal); background: var(--teal-dim); }
+    .radio-opt:hover:not(.disabled):not(.active) {
+      border-color: var(--text-muted);
+      color: var(--text);
+    }
+    .radio-opt.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: 0 0 6px var(--accent-glow);
+    }
     .radio-opt.disabled { opacity: 0.35; cursor: not-allowed; }
     /* Pro gated UI */
     .locked {
@@ -534,16 +654,29 @@
       pointer-events: none;
     }
     .opt-section-label {
-      font-size: 10px; font-family: var(--mono); color: var(--text-muted);
-      text-transform: uppercase; letter-spacing: 0.1em; margin: 12px 0 8px;
+      font-size: 9px; font-family: var(--mono); color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.16em; margin: 14px 0 8px;
+      opacity: 0.7;
     }
     .format-group { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
     .format-btn {
       padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border);
       background: none; font-family: var(--sans); font-size: 12px; color: var(--text-muted);
       cursor: pointer; transition: all var(--transition); text-align: center;
+      outline: none;
     }
-    .format-btn.active { border-color: var(--teal); color: var(--teal); background: var(--teal-dim); }
+    .format-btn:hover:not(.active) {
+      border-color: var(--text-muted);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+    .format-btn:active { transform: translateY(0); }
+    .format-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
     .email-display {
       margin-top: 14px; padding: 10px 12px; background: var(--surface2);
       border-radius: var(--radius-sm); border: 1px solid var(--border);
@@ -572,7 +705,7 @@
       justify-content: center;
     }
 
-    footer { text-align: center; font-size: 11px; font-family: var(--mono); color: var(--text-muted); opacity: 0.5; padding-top: 4px; }
+    footer { text-align: center; font-size: 10px; font-family: var(--mono); color: var(--text-muted); opacity: 0.45; padding-top: 8px; letter-spacing: 0.06em; }
   </style>
 </head>
 <body>
@@ -644,6 +777,13 @@
       <div class="step" id="step2"><div class="step-dot"></div>文字起こし処理</div>
       <div class="step" id="step3"><div class="step-dot"></div>レポート生成</div>
       <div class="step" id="step4"><div class="step-dot"></div>ファイルを保存</div>
+    </div>
+    <div class="close-notice" id="closeNotice">
+      <div class="close-notice-icon">📩</div>
+      <div class="close-notice-text">
+        <strong id="closeNoticeTitle"></strong>
+        <span id="closeNoticeBody"></span>
+      </div>
     </div>
   </div>
 
@@ -811,6 +951,11 @@ const I18N = {
     processing2: "文字起こし処理",
     processing3: "レポート生成",
     processing4: "ファイルを保存",
+    processing4_sub1: "クラウドに保存中...",
+    processing4_sub2: "もう少しお待ちください...",
+    processing4_sub3: "DLリンクを生成中...",
+    closeNoticeTitle: "このページを閉じても問題ありません",
+    closeNoticeBody:  "処理はサーバー上で続きます。完了後にメールでDLリンクをお送りします。",
     // 完了
     doneTitle: "処理が完了しました",
     doneSub: "メールにDLリンクを送信しました",
@@ -871,6 +1016,11 @@ const I18N = {
     processing2: "Transcribing",
     processing3: "Generating report",
     processing4: "Saving file",
+    processing4_sub1: "Uploading to cloud...",
+    processing4_sub2: "Almost done...",
+    processing4_sub3: "Generating download link...",
+    closeNoticeTitle: "You can close this page",
+    closeNoticeBody:  "Processing continues on the server. We'll email you a download link when it's ready.",
     // Done
     doneTitle: "Processing Complete",
     doneSub: "Download link sent via email",
@@ -1031,8 +1181,24 @@ function switchTab(tab) {
   activeTab = tab;
   document.getElementById('tabFile').classList.toggle('active', tab==='file');
   document.getElementById('tabLive').classList.toggle('active', tab==='live');
-  document.getElementById('fileMode').style.display = tab==='file' ? '' : 'none';
-  document.getElementById('liveMode').style.display = tab==='live' ? '' : 'none';
+
+  const fileEl = document.getElementById('fileMode');
+  const liveEl = document.getElementById('liveMode');
+
+  // フェードアウト → 切替 → フェードイン
+  const outEl = tab === 'file' ? liveEl : fileEl;
+  const inEl  = tab === 'file' ? fileEl : liveEl;
+
+  outEl.style.display = 'none';
+  inEl.style.display  = '';
+  inEl.style.opacity  = '0';
+  inEl.style.transform = 'translateY(4px)';
+  requestAnimationFrame(() => {
+    inEl.style.transition = 'opacity 0.15s ease-in-out, transform 0.15s ease-in-out';
+    inEl.style.opacity   = '1';
+    inEl.style.transform = 'translateY(0)';
+  });
+
   updateSubmitBtn();
   hideMessages();
 }
@@ -1083,6 +1249,11 @@ async function startRecord() {
     document.getElementById('recordBtnWrap').classList.add('recording');
     document.getElementById('submitBtn').disabled = true;
     elapsedTimer = setInterval(() => { elapsedSec++; updateTimers(); }, 1000);
+    // 波形フェードイン
+    const cvs = document.getElementById('waveCanvas');
+    cvs.style.transition = 'opacity 0.3s ease-in-out';
+    cvs.style.opacity = '0';
+    requestAnimationFrame(() => { cvs.style.opacity = '1'; });
     drawLiveWave();
   } catch(e) { showError(I18N[locale].errMicDenied); }
 }
@@ -1101,7 +1272,37 @@ async function stopRecord() {
     const btn = document.getElementById('recordBtn');
     btn.textContent = '🎙️'; btn.classList.remove('recording');
     document.getElementById('recordBtnWrap').classList.remove('recording');
-    drawIdleWave(); updateSubmitBtn();
+    // 波形フェードアウト → idle波形
+    // 収束アニメーション: 振幅を徐々にゼロに近づけてからidle波形へ
+    const cvsStop = document.getElementById('waveCanvas');
+    const ctxStop = cvsStop.getContext('2d');
+    const wStop = cvsStop.offsetWidth, hStop = cvsStop.offsetHeight;
+    let decayFactor = 1.0;
+    function decayDraw() {
+      if (decayFactor <= 0.05) {
+        cvsStop.style.opacity = '0';
+        setTimeout(() => { drawIdleWave(); cvsStop.style.opacity = '1'; }, 150);
+        return;
+      }
+      ctxStop.clearRect(0,0,wStop*devicePixelRatio,hStop*devicePixelRatio);
+      ctxStop.save();
+      ctxStop.scale(devicePixelRatio, devicePixelRatio);
+      ctxStop.beginPath();
+      const isJa = locale === 'ja';
+      ctxStop.strokeStyle = isJa ? `rgba(42,74,127,${decayFactor * 0.5})` : `rgba(232,212,77,${decayFactor * 0.5})`;
+      ctxStop.lineWidth = 1.5;
+      for (let x=0; x<wStop; x++) {
+        const y = hStop/2 + Math.sin(x/wStop*Math.PI*4)*8*decayFactor*Math.sin(x/wStop*Math.PI);
+        x===0 ? ctxStop.moveTo(x,y) : ctxStop.lineTo(x,y);
+      }
+      ctxStop.stroke();
+      ctxStop.restore();
+      decayFactor *= 0.88;
+      requestAnimationFrame(decayDraw);
+    }
+    cancelAnimationFrame(waveAnimFrame);
+    decayDraw();
+    updateSubmitBtn();
   });
 }
 function updateTimers() {
@@ -1122,19 +1323,36 @@ function drawIdleWave() {
   canvas.height = canvas.offsetHeight * devicePixelRatio;
   ctx.scale(devicePixelRatio, devicePixelRatio);
   const w = canvas.offsetWidth, h = canvas.offsetHeight;
+
+  // テーマ別カラー定義
+  const isJa = locale === 'ja';
+  const layers = isJa ? [
+    { color: 'rgba(42,74,127,0.10)',  width: 2.5, amp: 5,  freq: 3, speed: 0.025, phase: 0 },
+    { color: 'rgba(42,74,127,0.18)',  width: 1.5, amp: 8,  freq: 4, speed: 0.035, phase: 1.2 },
+    { color: 'rgba(155,35,53,0.08)',  width: 1.0, amp: 3,  freq: 6, speed: 0.045, phase: 2.4 },
+  ] : [
+    { color: 'rgba(232,212,77,0.10)', width: 2.5, amp: 5,  freq: 3, speed: 0.025, phase: 0 },
+    { color: 'rgba(232,212,77,0.20)', width: 1.5, amp: 8,  freq: 4, speed: 0.035, phase: 1.2 },
+    { color: 'rgba(255,255,255,0.05)',width: 1.0, amp: 3,  freq: 6, speed: 0.045, phase: 2.4 },
+  ];
+
   let t = 0;
   function draw() {
     if (isRecording) return;
     ctx.clearRect(0,0,w,h);
-    ctx.beginPath();
-    ctx.strokeStyle = locale === 'ja' ? 'rgba(42,74,127,0.20)' : 'rgba(232,212,77,0.22)';
-    ctx.lineWidth = 1.5;
-    for (let x=0; x<w; x++) {
-      const y = h/2 + Math.sin((x/w)*Math.PI*4+t)*6*Math.sin(x/w*Math.PI);
-      x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
-    }
-    ctx.stroke();
-    t += 0.04;
+    layers.forEach(layer => {
+      ctx.beginPath();
+      ctx.strokeStyle = layer.color;
+      ctx.lineWidth   = layer.width;
+      for (let x=0; x<w; x++) {
+        const envelope = Math.sin(x/w * Math.PI); // 両端でフェード
+        const y = h/2 + Math.sin((x/w)*Math.PI*layer.freq + t*layer.speed*100 + layer.phase)
+                      * layer.amp * envelope;
+        x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    });
+    t += 1;
     waveAnimFrame = requestAnimationFrame(draw);
   }
   cancelAnimationFrame(waveAnimFrame);
@@ -1148,16 +1366,54 @@ function drawLiveWave() {
   ctx.scale(devicePixelRatio, devicePixelRatio);
   const w = canvas.offsetWidth, h = canvas.offsetHeight;
   const data = new Uint8Array(analyser.frequencyBinCount);
+
+  const isJa = locale === 'ja';
+  // メイン波形色
+  const mainColor   = isJa ? '#2a4a7f'              : '#e8d44d';
+  const glowColor   = isJa ? 'rgba(42,74,127,0.25)' : 'rgba(232,212,77,0.25)';
+  const mirrorColor = isJa ? 'rgba(42,74,127,0.10)' : 'rgba(232,212,77,0.10)';
+
   function draw() {
     if (!isRecording) return;
     analyser.getByteTimeDomainData(data);
     ctx.clearRect(0,0,w,h);
-    ctx.beginPath();
-    ctx.strokeStyle = locale === 'ja' ? '#2a4a7f' : '#e8d44d';
-    ctx.lineWidth = 1.5;
+
     const step = w / data.length;
-    data.forEach((v,i) => { const x=i*step, y=(v/128)*h/2; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+
+    // レイヤー1: glow（太め・半透明）
+    ctx.beginPath();
+    ctx.strokeStyle = glowColor;
+    ctx.lineWidth   = 4;
+    data.forEach((v,i) => {
+      const x = i * step;
+      const y = h/2 + (v - 128) / 128 * (h/2) * 0.9;
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
     ctx.stroke();
+
+    // レイヤー2: メイン波形（細・鮮明）
+    ctx.beginPath();
+    ctx.strokeStyle = mainColor;
+    ctx.lineWidth   = 1.5;
+    data.forEach((v,i) => {
+      const x = i * step;
+      const y = h/2 + (v - 128) / 128 * (h/2) * 0.9;
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+
+    // レイヤー3: ミラー波形（下半分・薄め）
+    ctx.beginPath();
+    ctx.strokeStyle = mirrorColor;
+    ctx.lineWidth   = 1;
+    data.forEach((v,i) => {
+      const x = i * step;
+      // 上下反転 + 少し小さく
+      const y = h/2 - (v - 128) / 128 * (h/2) * 0.4;
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+
     waveAnimFrame = requestAnimationFrame(draw);
   }
   cancelAnimationFrame(waveAnimFrame);
@@ -1274,7 +1530,22 @@ async function runTranscribe() {
     const body = {
       job_id: `WEB-${Date.now()}`,
       audio: { data_base64: base64.split(',')[1], duration_sec: duration },
-      options: { language: locale, speaker_diarization: document.getElementById('optDiarize')?.checked || false }
+      options: {
+        language:            locale,
+        include_transcript:  document.getElementById('optTranscript')?.checked ?? true,
+        include_summary:     document.getElementById('optSummary')?.checked    ?? false,
+        summary_depth:       (() => {
+          const active = document.querySelector('#rowDepth .radio-opt.active');
+          const map = { '簡潔':'brief','Brief':'brief','標準':'standard','Standard':'standard','詳細':'detailed','Detailed':'detailed' };
+          return active ? (map[active.textContent.trim()] || 'standard') : 'standard';
+        })(),
+        include_structure:   document.getElementById('optStructure')?.checked  ?? false,
+        speaker_diarization: document.getElementById('optDiarize')?.checked    ?? false,
+        include_translation: document.getElementById('optTranslate')?.checked  ?? false,
+        include_timestamp:   document.getElementById('optTimestamp')?.checked  ?? false,
+        output_format:       currentFormat,
+        report_template:     document.getElementById('reportTemplateSelect')?.value || 'common',
+      }
     };
     animateSteps();
     const result = await apiFetch('/api/transcribe', { method:'POST', body: JSON.stringify(body) });
@@ -1298,13 +1569,48 @@ async function runTranscribe() {
 function animateSteps() {
   const steps = ['step1','step2','step3','step4'];
   let i = 0;
+  let subTimer = null;
   steps.forEach(s => { const el=document.getElementById(s); el.classList.remove('active','done'); });
   document.getElementById('step1').classList.add('active');
+
+  // 処理開始直後にclose-noticeを表示
+  setTimeout(() => {
+    const notice = document.getElementById('closeNotice');
+    const t = I18N[locale];
+    document.getElementById('closeNoticeTitle').textContent = t.closeNoticeTitle;
+    document.getElementById('closeNoticeBody').textContent  = t.closeNoticeBody;
+    if (notice) notice.classList.add('visible');
+  }, 600);
+
+  const t = I18N[locale];
+  const step4Texts = [
+    t.processing4,
+    t.processing4_sub1,
+    t.processing4_sub2,
+    t.processing4_sub3,
+  ];
+  let subIdx = 0;
+
   stepTimer = setInterval(() => {
-    if (i < steps.length-1) {
+    if (i < steps.length - 2) {
+      // step1 -> step2 -> step3
       document.getElementById(steps[i]).classList.replace('active','done');
       i++;
       document.getElementById(steps[i]).classList.add('active');
+
+    } else if (i === steps.length - 2) {
+      // step3 -> step4 に移行: サブテキストループ開始
+      document.getElementById(steps[i]).classList.replace('active','done');
+      i++;
+      const step4El = document.getElementById('step4');
+      step4El.classList.add('active');
+      clearInterval(stepTimer);
+      // step4到達後は1.8秒ごとにサブテキストをローテーション
+      subTimer = setInterval(() => {
+        subIdx = (subIdx + 1) % step4Texts.length;
+        step4El.lastChild.textContent = step4Texts[subIdx];
+      }, 1800);
+      stepTimer = subTimer;
     }
   }, 2500);
 }
@@ -1322,6 +1628,7 @@ function setUIState(state) {
     statusCard.classList.add('visible');
   } else if (state === 'done') {
     clearInterval(stepTimer);
+    const notice = document.getElementById('closeNotice'); if(notice) notice.classList.remove('visible');
     ['step1','step2','step3','step4'].forEach(s => {
       const el = document.getElementById(s);
       el.classList.remove('active'); el.classList.add('done');
