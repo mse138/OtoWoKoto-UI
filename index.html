@@ -5,25 +5,266 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OtoWoKoto</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Outfit:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;700&family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg:        #0d1117;
-      --surface:   #161b22;
-      --surface2:  #1c2333;
-      --border:    #2a3444;
-      --teal:      #38d9c0;
-      --teal-dim:  rgba(56,217,192,0.12);
-      --teal-glow: rgba(56,217,192,0.35);
-      --text:      #e6edf3;
-      --text-muted:#7d8590;
-      --warn:      #f0a83a;
-      --danger:    #f05a5a;
-      --radius:    14px;
-      --radius-sm: 8px;
-      --mono:      'DM Mono', monospace;
-      --sans:      'Outfit', sans-serif;
-      --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+    /* ==============================
+       テーマ: ny（en）
+       New York — コンクリート、ネオン、無骨な強さ
+    ============================== */
+    :root, [data-theme="modern"] {
+      --bg:          #0e0e0e;
+      --surface:     #1a1a1a;
+      --surface2:    #242424;
+      --border:      #333333;
+      --accent:      #e8d44d;
+      --accent-dim:  rgba(232,212,77,0.10);
+      --accent-glow: rgba(232,212,77,0.30);
+      --text:        #f0f0f0;
+      --text-muted:  #888888;
+      --warn:        #f0a83a;
+      --danger:      #e05555;
+      --radius:      4px;
+      --radius-sm:   2px;
+      --mono:        'IBM Plex Mono', 'DM Mono', monospace;
+      --sans:        'Outfit', sans-serif;
+      --transition:  0.18s cubic-bezier(0.4,0,0.2,1);
+      --teal:        var(--accent);
+      --teal-dim:    var(--accent-dim);
+      --teal-glow:   var(--accent-glow);
+      /* NY固有 */
+      --ny-yellow:   #e8d44d;
+      --ny-concrete: #2a2a2a;
+    }
+
+    /* NY固有スタイル */
+    [data-theme="modern"] body {
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 40px,
+          rgba(255,255,255,0.012) 40px,
+          rgba(255,255,255,0.012) 41px
+        );
+    }
+    [data-theme="modern"] .logo-mark {
+      font-family: 'Bebas Neue', 'DM Mono', monospace;
+      font-size: 24px;
+      letter-spacing: 0.12em;
+      color: var(--ny-yellow);
+    }
+    [data-theme="modern"] .logo-sub {
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-size: 9px;
+    }
+    [data-theme="modern"] .drop-zone {
+      border-style: solid;
+      border-width: 1px;
+    }
+    [data-theme="modern"] .submit-btn {
+      background: var(--ny-yellow);
+      color: #0e0e0e;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border-radius: var(--radius);
+    }
+    [data-theme="modern"] .submit-btn:hover:not(:disabled) {
+      background: #f5e05a;
+      box-shadow: 0 0 24px rgba(232,212,77,0.4);
+      transform: translateY(-1px);
+    }
+    [data-theme="modern"] .tab.active {
+      background: var(--accent-dim);
+      color: var(--ny-yellow);
+      box-shadow: inset 0 0 0 1px rgba(232,212,77,0.3);
+    }
+    [data-theme="modern"] .record-btn:hover:not(:disabled) {
+      border-color: var(--ny-yellow);
+      color: var(--ny-yellow);
+      background: var(--accent-dim);
+      box-shadow: 0 0 24px rgba(232,212,77,0.3);
+    }
+    [data-theme="modern"] .ripple {
+      border-color: var(--ny-yellow);
+    }
+    [data-theme="modern"] .result-card {
+      border-color: rgba(232,212,77,0.3);
+    }
+    [data-theme="modern"] .result-icon {
+      background: var(--accent-dim);
+      color: var(--ny-yellow);
+    }
+    [data-theme="modern"] .dl-btn {
+      background: var(--accent-dim);
+      border-color: rgba(232,212,77,0.3);
+      color: var(--ny-yellow);
+    }
+    [data-theme="modern"] .dl-btn:hover {
+      background: rgba(232,212,77,0.15);
+      box-shadow: 0 0 20px rgba(232,212,77,0.3);
+    }
+    [data-theme="modern"] .toggle input:checked + .toggle-track {
+      background: var(--ny-yellow);
+    }
+    [data-theme="modern"] .radio-opt.active {
+      border-color: var(--ny-yellow);
+      color: var(--ny-yellow);
+      background: var(--accent-dim);
+    }
+    [data-theme="modern"] .format-btn.active {
+      border-color: var(--ny-yellow);
+      color: var(--ny-yellow);
+      background: var(--accent-dim);
+    }
+    [data-theme="modern"] .bar-fill {
+      background: var(--ny-yellow);
+    }
+    [data-theme="modern"] .usage-plan {
+      color: var(--ny-yellow);
+    }
+    [data-theme="modern"] .step.done .step-dot { background: var(--ny-yellow); }
+    [data-theme="modern"] .step.done { color: var(--ny-yellow); }
+    [data-theme="modern"] .option-toggle:hover { border-color: var(--ny-yellow); }
+
+    /* ==============================
+       テーマ: sara（ja）
+       沙羅 — 冬の富士、静寂の藍
+    ============================== */
+    [data-theme="sara"] {
+      --bg:          #f0ece3;
+      --surface:     #e8e2d6;
+      --surface2:    #ddd7ca;
+      --border:      #c8bfad;
+      --accent:      #2a4a7f;
+      --accent-dim:  rgba(42,74,127,0.10);
+      --accent-glow: rgba(42,74,127,0.28);
+      --text:        #1a1a1a;
+      --text-muted:  #7a7060;
+      --warn:        #b85c00;
+      --danger:      #a02020;
+      --radius:      10px;
+      --radius-sm:   6px;
+      --mono:        'IBM Plex Mono', 'DM Mono', monospace;
+      --sans:        'Noto Sans JP', 'Outfit', sans-serif;
+      --transition:  0.28s cubic-bezier(0.4,0,0.2,1);
+      --teal:        var(--accent);
+      --teal-dim:    var(--accent-dim);
+      --teal-glow:   var(--accent-glow);
+      /* sara固有 */
+      --crimson:     #9b2335;
+      --snow:        #f8f6f2;
+      --indigo-deep: #1a2f54;
+    }
+
+    /* sara固有スタイル */
+    [data-theme="sara"] body {
+      background-image:
+        radial-gradient(ellipse at 80% 0%, rgba(42,74,127,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 20% 100%, rgba(155,35,53,0.04) 0%, transparent 50%);
+    }
+    [data-theme="sara"] .logo-mark {
+      color: var(--indigo-deep);
+      letter-spacing: 0.04em;
+    }
+    [data-theme="sara"] .logo-sub {
+      color: var(--crimson);
+      letter-spacing: 0.15em;
+    }
+    [data-theme="sara"] .drop-zone {
+      background: var(--snow);
+      border-style: solid;
+      border-color: var(--border);
+    }
+    [data-theme="sara"] .drop-zone:hover,
+    [data-theme="sara"] .drop-zone.dragover {
+      border-color: var(--accent);
+      background: rgba(42,74,127,0.04);
+    }
+    [data-theme="sara"] .record-area {
+      background: var(--snow);
+    }
+    [data-theme="sara"] .submit-btn {
+      background: var(--accent);
+      color: #f8f6f2;
+      letter-spacing: 0.1em;
+    }
+    [data-theme="sara"] .submit-btn:hover:not(:disabled) {
+      background: var(--indigo-deep);
+      box-shadow: 0 4px 20px rgba(42,74,127,0.3);
+    }
+    [data-theme="sara"] .tab.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+      box-shadow: inset 0 0 0 1px var(--accent-glow);
+    }
+    [data-theme="sara"] .record-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+    [data-theme="sara"] .record-btn.recording {
+      border-color: var(--crimson);
+      color: var(--crimson);
+      background: rgba(155,35,53,0.08);
+      box-shadow: 0 0 20px rgba(155,35,53,0.25);
+    }
+    [data-theme="sara"] .ripple {
+      border-color: var(--accent);
+    }
+    [data-theme="sara"] .result-card {
+      border-color: var(--accent-glow);
+      background: var(--snow);
+    }
+    [data-theme="sara"] .result-icon {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+    [data-theme="sara"] .dl-btn {
+      background: var(--accent-dim);
+      border-color: var(--accent-glow);
+      color: var(--accent);
+    }
+    [data-theme="sara"] .dl-btn:hover {
+      background: rgba(42,74,127,0.15);
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+    [data-theme="sara"] .option-toggle:hover {
+      border-color: var(--accent);
+    }
+    [data-theme="sara"] .toggle input:checked + .toggle-track {
+      background: var(--accent);
+    }
+    [data-theme="sara"] .radio-opt.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+    [data-theme="sara"] .format-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+    [data-theme="sara"] .bar-fill {
+      background: var(--accent);
+    }
+    [data-theme="sara"] .usage-plan {
+      color: var(--accent);
+    }
+    [data-theme="sara"] .step.done .step-dot {
+      background: var(--accent);
+    }
+    [data-theme="sara"] .step.done {
+      color: var(--accent);
+    }
+    /* sara: 区切り線を和風に */
+    [data-theme="sara"] .opt-row {
+      border-bottom-color: var(--border);
+    }
+    [data-theme="sara"] footer {
+      color: var(--text-muted);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -514,7 +755,7 @@ let usageData = null;
 let currentFormat = 'text';
 let activeTab = 'file';
 let stepTimer = null;
-let label = 'standard';
+let label = 'STANDARD';
 // ===== Plan / Feature gating (Standard vs Pro) =====
 let currentUser = {
   plan: 'standard'  // 'standard' | 'pro'
@@ -545,72 +786,203 @@ function applyPlanUI() {
 }
 
 // ===== Locale Detection =====
-const locale = location.pathname.startsWith('/en') ? 'en' : 'ja';
+const locale = /^\/en(\/|$|\?)/.test(location.pathname) ? 'en' : 'ja';
+
+// ===== Theme Application =====
+const theme = locale === 'ja' ? 'sara' : 'modern';
+document.documentElement.setAttribute('data-theme', theme);
 
 // ===== I18N Dictionary =====
 const I18N = {
   ja: {
+    // ページ
+    title: "OtoWoKoto",
     appName: "OtoWoKoto",
+    // タブ
     fileTab: "📁 音声ファイル",
     liveTab: "🎙️ ライブ録音",
+    // ドロップゾーン
     dropTitle: "音声ファイルをドロップ",
     dropSub: "または タップして選択",
+    // ボタン
     submit: "文字起こし",
+    // 処理ステップ
     processing1: "音声を解析中",
     processing2: "文字起こし処理",
     processing3: "レポート生成",
     processing4: "ファイルを保存",
+    // 完了
     doneTitle: "処理が完了しました",
     doneSub: "メールにDLリンクを送信しました",
     download: "⬇️ 結果ファイルをダウンロード",
+    resultNote: "有効期限: 60分 ／ DL後に自動削除",
     again: "もう一度実行する",
+    // メニュー
+    menuPortal: "📋 プラン管理",
+    menuAddon: "➕ 追加購入",
+    menuAbout: "ℹ️ about",
+    menuReset: "🔄 設定リセット",
+    menuAboutText: "OtoWoKoto\nZero Retention Voice Transcription\nby otowolab.com",
+    menuResetConfirm: "設定をリセットしますか？",
+    // オプション
     options: "オプション",
-    remaining: "残り"
+    optTranscript: "文字起こし全文",
+    optSummary: "要約",
+    optDepth: "要約深度",
+    optDepthValues: ["簡潔", "標準", "詳細"],
+    optTimestamp: "タイムスタンプ",
+    optStructure: "構成出力",
+    optDiarize: "話者分け",
+    optTranslate: "翻訳",
+    outputFormat: "出力形式",
+    fmtText: "📄 テキスト",
+    fmtReport: "📊 レポート",
+    reportTemplate: "レポートテンプレート",
+    reportCommon: "汎用レポート",
+    // 利用状況
+    remaining: "残り",
+    usageRemaining: (h, m) => `残 ${h}h ${m}m`,
+    countdown: (t) => `残り ${t}`,
+    // エラー・警告
+    errNoKey: "URLが正しくありません（APIキーが見つかりません）",
+    errNetwork: "通信エラーが発生しました",
+    errApiError: "エラーが発生しました",
+    errNoPortal: "ポータルを開けませんでした",
+    errNoAddon: "追加購入ページを開けませんでした",
+    errNoApiKey: "APIキーが設定されていません",
+    errUsageLimit: "今月の利用時間が上限に達しています。追加購入またはプラン変更をご検討ください。",
+    errTrialLimit: "無料利用回数が上限に達しました。プラン変更をご検討ください。",
+    errMicDenied: "マイクへのアクセスが拒否されました",
   },
   en: {
+    // Page
+    title: "EchoLess",
     appName: "EchoLess",
+    // Tabs
     fileTab: "📁 Audio File",
     liveTab: "🎙️ Live Recording",
+    // Drop zone
     dropTitle: "Drop audio file here",
-    dropSub: "or click to select",
+    dropSub: "or tap to select",
+    // Button
     submit: "Transcribe",
+    // Steps
     processing1: "Analyzing audio",
     processing2: "Transcribing",
     processing3: "Generating report",
     processing4: "Saving file",
-    doneTitle: "Processing Completed",
+    // Done
+    doneTitle: "Processing Complete",
     doneSub: "Download link sent via email",
     download: "⬇️ Download Result",
+    resultNote: "Valid for 60 min ／ Auto-deleted after download",
     again: "Run Again",
+    // Menu
+    menuPortal: "📋 Plan Management",
+    menuAddon: "➕ Add-on Purchase",
+    menuAbout: "ℹ️ about",
+    menuReset: "🔄 Reset Settings",
+    menuAboutText: "EchoLess\nZero Retention Voice Transcription\nby otowolab.com",
+    menuResetConfirm: "Reset settings?",
+    // Options
     options: "Options",
-    remaining: "Remaining"
+    optTranscript: "Full Transcript",
+    optSummary: "Summary",
+    optDepth: "Summary Depth",
+    optDepthValues: ["Brief", "Standard", "Detailed"],
+    optTimestamp: "Timestamps",
+    optStructure: "Structure Output",
+    optDiarize: "Speaker Diarization",
+    optTranslate: "Translation",
+    outputFormat: "Output Format",
+    fmtText: "📄 Text",
+    fmtReport: "📊 Report",
+    reportTemplate: "Report Template",
+    reportCommon: "General Report",
+    // Usage
+    remaining: "Remaining",
+    usageRemaining: (h, m) => `${h}h ${m}m left`,
+    countdown: (t) => `Remaining ${t}`,
+    // Errors
+    errNoKey: "Invalid URL (API key not found)",
+    errNetwork: "Network error occurred",
+    errApiError: "An error occurred",
+    errNoPortal: "Could not open portal",
+    errNoAddon: "Could not open add-on page",
+    errNoApiKey: "API key not configured",
+    errUsageLimit: "Monthly usage limit reached. Consider purchasing add-on or upgrading.",
+    errTrialLimit: "Free trial limit reached. Please consider upgrading.",
+    errMicDenied: "Microphone access denied",
   }
 };
 function applyI18N() {
   const t = I18N[locale];
 
+  // ページタイトル・lang属性
+  document.title = t.title;
   document.documentElement.lang = locale;
+
+  // ロゴ
   document.querySelector('.logo-mark').textContent = t.appName;
 
+  // タブ
   document.getElementById('tabFile').textContent = t.fileTab;
   document.getElementById('tabLive').textContent = t.liveTab;
 
+  // ドロップゾーン
   document.querySelector('.drop-label strong').textContent = t.dropTitle;
   document.querySelector('.drop-label').childNodes[2].nodeValue = " " + t.dropSub;
 
+  // 文字起こしボタン
   document.getElementById('submitBtn').textContent = t.submit;
 
+  // 処理ステップ
   document.getElementById('step1').lastChild.textContent = t.processing1;
   document.getElementById('step2').lastChild.textContent = t.processing2;
   document.getElementById('step3').lastChild.textContent = t.processing3;
   document.getElementById('step4').lastChild.textContent = t.processing4;
 
+  // 完了カード
   document.querySelector('.result-title').textContent = t.doneTitle;
   document.querySelector('.result-sub').textContent = t.doneSub;
   document.getElementById('dlBtn').textContent = t.download;
+  document.querySelector('.result-note').innerHTML = t.resultNote;
   document.getElementById('againBtn').textContent = t.again;
 
+  // メニュー
+  document.getElementById('menuPortal').textContent = t.menuPortal;
+  document.getElementById('menuAddon').textContent = t.menuAddon;
+  document.getElementById('menuAbout').textContent = t.menuAbout;
+  document.getElementById('menuReset').textContent = t.menuReset;
+
+  // オプション見出し
   document.querySelector('.option-toggle-left span:last-child').textContent = t.options;
+
+  // オプション項目ラベル
+  document.querySelector('#optTranscript').closest('.opt-row').querySelector('.opt-label').textContent = t.optTranscript;
+  document.querySelector('#optSummary').closest('.opt-row').querySelector('.opt-label').textContent = t.optSummary;
+  document.querySelector('#rowDepth .opt-label').childNodes[0].textContent = t.optDepth + " ";
+  document.querySelector('#optTimestamp').closest('.opt-row').querySelector('.opt-label').textContent = t.optTimestamp;
+  document.querySelector('#rowStructure .opt-label').childNodes[0].textContent = t.optStructure + " ";
+  document.querySelector('#rowDiarize .opt-label').childNodes[0].textContent = t.optDiarize + " ";
+  document.querySelector('#rowTranslate .opt-label').childNodes[0].textContent = t.optTranslate + " ";
+
+  // 要約深度ラジオ
+  const depthOpts = document.querySelectorAll('#rowDepth .radio-opt');
+  depthOpts.forEach((el, i) => { el.textContent = t.optDepthValues[i]; });
+
+  // 出力形式
+  document.querySelector('.opt-section-label').textContent = t.outputFormat;
+  document.getElementById('fmtText').textContent = t.fmtText;
+  document.getElementById('fmtReport').textContent = t.fmtReport;
+
+  // レポートテンプレート
+  document.querySelector('#reportTemplateWrap .opt-section-label').textContent = t.reportTemplate;
+  const commonOpt = document.querySelector('#reportTemplateSelect option[value="common"]');
+  if (commonOpt) commonOpt.textContent = t.reportCommon;
+
+  // カウントダウン初期値
+  document.getElementById('countdown').textContent = t.countdown('—');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -637,17 +1009,17 @@ function initMenu() {
   document.addEventListener('click', () => dd.classList.remove('open'));
   document.getElementById('menuPortal').addEventListener('click', openPortal);
   document.getElementById('menuAddon').addEventListener('click', openAddon);
-  document.getElementById('menuAbout').addEventListener('click', () => alert('OtoWoKoto\nZero Retention Voice Transcription\nby otowolab.com'));
-  document.getElementById('menuReset').addEventListener('click', () => { if(confirm('設定をリセットしますか？')) location.href = location.pathname; });
+  document.getElementById('menuAbout').addEventListener('click', () => alert(I18N[locale].menuAboutText));
+  document.getElementById('menuReset').addEventListener('click', () => { if(confirm(I18N[locale].menuResetConfirm)) location.href = location.pathname; });
 }
 
 async function openPortal() {
-  if (!apiKey) return showError('APIキーが設定されていません');
-  try { const r = await apiFetch('/api/customer-portal'); if(r.url) window.open(r.url,'_blank'); } catch(e) { showError('ポータルを開けませんでした'); }
+  if (!apiKey) return showError(I18N[locale].errNoApiKey);
+  try { const r = await apiFetch('/api/customer-portal'); if(r.url) window.open(r.url,'_blank'); } catch(e) { showError(I18N[locale].errNoPortal); }
 }
 async function openAddon() {
-  if (!apiKey) return showError('APIキーが設定されていません');
-  try { const r = await apiFetch('/api/checkout/addon'); if(r.url) window.open(r.url,'_blank'); } catch(e) { showError('追加購入ページを開けませんでした'); }
+  if (!apiKey) return showError(I18N[locale].errNoApiKey);
+  try { const r = await apiFetch('/api/checkout/addon'); if(r.url) window.open(r.url,'_blank'); } catch(e) { showError(I18N[locale].errNoAddon); }
 }
 
 // Tabs
@@ -681,7 +1053,7 @@ function setFile(f) {
   updateSubmitBtn(); hideMessages();
   // 残り時間0のチェック
   if (usageData && usageData.remaining_seconds <= 0) {
-    showError('今月の利用時間が上限に達しています。追加購入またはプラン変更をご検討ください。');
+    showError(I18N[locale].errUsageLimit);
     document.getElementById('submitBtn').disabled = true;
   }
 }
@@ -712,7 +1084,7 @@ async function startRecord() {
     document.getElementById('submitBtn').disabled = true;
     elapsedTimer = setInterval(() => { elapsedSec++; updateTimers(); }, 1000);
     drawLiveWave();
-  } catch(e) { showError('マイクへのアクセスが拒否されました'); }
+  } catch(e) { showError(I18N[locale].errMicDenied); }
 }
 async function stopRecord() {
   return new Promise(resolve => {
@@ -738,7 +1110,7 @@ function updateTimers() {
   if (usageData) {
     const rem = Math.max(0, Math.floor(usageData.remaining_seconds) - elapsedSec);
     const el = document.getElementById('countdown');
-    el.textContent = `残り ${fmt(rem)}`;
+    el.textContent = I18N[locale].countdown(fmt(rem));
     el.className = 'countdown' + (rem < 300 ? ' warn' : '');
   }
 }
@@ -755,7 +1127,7 @@ function drawIdleWave() {
     if (isRecording) return;
     ctx.clearRect(0,0,w,h);
     ctx.beginPath();
-    ctx.strokeStyle = 'rgba(56,217,192,0.25)';
+    ctx.strokeStyle = locale === 'ja' ? 'rgba(42,74,127,0.20)' : 'rgba(232,212,77,0.22)';
     ctx.lineWidth = 1.5;
     for (let x=0; x<w; x++) {
       const y = h/2 + Math.sin((x/w)*Math.PI*4+t)*6*Math.sin(x/w*Math.PI);
@@ -781,7 +1153,7 @@ function drawLiveWave() {
     analyser.getByteTimeDomainData(data);
     ctx.clearRect(0,0,w,h);
     ctx.beginPath();
-    ctx.strokeStyle = '#38d9c0';
+    ctx.strokeStyle = locale === 'ja' ? '#2a4a7f' : '#e8d44d';
     ctx.lineWidth = 1.5;
     const step = w / data.length;
     data.forEach((v,i) => { const x=i*step, y=(v/128)*h/2; i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
@@ -851,7 +1223,7 @@ async function fetchUsage() {
     }
 
     if (currentUser.plan === 'trial' && usageData.remaining_count <= 0) {
-      showError('無料利用回数が上限に達しました。プラン変更をご検討ください。');
+      showError(I18N[locale].errTrialLimit);
       document.getElementById('submitBtn').disabled = true;
     }
 
@@ -876,7 +1248,7 @@ function updateUsageBar() {
   document.getElementById('usagePlan').textContent = label;
 
   const timeEl = document.getElementById('usageTime');
-  timeEl.textContent = `残 ${h}h ${m}m`;
+  timeEl.textContent = I18N[locale].usageRemaining(h, m);
   const fill = document.getElementById('barFill');
   fill.style.width = pct + '%';
   fill.className = 'bar-fill' + (pct>=90?' danger':pct>=70?' warn':'');
@@ -893,7 +1265,7 @@ function updateSubmitBtn() {
 
 async function runTranscribe() {
   if (!selectedFile) return;
-  if (!apiKey) return showError('URLが正しくありません（APIキーが見つかりません）');
+  if (!apiKey) return showError(I18N[locale].errNoKey);
   hideMessages();
   setUIState('processing');
   try {
@@ -918,9 +1290,9 @@ async function runTranscribe() {
       fetchUsage();
     } else {
       setUIState('idle');
-      showError(result.error?.message || 'エラーが発生しました');
+      showError(result.error?.message || I18N[locale].errApiError);
     }
-  } catch(e) { setUIState('idle'); showError('通信エラーが発生しました'); }
+  } catch(e) { setUIState('idle'); showError(I18N[locale].errNetwork); }
 }
 
 function animateSteps() {
