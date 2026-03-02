@@ -1160,7 +1160,7 @@ function initMenu() {
   document.getElementById('menuPortal').addEventListener('click', openPortal);
   document.getElementById('menuAddon').addEventListener('click', openAddon);
   document.getElementById('menuAbout').addEventListener('click', () => alert(I18N[locale].menuAboutText));
-  document.getElementById('menuReset').addEventListener('click', () => { if(confirm(I18N[locale].menuResetConfirm)) location.href = location.pathname; });
+  document.getElementById('menuReset').addEventListener('click', () => { if(confirm(I18N[locale].menuResetConfirm)) location.href = location.pathname + location.search; });
 }
 
 async function openPortal() {
