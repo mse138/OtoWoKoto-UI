@@ -682,6 +682,19 @@
       border-radius: var(--radius-sm); border: 1px solid var(--border);
       display: flex; align-items: center; gap: 8px;
     }
+    .trial-email-label {
+      display: block; font-size: 11px; color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .trial-email-input {
+      width: 100%; box-sizing: border-box;
+      padding: 9px 12px; font-size: 13px; font-family: var(--mono);
+      background: var(--surface2); color: var(--text);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      outline: none; transition: border-color 0.15s;
+    }
+    .trial-email-input:focus { border-color: var(--accent); }
+    .trial-email-input.error { border-color: #e74c3c; }
     .email-display span { font-size: 11px; font-family: var(--mono); color: var(--text-muted); }
     .email-display .email-val { color: var(--text); font-size: 12px; }
 
@@ -767,6 +780,19 @@
         <div class="countdown" id="countdown">残り —</div>
       </div>
     </div>
+
+  </div>
+
+  <!-- Trial: メール入力エリア（無料枠ユーザーのみ表示） -->
+  <div id="trialEmailArea" style="display:none; margin-top:12px;">
+    <label class="trial-email-label" id="trialEmailLabel" for="trialEmailInput"></label>
+    <input
+      type="email"
+      id="trialEmailInput"
+      class="trial-email-input"
+      autocomplete="email"
+      spellcheck="false"
+    />
   </div>
 
 
@@ -881,6 +907,7 @@
 
 <script>
 const SERVICE_URL = 'https://api.koto.otowolab.com';
+const MAX_RECORDING_SEC = 5400;  // 90分（サーバ側と統一）
 let apiKey = new URLSearchParams(window.location.search).get('key') || '';
 let selectedFile = null;
 let isRecording = false;
@@ -903,6 +930,7 @@ let currentUser = {
 
 function applyPlanUI() {
   const isPro = currentUser.plan === 'pro';
+  const isTrial = currentUser.plan === 'trial';
   const proElements = document.querySelectorAll('[data-pro="true"]');
 
   proElements.forEach(el => {
@@ -923,6 +951,10 @@ function applyPlanUI() {
       opt.classList.toggle('disabled', !isPro);
     });
   });
+
+  // trial用メール入力エリアの表示切り替え
+  const trialArea = document.getElementById('trialEmailArea');
+  if (trialArea) trialArea.style.display = isTrial ? '' : 'none';
 }
 
 // ===== Locale Detection =====
@@ -997,7 +1029,13 @@ const I18N = {
     errNoApiKey: "APIキーが設定されていません",
     errUsageLimit: "今月の利用時間が上限に達しています。追加購入またはプラン変更をご検討ください。",
     errTrialLimit: "無料利用回数が上限に達しました。プラン変更をご検討ください。",
+    trialEmailLabel: "メールアドレス（無料枠の管理に使用）",
+    trialEmailPlaceholder: "your@email.com",
+    trialEmailRequired: "メールアドレスを入力してください",
+    trialEmailInvalid: "有効なメールアドレスを入力してください",
     errMicDenied: "マイクへのアクセスが拒否されました",
+    liveMaxReached: "最大録音時間（90分）に達したため、自動的に停止しました。",
+    liveSent: "送信しました。完了メールをお待ちください。",
   },
   en: {
     // Page
@@ -1062,7 +1100,13 @@ const I18N = {
     errNoApiKey: "API key not configured",
     errUsageLimit: "Monthly usage limit reached. Consider purchasing add-on or upgrading.",
     errTrialLimit: "Free trial limit reached. Please consider upgrading.",
+    trialEmailLabel: "Email address (used to track free usage)",
+    trialEmailPlaceholder: "your@email.com",
+    trialEmailRequired: "Please enter your email address",
+    trialEmailInvalid: "Please enter a valid email address",
     errMicDenied: "Microphone access denied",
+    liveMaxReached: "Maximum recording time (90 min) reached. Recording stopped automatically.",
+    liveSent: "Submitted. Please wait for the completion email.",
   }
 };
 function applyI18N() {
@@ -1085,6 +1129,7 @@ function applyI18N() {
 
   // 文字起こしボタン
   document.getElementById('submitBtn').textContent = t.submit;
+
 
   // 処理ステップ
   document.getElementById('step1').lastChild.textContent = t.processing1;
@@ -1133,6 +1178,12 @@ function applyI18N() {
 
   // カウントダウン初期値
   document.getElementById('countdown').textContent = t.countdown('—');
+
+  // trial用メール入力ラベル・プレースホルダー
+  const trialLabelEl = document.getElementById('trialEmailLabel');
+  const trialInputEl = document.getElementById('trialEmailInput');
+  if (trialLabelEl) trialLabelEl.textContent = t.trialEmailLabel;
+  if (trialInputEl) trialInputEl.placeholder = t.trialEmailPlaceholder;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1160,7 +1211,7 @@ function initMenu() {
   document.getElementById('menuPortal').addEventListener('click', openPortal);
   document.getElementById('menuAddon').addEventListener('click', openAddon);
   document.getElementById('menuAbout').addEventListener('click', () => alert(I18N[locale].menuAboutText));
-  document.getElementById('menuReset').addEventListener('click', () => { if(confirm(I18N[locale].menuResetConfirm)) location.href = location.pathname + location.search; });
+  document.getElementById('menuReset').addEventListener('click', () => { if(confirm(I18N[locale].menuResetConfirm)) location.href = location.pathname; });
 }
 
 async function openPortal() {
@@ -1248,7 +1299,15 @@ async function startRecord() {
     btn.textContent = '⏹️'; btn.classList.add('recording');
     document.getElementById('recordBtnWrap').classList.add('recording');
     document.getElementById('submitBtn').disabled = true;
-    elapsedTimer = setInterval(() => { elapsedSec++; updateTimers(); }, 1000);
+    elapsedTimer = setInterval(async () => {
+      elapsedSec++;
+      updateTimers();
+      if (elapsedSec >= MAX_RECORDING_SEC) {
+        clearInterval(elapsedTimer);
+        showWarn(I18N[locale].liveMaxReached);
+        await stopRecord();
+      }
+    }, 1000);
     // 波形フェードイン
     const cvs = document.getElementById('waveCanvas');
     cvs.style.transition = 'opacity 0.3s ease-in-out';
@@ -1262,7 +1321,9 @@ async function stopRecord() {
     mediaRecorder.onstop = () => {
       const blob = new Blob(recordedChunks, { type: 'audio/webm' });
       selectedFile = new File([blob], `rec_${Date.now()}.webm`, { type: 'audio/webm' });
+      selectedFile._duration = elapsedSec;  // duration_sec に使用（getAudioDurationより確実）
       resolve();
+      runTranscribe();  // 停止と同時に文字起こし開始
     };
     mediaRecorder.stop();
     mediaRecorder.stream.getTracks().forEach(t => t.stop());
@@ -1302,7 +1363,6 @@ async function stopRecord() {
     }
     cancelAnimationFrame(waveAnimFrame);
     decayDraw();
-    updateSubmitBtn();
   });
 }
 function updateTimers() {
@@ -1521,8 +1581,134 @@ function updateSubmitBtn() {
 
 async function runTranscribe() {
   if (!selectedFile) return;
-  if (!apiKey) return showError(I18N[locale].errNoKey);
   hideMessages();
+
+  // ── trial / 有料 の分岐 ──────────────────────────
+  if (currentUser.plan === 'trial') {
+    // trial: メールアドレス必須チェック
+    const emailInput = document.getElementById('trialEmailInput');
+    const emailVal   = emailInput ? emailInput.value.trim() : '';
+    const t          = I18N[locale];
+
+    if (!emailVal) {
+      emailInput && emailInput.classList.add('error');
+      return showError(t.trialEmailRequired);
+    }
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRe.test(emailVal)) {
+      emailInput && emailInput.classList.add('error');
+      return showError(t.trialEmailInvalid);
+    }
+    emailInput && emailInput.classList.remove('error');
+
+    setUIState('processing');
+    try {
+      const base64   = await fileToBase64(selectedFile);
+      const duration = await getAudioDuration(selectedFile);
+      const body = {
+        job_id: `FREE-${Date.now()}`,
+        audio: { data_base64: base64.split(',')[1], duration_sec: duration },
+        options: {
+          language:            locale,
+          include_transcript:  document.getElementById('optTranscript')?.checked ?? true,
+          include_summary:     document.getElementById('optSummary')?.checked    ?? false,
+          summary_depth:       (() => {
+            const active = document.querySelector('#rowDepth .radio-opt.active');
+            const map = { '簡潔':'brief','Brief':'brief','標準':'standard','Standard':'standard','詳細':'detailed','Detailed':'detailed' };
+            return active ? (map[active.textContent.trim()] || 'standard') : 'standard';
+          })(),
+          include_structure:   false,  // trial=Pro相当だが構成はOFFで体験
+          speaker_diarization: false,
+          include_translation: false,
+          include_timestamp:   document.getElementById('optTimestamp')?.checked ?? false,
+          output_format:       currentFormat,
+          report_template:     document.getElementById('reportTemplateSelect')?.value || 'common',
+        }
+      };
+      animateSteps();
+      const result = await fetch(`${SERVICE_URL}/api/free/transcribe`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Email': emailVal
+        },
+        body: JSON.stringify(body)
+      }).then(r => r.json());
+
+      if (result.success) {
+        setUIState('done');
+        if (result.download_url) {
+          const dl = document.getElementById('dlBtn');
+          dl.href = `${SERVICE_URL}${result.download_url}`;
+          dl.style.display = 'flex';
+        } else {
+          document.getElementById('dlBtn').style.display = 'none';
+        }
+        // 残回数を更新
+        if (usageData) {
+          usageData.remaining_count = Math.max(0, (usageData.remaining_count || 1) - 1);
+          updateUsageBar();
+        }
+      } else {
+        setUIState('idle');
+        showError(result.error?.message || I18N[locale].errApiError);
+      }
+    } catch(e) { setUIState('idle'); showError(I18N[locale].errNetwork); }
+    return;
+  }
+
+  // ── ライブ録音タブからの送信 ────────────────────────
+  if (activeTab === 'live') {
+    if (!apiKey) return showError(I18N[locale].errNoKey);
+    setUIState('processing');
+    try {
+      const duration = selectedFile._duration ?? elapsedSec;
+      const formData = new FormData();
+      formData.append('audio_blob', selectedFile);
+      formData.append('duration_sec', String(duration));
+      formData.append('language', locale);
+      formData.append('speaker_diarization', String(document.getElementById('optDiarize')?.checked ?? false));
+      formData.append('include_transcript', String(document.getElementById('optTranscript')?.checked ?? true));
+      formData.append('include_summary', String(document.getElementById('optSummary')?.checked ?? false));
+      formData.append('summary_depth', (() => {
+        const active = document.querySelector('#rowDepth .radio-opt.active');
+        const map = { '簡潔':'brief','Brief':'brief','標準':'standard','Standard':'standard','詳細':'detailed','Detailed':'detailed' };
+        return active ? (map[active.textContent.trim()] || 'standard') : 'standard';
+      })());
+      formData.append('include_structure', String(document.getElementById('optStructure')?.checked ?? false));
+      formData.append('include_translation', String(document.getElementById('optTranslate')?.checked ?? false));
+      formData.append('include_timestamp', String(document.getElementById('optTimestamp')?.checked ?? false));
+      formData.append('output_format', currentFormat);
+      formData.append('report_template', document.getElementById('reportTemplateSelect')?.value || 'common');
+      animateSteps();
+      const res = await fetch(SERVICE_URL + "/api/live/transcribe", {
+        method: 'POST',
+        headers: { 'X-API-KEY': apiKey },
+        body: formData
+      });
+      const result = await res.json();
+      if (result.success) {
+        setUIState('done');
+        document.getElementById('dlBtn').style.display = 'none';
+        const doneCard = document.getElementById('resultCard');
+        if (doneCard && !doneCard.querySelector('.live-sent-notice')) {
+          const p = document.createElement('p');
+          p.className = 'live-sent-notice';
+          p.style.cssText = 'margin-top:12px; font-size:0.95em; opacity:0.85;';
+          p.textContent = I18N[locale].liveSent;
+          doneCard.appendChild(p);
+        }
+        fetchUsage();
+      } else {
+        setUIState('idle');
+        showError(result.error?.message || I18N[locale].errApiError);
+      }
+    } catch(e) { setUIState('idle'); showError(I18N[locale].errNetwork); }
+    return;
+  }
+
+  // ── 有料プラン ────────────────────────────────────
+  if (!apiKey) return showError(I18N[locale].errNoKey);
   setUIState('processing');
   try {
     const base64   = await fileToBase64(selectedFile);
@@ -1616,9 +1802,9 @@ function animateSteps() {
 }
 
 function setUIState(state) {
-  const statusCard = document.getElementById('statusCard');
-  const resultCard = document.getElementById('resultCard');
-  const submitBtn  = document.getElementById('submitBtn');
+  const statusCard  = document.getElementById('statusCard');
+  const resultCard  = document.getElementById('resultCard');
+  const submitBtn   = document.getElementById('submitBtn');
   statusCard.classList.remove('visible');
   resultCard.classList.remove('visible');
   if (state === 'processing') {
