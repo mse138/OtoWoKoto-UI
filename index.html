@@ -1614,7 +1614,8 @@ async function runTranscribe() {
         job_id: `FREE-${Date.now()}`,
         audio: { data_base64: base64.split(',')[1], duration_sec: duration },
         options: {
-          language:            'auto',
+          language:            'ja',
+          ui_locale:           locale,
           include_transcript:  document.getElementById('optTranscript')?.checked ?? true,
           include_summary:     document.getElementById('optSummary')?.checked    ?? false,
           summary_depth:       (() => {
@@ -1671,7 +1672,8 @@ async function runTranscribe() {
       const formData = new FormData();
       formData.append('audio_blob', selectedFile);
       formData.append('duration_sec', String(duration));
-      formData.append('language', 'auto');
+      formData.append('language', 'ja');
+      formData.append('ui_locale', locale);
       formData.append('speaker_diarization', String(document.getElementById('optDiarize')?.checked ?? false));
       formData.append('include_transcript', String(document.getElementById('optTranscript')?.checked ?? true));
       formData.append('include_summary', String(document.getElementById('optSummary')?.checked ?? false));
@@ -1720,7 +1722,8 @@ async function runTranscribe() {
       job_id: `WEB-${Date.now()}`,
       audio: { data_base64: base64.split(',')[1], duration_sec: duration },
       options: {
-          language:            'auto',
+          language:            'ja',
+          ui_locale:           locale,
           include_transcript:  document.getElementById('optTranscript')?.checked ?? true,
         include_summary:     document.getElementById('optSummary')?.checked    ?? false,
         summary_depth:       (() => {
