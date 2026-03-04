@@ -834,6 +834,7 @@
       <span class="option-arrow" id="optArrow">›</span>
     </div>
     <div class="option-panel" id="optPanel">
+      </div>
       <div class="opt-row">
         <span class="opt-label">文字起こし全文</span>
         <label class="toggle"><input type="checkbox" id="optTranscript" checked><div class="toggle-track"></div></label>
@@ -1281,7 +1282,12 @@ function initRecordBtn() {
   drawIdleWave();
 }
 async function toggleRecord() {
-  if (!isRecording) await startRecord(); else await stopRecord();
+  if (!isRecording) {
+    await startRecord();
+  } else {
+    await stopRecord();
+    runTranscribe();  // 録音停止後に即文字起こし開始
+  }
 }
 async function startRecord() {
   try {
@@ -1323,7 +1329,6 @@ async function stopRecord() {
       selectedFile = new File([blob], `rec_${Date.now()}.webm`, { type: 'audio/webm' });
       selectedFile._duration = elapsedSec;  // duration_sec に使用（getAudioDurationより確実）
       resolve();
-      runTranscribe();  // 停止と同時に文字起こし開始
     };
     mediaRecorder.stop();
     mediaRecorder.stream.getTracks().forEach(t => t.stop());
@@ -1581,6 +1586,7 @@ function updateSubmitBtn() {
 
 async function runTranscribe() {
   if (!selectedFile) return;
+  if (document.getElementById('submitBtn').disabled && activeTab !== 'live') return;  // 二重送信防止
   hideMessages();
 
   // ── trial / 有料 の分岐 ──────────────────────────
@@ -1609,7 +1615,7 @@ async function runTranscribe() {
         job_id: `FREE-${Date.now()}`,
         audio: { data_base64: base64.split(',')[1], duration_sec: duration },
         options: {
-          language:            locale,
+          language:            'auto',
           include_transcript:  document.getElementById('optTranscript')?.checked ?? true,
           include_summary:     document.getElementById('optSummary')?.checked    ?? false,
           summary_depth:       (() => {
@@ -1666,7 +1672,7 @@ async function runTranscribe() {
       const formData = new FormData();
       formData.append('audio_blob', selectedFile);
       formData.append('duration_sec', String(duration));
-      formData.append('language', locale);
+      formData.append('language', 'auto');
       formData.append('speaker_diarization', String(document.getElementById('optDiarize')?.checked ?? false));
       formData.append('include_transcript', String(document.getElementById('optTranscript')?.checked ?? true));
       formData.append('include_summary', String(document.getElementById('optSummary')?.checked ?? false));
@@ -1689,14 +1695,12 @@ async function runTranscribe() {
       const result = await res.json();
       if (result.success) {
         setUIState('done');
-        document.getElementById('dlBtn').style.display = 'none';
-        const doneCard = document.getElementById('resultCard');
-        if (doneCard && !doneCard.querySelector('.live-sent-notice')) {
-          const p = document.createElement('p');
-          p.className = 'live-sent-notice';
-          p.style.cssText = 'margin-top:12px; font-size:0.95em; opacity:0.85;';
-          p.textContent = I18N[locale].liveSent;
-          doneCard.appendChild(p);
+        if (result.download_url) {
+          const dl = document.getElementById('dlBtn');
+          dl.href = SERVICE_URL + result.download_url;
+          dl.style.display = 'flex';
+        } else {
+          document.getElementById('dlBtn').style.display = 'none';
         }
         fetchUsage();
       } else {
@@ -1717,8 +1721,8 @@ async function runTranscribe() {
       job_id: `WEB-${Date.now()}`,
       audio: { data_base64: base64.split(',')[1], duration_sec: duration },
       options: {
-        language:            locale,
-        include_transcript:  document.getElementById('optTranscript')?.checked ?? true,
+          language:            'auto',
+          include_transcript:  document.getElementById('optTranscript')?.checked ?? true,
         include_summary:     document.getElementById('optSummary')?.checked    ?? false,
         summary_depth:       (() => {
           const active = document.querySelector('#rowDepth .radio-opt.active');
