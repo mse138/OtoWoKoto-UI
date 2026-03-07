@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OtoWoKoto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Outfit:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;700&family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ==============================
+       テーマ: ny（en）
+       New York — コンクリート、ネオン、無骨な強さ
+    ============================== */
+    :root, [data-theme="modern"] {
+      --bg:          #0f0f12;
+      --surface:     #1a1a1e;
+      --surface2:    #242428;
+      --border:      #303038;
+      --accent:      #e8d44d;
+      --accent-dim:  rgba(232,212,77,0.08);
+      --accent-glow: rgba(232,212,77,0.22);
+      --text:        #f1f3f5;
+      --text-muted:  #82828c;
+      --warn:        #f0a83a;
+      --danger:      #e05555;
+      --radius:      4px;
+      --radius-sm:   2px;
+      --mono:        'IBM Plex Mono', 'DM Mono', monospace;
+      --sans:        'Outfit', sans-serif;
+      /* モーション統一: 150ms ease-in-out */
+      --transition:       0.15s ease-in-out;
+      --transition-slow:  0.28s ease-in-out;
+      --transition-fast:  0.08s ease-in-out;
+      --teal:        var(--accent);
+      --teal-dim:    var(--accent-dim);
+      --teal-glow:   var(--accent-glow);
+      /* NY固有 */
+      --ny-yellow:   #e8d44d;
+      --ny-concrete: #2a2a2e;
+      /* shadow */
+      --shadow-sm:   0 1px 4px rgba(0,0,0,0.4);
+      --shadow-md:   0 4px 16px rgba(0,0,0,0.5);
+      --shadow-glow: 0 0 20px var(--accent-glow);
+    }
+
+    /* NY固有スタイル */
+    [data-theme="modern"] body {
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 40px,
+          rgba(255,255,255,0.012) 40px,
+          rgba(255,255,255,0.012) 41px
+        );
+    }
+    [data-theme="modern"] .logo-mark {
+      font-family: 'Bebas Neue', 'DM Mono', monospace;
+      font-size: 24px;
+      letter-spacing: 0.12em;
+      color: var(--ny-yellow);
+    }
+    [data-theme="modern"] .logo-sub {
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-size: 9px;
+    }
+    [data-theme="modern"] .drop-zone {
+      border-style: solid;
+      border-width: 1px;
+    }
+    [data-theme="modern"] .submit-btn {
+      background: var(--ny-yellow);
+      color: #0e0e0e;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      border-radius: var(--radius);
+    }
+    [data-theme="modern"] .submit-btn:hover:not(:disabled) {
+      background: #f5e05a;
+      box-shadow: 0 0 24px rgba(232,212,77,0.4);
+      transform: translateY(-1px);
+    }
+    [data-theme="modern"] .tab.active {
+      background: var(--accent-dim);
+      color: var(--ny-yellow);
+      box-shadow: inset 0 0 0 1px rgba(232,212,77,0.3);
+    }
+    [data-theme="modern"] .record-btn:hover:not(:disabled) {
+      border-color: var(--ny-yellow);
+      color: var(--ny-yellow);
+      background: var(--accent-dim);
+      box-shadow: 0 0 24px rgba(232,212,77,0.3);
+    }
+    [data-theme="modern"] .ripple {
+      border-color: var(--ny-yellow);
+    }
+    [data-theme="modern"] .result-card {
+      border-color: rgba(232,212,77,0.3);
+    }
+    [data-theme="modern"] .result-icon {
+      background: var(--accent-dim);
+      color: var(--ny-yellow);
+    }
+    [data-theme="modern"] .dl-btn {
+      background: var(--accent-dim);
+      border-color: rgba(232,212,77,0.3);
+      color: var(--ny-yellow);
+    }
+    [data-theme="modern"] .dl-btn:hover {
+      background: rgba(232,212,77,0.15);
+      box-shadow: 0 0 20px rgba(232,212,77,0.3);
+    }
+    [data-theme="modern"] .toggle input:checked + .toggle-track {
+      background: var(--ny-yellow);
+    }
+    [data-theme="modern"] .radio-opt.active {
+      border-color: var(--ny-yellow);
+      color: var(--ny-yellow);
+      background: var(--accent-dim);
+    }
+    [data-theme="modern"] .format-btn.active {
+      border-color: var(--ny-yellow);
+      color: var(--ny-yellow);
+      background: var(--accent-dim);
+    }
+    [data-theme="modern"] .bar-fill {
+      background: var(--ny-yellow);
+    }
+    [data-theme="modern"] .usage-plan {
+      color: var(--ny-yellow);
+    }
+    [data-theme="modern"] .step.done .step-dot { background: var(--ny-yellow); }
+    [data-theme="modern"] .step.done { color: var(--ny-yellow); }
+    [data-theme="modern"] .option-toggle:hover { border-color: var(--ny-yellow); }
+
+    /* ==============================
+       テーマ: sara（ja）
+       沙羅 — 冬の富士、静寂の藍
+    ============================== */
+    [data-theme="sara"] {
+      --bg:          #f2ede4;
+      --surface:     #ece6da;
+      --surface2:    #e0d9cc;
+      --border:      #ccc4b2;
+      --accent:      #2a4a7f;
+      --accent-dim:  rgba(42,74,127,0.08);
+      --accent-glow: rgba(42,74,127,0.20);
+      --text:        #1c1c1c;
+      --text-muted:  #7a7060;
+      --warn:        #b85c00;
+      --danger:      #a02020;
+      --radius:      10px;
+      --radius-sm:   6px;
+      --mono:        'IBM Plex Mono', 'DM Mono', monospace;
+      --sans:        'Noto Sans JP', 'Outfit', sans-serif;
+      --transition:       0.15s ease-in-out;
+      --transition-slow:  0.30s ease-in-out;
+      --transition-fast:  0.08s ease-in-out;
+      --teal:        var(--accent);
+      --teal-dim:    var(--accent-dim);
+      --teal-glow:   var(--accent-glow);
+      /* sara固有 */
+      --crimson:     #9b2335;
+      --snow:        #faf7f2;
+      --indigo-deep: #1a2f54;
+      --shadow-sm:   0 1px 4px rgba(0,0,0,0.08);
+      --shadow-md:   0 4px 16px rgba(0,0,0,0.12);
+      --shadow-glow: 0 0 16px var(--accent-glow);
+    }
+
+    /* sara固有スタイル */
+    [data-theme="sara"] body {
+      background-image:
+        radial-gradient(ellipse at 80% 0%, rgba(42,74,127,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 20% 100%, rgba(155,35,53,0.04) 0%, transparent 50%);
+    }
+    [data-theme="sara"] .logo-mark {
+      color: var(--indigo-deep);
+      letter-spacing: 0.04em;
+    }
+    [data-theme="sara"] .logo-sub {
+      color: var(--crimson);
+      letter-spacing: 0.15em;
+    }
+    [data-theme="sara"] .drop-zone {
+      background: var(--snow);
+      border-style: solid;
+      border-color: var(--border);
+    }
+    [data-theme="sara"] .drop-zone:hover,
+    [data-theme="sara"] .drop-zone.dragover {
+      border-color: var(--accent);
+      background: rgba(42,74,127,0.04);
+    }
+    [data-theme="sara"] .record-area {
+      background: var(--snow);
+    }
+    [data-theme="sara"] .submit-btn {
+      background: var(--accent);
+      color: #f8f6f2;
+      letter-spacing: 0.1em;
+    }
+    [data-theme="sara"] .submit-btn:hover:not(:disabled) {
+      background: var(--indigo-deep);
+      box-shadow: 0 4px 20px rgba(42,74,127,0.3);
+    }
+    [data-theme="sara"] .tab.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+      box-shadow: inset 0 0 0 1px var(--accent-glow);
+    }
+    [data-theme="sara"] .record-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+    [data-theme="sara"] .record-btn.recording {
+      border-color: var(--crimson);
+      color: var(--crimson);
+      background: rgba(155,35,53,0.08);
+      box-shadow: 0 0 20px rgba(155,35,53,0.25);
+    }
+    [data-theme="sara"] .ripple {
+      border-color: var(--accent);
+    }
+    [data-theme="sara"] .result-card {
+      border-color: var(--accent-glow);
+      background: var(--snow);
+    }
+    [data-theme="sara"] .result-icon {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+    [data-theme="sara"] .dl-btn {
+      background: var(--accent-dim);
+      border-color: var(--accent-glow);
+      color: var(--accent);
+    }
+    [data-theme="sara"] .dl-btn:hover {
+      background: rgba(42,74,127,0.15);
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+    [data-theme="sara"] .option-toggle:hover {
+      border-color: var(--accent);
+    }
+    [data-theme="sara"] .toggle input:checked + .toggle-track {
+      background: var(--accent);
+    }
+    [data-theme="sara"] .radio-opt.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+    [data-theme="sara"] .format-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+    [data-theme="sara"] .bar-fill {
+      background: var(--accent);
+    }
+    [data-theme="sara"] .usage-plan {
+      color: var(--accent);
+    }
+    [data-theme="sara"] .step.done .step-dot {
+      background: var(--accent);
+    }
+    [data-theme="sara"] .step.done {
+      color: var(--accent);
+    }
+    /* sara: 区切り線を和風に */
+    [data-theme="sara"] .opt-row {
+      border-bottom-color: var(--border);
+    }
+    [data-theme="sara"] footer {
+      color: var(--text-muted);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 16px;
+    }
+    .app {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-bottom: 40px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0 6px;
+    }
+    .logo { display: flex; align-items: baseline; gap: 6px; }
+    .logo-mark {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--teal);
+      letter-spacing: -0.3px;
+    }
+    .logo-sub { font-size: 10px; color: var(--text-muted); letter-spacing: 0.14em; font-weight: 400; text-transform: uppercase; }
+    .menu-btn {
+      background: none; border: none; cursor: pointer; color: var(--text-muted);
+      padding: 6px; border-radius: var(--radius-sm);
+      transition: color var(--transition), background var(--transition);
+      display: flex; flex-direction: column; gap: 4px; align-items: center;
+    }
+    .menu-btn span { display: block; width: 18px; height: 1.5px; background: currentColor; }
+    .menu-btn:hover { color: var(--text); background: var(--surface2); }
+    .menu-wrap { position: relative; }
+    .dropdown {
+      position: absolute; top: calc(100% + 6px); right: 0;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); min-width: 180px; overflow: hidden;
+      display: none; z-index: 100; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+    .dropdown.open { display: block; animation: fadeIn 0.15s ease-in-out; }
+    .dropdown a {
+      display: block; padding: 11px 16px; font-size: 13px;
+      color: var(--text-muted); text-decoration: none; cursor: pointer;
+      transition: background var(--transition), color var(--transition),
+                  padding-left var(--transition);
+      border-bottom: 1px solid var(--border);
+    }
+    .dropdown a:last-child { border-bottom: none; }
+    .dropdown a:hover {
+      background: var(--accent-dim);
+      color: var(--text);
+      padding-left: 20px;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: grid; grid-template-columns: 1fr 1fr;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 4px; gap: 4px;
+      box-shadow: var(--shadow-sm);
+    }
+    .tab {
+      padding: 9px; border: none; background: none;
+      border-radius: calc(var(--radius) - 2px);
+      font-family: var(--sans); font-size: 13px; font-weight: 600; letter-spacing: 0.01em;
+      color: var(--text-muted); cursor: pointer;
+      transition: background var(--transition), color var(--transition),
+                  box-shadow var(--transition), transform var(--transition-fast);
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .tab.active {
+      background: var(--teal-dim); color: var(--teal);
+      box-shadow: inset 0 0 0 1px var(--teal-glow);
+    }
+    .tab:not(.active):hover {
+      background: var(--surface2); color: var(--text);
+      transform: translateY(-1px);
+    }
+    .tab:active { transform: translateY(0); }
+
+    /* Usage bar */
+    .usage-bar-wrap {
+      padding: 14px 16px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius); display: none;
+      box-shadow: var(--shadow-sm);
+    }
+    .usage-bar-wrap.visible { display: block; }
+    .usage-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .usage-plan { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-family: var(--mono); }
+    .usage-time { font-size: 12px; font-family: var(--mono); color: var(--text-muted); }
+    .usage-time.warn { color: var(--warn); }
+    .usage-time.danger { color: var(--danger); }
+    .bar-bg { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.8s ease-in-out, background var(--transition-slow); }
+    .bar-fill.warn { background: var(--warn); }
+    .bar-fill.danger { background: var(--danger); }
+
+    /* Messages */
+    .msg { padding: 11px 14px; border-radius: var(--radius-sm); font-size: 13px; display: none; line-height: 1.5; }
+    .msg.visible { display: block; }
+    .msg.error { background: rgba(240,90,90,0.1); border: 1px solid rgba(240,90,90,0.3); color: #f09090; }
+    .msg.warning { background: rgba(240,168,58,0.1); border: 1px solid rgba(240,168,58,0.3); color: var(--warn); }
+
+    /* Drop Zone */
+    .drop-zone {
+      padding: 28px 20px; text-align: center; cursor: pointer;
+      border: 1.5px dashed var(--border); border-radius: var(--radius);
+      background: var(--surface);
+      transition: border-color var(--transition), background var(--transition),
+                  box-shadow var(--transition-slow);
+      position: relative;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: var(--shadow-md);
+    }
+    .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+    .drop-icon {
+      width: 44px; height: 44px; margin: 0 auto 12px; border-radius: 50%;
+      background: var(--teal-dim); display: flex; align-items: center; justify-content: center;
+      color: var(--teal); font-size: 20px;
+    }
+    .drop-label { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    .drop-label strong { color: var(--text); display: block; margin-bottom: 4px; font-size: 15px; font-weight: 600; letter-spacing: 0.01em; }
+    .file-selected {
+      margin-top: 10px; font-family: var(--mono); font-size: 11px; color: var(--teal);
+      background: var(--teal-dim); border-radius: 6px; padding: 5px 10px;
+      display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    /* Record area */
+    .record-area {
+      padding: 28px 20px; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); display: flex; flex-direction: column; align-items: center; gap: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .waveform-wrap { width: 100%; height: 64px; }
+    #waveCanvas { width: 100%; height: 100%; border-radius: var(--radius-sm); }
+    .record-btn-wrap { position: relative; width: 80px; height: 80px; }
+    .ripple {
+      position: absolute; inset: -12px; border-radius: 50%;
+      border: 1.5px solid var(--teal); opacity: 0;
+    }
+    .recording .ripple { animation: ripple 1.6s ease-out infinite; }
+    .recording .ripple:nth-child(2) { animation-delay: 0.8s; }
+    @keyframes ripple {
+      0%   { transform: scale(0.85); opacity: 0.6; }
+      100% { transform: scale(1.4);  opacity: 0; }
+    }
+    .record-btn {
+      width: 80px; height: 80px; border-radius: 50%;
+      border: 2px solid var(--border); background: var(--surface2);
+      color: var(--text-muted); font-size: 28px; cursor: pointer;
+      transition: all var(--transition), transform var(--transition);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; z-index: 1;
+      box-shadow: var(--shadow-sm);
+    }
+    .record-btn:hover:not(:disabled) {
+      border-color: var(--accent); color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: var(--shadow-glow);
+      transform: scale(1.04);
+    }
+    .record-btn.recording {
+      border-color: var(--danger); color: var(--danger);
+      background: rgba(240,90,90,0.1);
+      box-shadow: 0 0 24px rgba(240,90,90,0.3);
+    }
+    .timers { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .elapsed { font-family: var(--mono); font-size: 26px; font-weight: 300; color: var(--text); letter-spacing: 0.08em; }
+    .countdown { font-family: var(--mono); font-size: 12px; color: var(--text-muted); letter-spacing: 0.04em; }
+    .countdown.warn { color: var(--warn); }
+
+    /* Submit btn */
+    .submit-btn {
+      width: 100%; padding: 14px; background: var(--teal); color: #0d1117;
+      border: none; border-radius: var(--radius); font-family: var(--sans);
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: opacity var(--transition), box-shadow var(--transition),
+                  transform var(--transition), background var(--transition);
+      letter-spacing: 0.06em;
+      outline: none;
+    }
+    .submit-btn:hover:not(:disabled) {
+      box-shadow: var(--shadow-glow);
+      transform: translateY(-2px);
+    }
+    .submit-btn:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+    .submit-btn:focus-visible {
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .submit-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* Status card */
+    .status-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px 20px; display: none;
+    }
+    .status-card.visible { display: block; animation: fadeIn 0.2s ease-in-out; }
+    .status-steps { display: flex; flex-direction: column; gap: 13px; }
+    .step { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--text-muted); transition: color var(--transition), font-weight var(--transition); }
+    .step.active { color: var(--text); font-weight: 600; }
+    .step.done   { color: var(--accent); }
+    .step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background var(--transition); }
+    .step.active .step-dot { background: var(--text); animation: pulse 1s infinite; }
+    .step.done  .step-dot  { background: var(--teal); }
+    @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.4); } }
+
+    /* Close notice */
+    .close-notice {
+      margin-top: 16px; padding: 11px 14px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 10px;
+      opacity: 0;
+      transition: opacity 0.4s ease-in-out;
+      pointer-events: none;
+    }
+    .close-notice.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .close-notice-icon {
+      font-size: 14px; flex-shrink: 0; margin-top: 1px;
+    }
+    .close-notice-text {
+      font-size: 12px; color: var(--text-muted); line-height: 1.6;
+    }
+    .close-notice-text strong {
+      display: block; color: var(--text); font-size: 12px;
+      font-weight: 600; margin-bottom: 2px;
+    }
+
+    /* Result card */
+    .result-card {
+      background: var(--surface); border: 1px solid var(--accent-glow);
+      border-radius: var(--radius); padding: 20px; display: none;
+      animation: fadeInScale 0.3s ease-in-out;
+    }
+    .result-card.visible { display: block; }
+    .result-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .result-icon {
+      width: 36px; height: 36px; border-radius: 50%; background: var(--teal-dim);
+      display: flex; align-items: center; justify-content: center; color: var(--teal); font-size: 16px;
+    }
+    .result-title { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: 0.01em; }
+    .result-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+    .dl-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 12px; background: var(--accent-dim);
+      border: 1px solid var(--accent-glow); border-radius: var(--radius-sm);
+      color: var(--accent); font-family: var(--sans); font-size: 13px; font-weight: 600;
+      text-decoration: none; cursor: pointer;
+      transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
+    }
+    .dl-btn:hover {
+      background: var(--accent-dim);
+      box-shadow: var(--shadow-glow);
+      transform: translateY(-1px);
+    }
+    .dl-btn:active { transform: translateY(0); }
+    .result-note { margin-top: 10px; font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.5; }
+    .again-btn {
+      margin-top: 12px; width: 100%; padding: 10px; background: none;
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      color: var(--text-muted); font-family: var(--sans); font-size: 13px;
+      cursor: pointer; transition: all var(--transition);
+      outline: none;
+    }
+    .again-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
+      background: var(--accent-dim);
+    }
+    .again-btn:active { transform: scale(0.98); }
+    .again-btn:focus-visible { box-shadow: 0 0 0 3px var(--accent-glow); }
+
+    /* Options */
+    .option-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 16px; cursor: pointer; user-select: none;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: border-color var(--transition), background var(--transition),
+                  box-shadow var(--transition);
+    }
+    .option-toggle:hover {
+      border-color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: var(--shadow-sm);
+    }
+    .option-toggle-left { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--text-muted); }
+    .option-arrow { font-size: 11px; color: var(--text-muted); transition: transform var(--transition); font-family: var(--mono); }
+    .option-arrow.open { transform: rotate(90deg); color: var(--teal); }
+    .option-panel {
+      display: none; background: var(--surface); border: 1px solid var(--border);
+      border-top: none; border-radius: 0 0 var(--radius) var(--radius);
+      padding: 16px; margin-top: -10px; padding-top: 20px;
+    }
+    .option-panel.open { display: block; animation: slideDown 0.22s ease-in-out; }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.97); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .opt-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 11px 0; border-bottom: 1px solid var(--border);
+    }
+    .opt-row:last-child { border-bottom: none; }
+    .opt-label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); }
+    .opt-label.muted { color: var(--text-muted); }
+
+    .lock-icon { font-size: 10px; color: var(--text-muted); opacity: 0.6; }
+    .toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track {
+      position: absolute; inset: 0; background: var(--border);
+      border-radius: 10px; cursor: pointer; transition: background var(--transition);
+    }
+    .toggle input:checked + .toggle-track { background: var(--teal); }
+    .toggle-track::after {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 14px; height: 14px; background: white; border-radius: 50%;
+      transition: transform var(--transition);
+    }
+    .toggle input:checked + .toggle-track::after { transform: translateX(16px); }
+    .toggle input:disabled + .toggle-track { opacity: 0.35; cursor: not-allowed; }
+    .radio-group { display: flex; gap: 6px; }
+    .radio-opt {
+      padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border);
+      font-size: 11px; font-family: var(--mono); color: var(--text-muted);
+      cursor: pointer; transition: all var(--transition);
+    }
+    .radio-opt:hover:not(.disabled):not(.active) {
+      border-color: var(--text-muted);
+      color: var(--text);
+    }
+    .radio-opt.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: 0 0 6px var(--accent-glow);
+    }
+    .radio-opt.disabled { opacity: 0.35; cursor: not-allowed; }
+    /* Pro gated UI */
+    .locked {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .opt-section-label {
+      font-size: 9px; font-family: var(--mono); color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.16em; margin: 14px 0 8px;
+      opacity: 0.7;
+    }
+    .format-group { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .format-btn {
+      padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+      background: none; font-family: var(--sans); font-size: 12px; color: var(--text-muted);
+      cursor: pointer; transition: all var(--transition); text-align: center;
+      outline: none;
+    }
+    .format-btn:hover:not(.active) {
+      border-color: var(--text-muted);
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+    .format-btn:active { transform: translateY(0); }
+    .format-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+    .email-display {
+      margin-top: 14px; padding: 10px 12px; background: var(--surface2);
+      border-radius: var(--radius-sm); border: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .trial-email-label {
+      display: block; font-size: 11px; color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .trial-email-input {
+      width: 100%; box-sizing: border-box;
+      padding: 9px 12px; font-size: 13px; font-family: var(--mono);
+      background: var(--surface2); color: var(--text);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      outline: none; transition: border-color 0.15s;
+    }
+    .trial-email-input:focus { border-color: var(--accent); }
+    .trial-email-input.error { border-color: #e74c3c; }
+    .email-display span { font-size: 11px; font-family: var(--mono); color: var(--text-muted); }
+    .email-display .email-val { color: var(--text); font-size: 12px; }
+
+    /* ===== fileModeを縦いっぱいに使う ===== */
+    #fileMode {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 340px;   /* ← ここで全体の最低高さを底上げ */
+    }
+    /* drop-zoneを可能な限り広げる */
+    .drop-zone {
+      flex: 1;
+      min-height: 240px;   /* 最低限これだけは確保 */
+    }
+    /* record-areaも揃える */
+    .record-area {
+      min-height: 340px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    footer { text-align: center; font-size: 10px; font-family: var(--mono); color: var(--text-muted); opacity: 0.45; padding-top: 8px; letter-spacing: 0.06em; }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <div class="logo">
+      <span class="logo-mark">OtoWoKoto</span>
+      <span class="logo-sub">by otowolab</span>
+    </div>
+    <div class="menu-wrap">
+      <button class="menu-btn" id="menuBtn">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="dropdown" id="dropdown">
+        <a id="menuPortal">📋 プラン管理</a>
+        <a id="menuAddon">➕ 追加購入</a>
+        <a id="menuAbout">ℹ️ about</a>
+        <a id="menuReset">🔄 設定リセット</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" id="tabFile">📁 音声ファイル</button>
+    <button class="tab" id="tabLive">🎙️ ライブ録音</button>
+  </div>
+
+  <div class="msg error" id="msgError"></div>
+  <div class="msg warning" id="msgWarn"></div>
+
+  <!-- File mode -->
+  <div id="fileMode">
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="fileInput" accept="audio/*,video/*">
+      <div class="drop-icon">🎵</div>
+      <div class="drop-label">
+        <strong>音声ファイルをドロップ</strong>
+        または タップして選択
+      </div>
+      <div class="file-selected" id="fileName" style="display:none"></div>
+    </div>
+    <button class="submit-btn" id="submitBtn" style="margin-top:0; flex-shrink:0;" disabled>文字起こし</button>
+  </div>
+
+  <!-- Live mode -->
+  <div id="liveMode" style="display:none">
+    <div class="record-area">
+      <div class="waveform-wrap">
+        <canvas id="waveCanvas"></canvas>
+      </div>
+      <div class="record-btn-wrap" id="recordBtnWrap">
+        <div class="ripple"></div>
+        <div class="ripple"></div>
+        <button class="record-btn" id="recordBtn">🎙️</button>
+      </div>
+      <div class="timers">
+        <div class="elapsed" id="elapsed">00:00:00</div>
+        <div class="countdown" id="countdown">残り —</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Trial: メール入力エリア（無料枠ユーザーのみ表示） -->
+  <div id="trialEmailArea" style="display:none; margin-top:12px;">
+    <label class="trial-email-label" id="trialEmailLabel" for="trialEmailInput"></label>
+    <input
+      type="email"
+      id="trialEmailInput"
+      class="trial-email-input"
+      autocomplete="email"
+      spellcheck="false"
+    />
+  </div>
+
+
+  <!-- Processing -->
+  <div class="status-card" id="statusCard">
+    <div class="status-steps">
+      <div class="step" id="step1"><div class="step-dot"></div>音声を解析中</div>
+      <div class="step" id="step2"><div class="step-dot"></div>文字起こし処理</div>
+      <div class="step" id="step3"><div class="step-dot"></div>レポート生成</div>
+      <div class="step" id="step4"><div class="step-dot"></div>ファイルを保存</div>
+    </div>
+    <div class="close-notice" id="closeNotice">
+      <div class="close-notice-icon">📩</div>
+      <div class="close-notice-text">
+        <strong id="closeNoticeTitle"></strong>
+        <span id="closeNoticeBody"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div class="result-card" id="resultCard">
+    <div class="result-header">
+      <div class="result-icon">✅</div>
+      <div>
+        <div class="result-title">処理が完了しました</div>
+        <div class="result-sub">メールにDLリンクを送信しました</div>
+      </div>
+    </div>
+    <a class="dl-btn" id="dlBtn" download>⬇️ 結果ファイルをダウンロード</a>
+    <p class="result-note">有効期限: <strong>60分</strong> ／ DL後に自動削除</p>
+    <button class="again-btn" id="againBtn">もう一度実行する</button>
+  </div>
+
+  <!-- Options -->
+  <div>
+    <div class="option-toggle" id="optToggle">
+      <div class="option-toggle-left"><span>⚙️</span><span>オプション</span></div>
+      <span class="option-arrow" id="optArrow">›</span>
+    </div>
+    <div class="option-panel" id="optPanel">
+      <div class="opt-row">
+        <span class="opt-label">文字起こし全文</span>
+        <label class="toggle"><input type="checkbox" id="optTranscript" checked><div class="toggle-track"></div></label>
+      </div>
+      <div class="opt-row">
+        <span class="opt-label">要約</span>
+        <label class="toggle"><input type="checkbox" id="optSummary"><div class="toggle-track"></div></label>
+      </div>
+      <div class="opt-row locked" id="rowDepth" data-pro="true">
+        <span class="opt-label muted">要約深度 <span class="lock-icon">🔒</span></span>
+        <div class="radio-group">
+          <div class="radio-opt disabled">簡潔</div>
+          <div class="radio-opt active disabled">標準</div>
+          <div class="radio-opt disabled">詳細</div>
+        </div>
+      </div>
+      <div class="opt-row">
+        <span class="opt-label">タイムスタンプ</span>
+        <label class="toggle"><input type="checkbox" id="optTimestamp"><div class="toggle-track"></div></label>
+      </div>
+      <div class="opt-row locked" id="rowStructure" data-pro="true">      
+        <span class="opt-label muted">構成出力 <span class="lock-icon">🔒</span></span>
+        <label class="toggle"><input type="checkbox" id="optStructure" disabled><div class="toggle-track"></div></label>
+      </div>
+      <div class="opt-row locked" id="rowDiarize" data-pro="true">
+        <span class="opt-label muted">話者分け <span class="lock-icon">🔒</span></span>
+        <label class="toggle"><input type="checkbox" id="optDiarize" disabled><div class="toggle-track"></div></label>
+      </div>
+      <div class="opt-row locked" id="rowTranslate" data-pro="true">
+        <span class="opt-label muted">翻訳 <span class="lock-icon">🔒</span></span>
+        <label class="toggle"><input type="checkbox" id="optTranslate" disabled><div class="toggle-track"></div></label>
+      </div>
+      <div class="opt-section-label">出力形式</div>
+      <div class="format-group">
+        <button class="format-btn active" id="fmtText">📄 テキスト</button>
+        <button class="format-btn" id="fmtReport">📊 レポート</button>
+
+        <!-- Report Template Select -->
+        <div id="reportTemplateWrap" style="display:none; margin-top:10px;">
+          <div class="opt-section-label">レポートテンプレート</div>
+          <select id="reportTemplateSelect" style="
+            width:100%;
+            padding:8px;
+            border-radius:8px;
+            border:1px solid var(--border);
+            background:var(--surface2);
+            color:var(--text);
+            font-size:12px;
+          ">
+            <option value="common">Common</option>
+          </select>
+        </div>
+        
+      </div>
+      <div class="email-display">
+        <span>📧</span>
+        <span class="email-val" id="emailDisplay">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="usage-bar-wrap" id="usageBar">
+    <div class="usage-row">
+      <span class="usage-plan" id="usagePlan">—</span>
+      <span class="usage-time" id="usageTime">—</span>
+    </div>
+    <div class="bar-bg"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+  </div>
+  <footer style="display:none">otowolab.com</footer>
+</div>
+
+<script>
+const SERVICE_URL = 'https://api.koto.otowolab.com';
+const MAX_RECORDING_SEC = 5400;  // 90分（サーバ側と統一）
+let apiKey = new URLSearchParams(window.location.search).get('key') || '';
+let selectedFile = null;
+let isRecording = false;
+let mediaRecorder = null;
+let recordedChunks = [];
+let elapsedSec = 0;
+let elapsedTimer = null;
+let waveAnimFrame = null;
+let analyser = null;
+let audioCtx = null;
+let usageData = null;
+let currentFormat = 'text';
+let activeTab = 'file';
+let stepTimer = null;
+let label = 'STANDARD';
+// ===== Plan / Feature gating (Standard vs Pro) =====
+let currentUser = {
+  plan: 'standard'  // 'standard' | 'pro'
+};
+
+function applyPlanUI() {
+  const isPro = currentUser.plan === 'pro';
+  const isTrial = currentUser.plan === 'trial';
+  const proElements = document.querySelectorAll('[data-pro="true"]');
+
+  proElements.forEach(el => {
+    // locked class toggle
+    el.classList.toggle('locked', !isPro);
+
+    el.querySelectorAll('.opt-label').forEach(label => {
+      label.classList.toggle('muted', !isPro);
+    });
+    
+    // enable/disable inputs inside
+    el.querySelectorAll('input').forEach(inp => {
+      inp.disabled = !isPro;
+    });
+
+    // enable/disable pseudo radios
+    el.querySelectorAll('.radio-opt').forEach(opt => {
+      opt.classList.toggle('disabled', !isPro);
+    });
+  });
+
+  // trial用メール入力エリアの表示切り替え
+  const trialArea = document.getElementById('trialEmailArea');
+  if (trialArea) trialArea.style.display = isTrial ? '' : 'none';
+}
+
+// ===== Locale Detection =====
+const locale = /^\/en(\/|$|\?)/.test(location.pathname) ? 'en' : 'ja';
+
+// ===== Theme Application =====
+const theme = locale === 'ja' ? 'sara' : 'modern';
+document.documentElement.setAttribute('data-theme', theme);
+
+// ===== I18N Dictionary =====
+const I18N = {
+  ja: {
+    // ページ
+    title: "OtoWoKoto",
+    appName: "OtoWoKoto",
+    // タブ
+    fileTab: "📁 音声ファイル",
+    liveTab: "🎙️ ライブ録音",
+    // ドロップゾーン
+    dropTitle: "音声ファイルをドロップ",
+    dropSub: "または タップして選択",
+    // ボタン
+    submit: "文字起こし",
+    // 処理ステップ
+    processing1: "音声を解析中",
+    processing2: "文字起こし処理",
+    processing3: "レポート生成",
+    processing4: "ファイルを保存",
+    processing4_sub1: "クラウドに保存中...",
+    processing4_sub2: "もう少しお待ちください...",
+    processing4_sub3: "DLリンクを生成中...",
+    closeNoticeTitle: "このページを閉じても問題ありません",
+    closeNoticeBody:  "処理はサーバー上で続きます。完了後にメールでDLリンクをお送りします。",
+    // 完了
+    doneTitle: "処理が完了しました",
+    doneSub: "メールにDLリンクを送信しました",
+    download: "⬇️ 結果ファイルをダウンロード",
+    resultNote: "有効期限: 60分 ／ DL後に自動削除",
+    again: "もう一度実行する",
+    // メニュー
+    menuPortal: "📋 プラン管理",
+    menuAddon: "➕ 追加購入",
+    menuAbout: "ℹ️ about",
+    menuReset: "🔄 設定リセット",
+    menuAboutText: "OtoWoKoto\nZero Retention Voice Transcription\nby otowolab.com",
+    menuResetConfirm: "設定をリセットしますか？",
+    // オプション
+    options: "オプション",
+    optTranscript: "文字起こし全文",
+    optSummary: "要約",
+    optDepth: "要約深度",
+    optDepthValues: ["簡潔", "標準", "詳細"],
+    optTimestamp: "タイムスタンプ",
+    optStructure: "構成出力",
+    optDiarize: "話者分け",
+    optTranslate: "翻訳",
+    outputFormat: "出力形式",
+    fmtText: "📄 テキスト",
+    fmtReport: "📊 レポート",
+    reportTemplate: "レポートテンプレート",
+    reportCommon: "汎用レポート",
+    // 利用状況
+    remaining: "残り",
+    usageRemaining: (h, m) => `残 ${h}h ${m}m`,
+    countdown: (t) => `残り ${t}`,
+    // エラー・警告
+    errNoKey: "URLが正しくありません（APIキーが見つかりません）",
+    errNetwork: "通信エラーが発生しました",
+    errApiError: "エラーが発生しました",
+    errNoPortal: "ポータルを開けませんでした",
+    errNoAddon: "追加購入ページを開けませんでした",
+    errNoApiKey: "APIキーが設定されていません",
+    errUsageLimit: "今月の利用時間が上限に達しています。追加購入またはプラン変更をご検討ください。",
+    errTrialLimit: "無料利用回数が上限に達しました。プラン変更をご検討ください。",
+    trialEmailLabel: "メールアドレス（無料枠の管理に使用）",
+    trialEmailPlaceholder: "your@email.com",
+    trialEmailRequired: "メールアドレスを入力してください",
+    trialEmailInvalid: "有効なメールアドレスを入力してください",
+    errMicDenied: "マイクへのアクセスが拒否されました",
+    liveMaxReached: "最大録音時間（90分）に達したため、自動的に停止しました。",
+    liveSent: "送信しました。完了メールをお待ちください。",
+  },
+  en: {
+    // Page
+    title: "EchoLess",
+    appName: "EchoLess",
+    // Tabs
+    fileTab: "📁 Audio File",
+    liveTab: "🎙️ Live Recording",
+    // Drop zone
+    dropTitle: "Drop audio file here",
+    dropSub: "or tap to select",
+    // Button
+    submit: "Transcribe",
+    // Steps
+    processing1: "Analyzing audio",
+    processing2: "Transcribing",
+    processing3: "Generating report",
+    processing4: "Saving file",
+    processing4_sub1: "Uploading to cloud...",
+    processing4_sub2: "Almost done...",
+    processing4_sub3: "Generating download link...",
+    closeNoticeTitle: "You can close this page",
+    closeNoticeBody:  "Processing continues on the server. We'll email you a download link when it's ready.",
+    // Done
+    doneTitle: "Processing Complete",
+    doneSub: "Download link sent via email",
+    download: "⬇️ Download Result",
+    resultNote: "Valid for 60 min ／ Auto-deleted after download",
+    again: "Run Again",
+    // Menu
+    menuPortal: "📋 Plan Management",
+    menuAddon: "➕ Add-on Purchase",
+    menuAbout: "ℹ️ about",
+    menuReset: "🔄 Reset Settings",
+    menuAboutText: "EchoLess\nZero Retention Voice Transcription\nby otowolab.com",
+    menuResetConfirm: "Reset settings?",
+    // Options
+    options: "Options",
+    optTranscript: "Full Transcript",
+    optSummary: "Summary",
+    optDepth: "Summary Depth",
+    optDepthValues: ["Brief", "Standard", "Detailed"],
+    optTimestamp: "Timestamps",
+    optStructure: "Structure Output",
+    optDiarize: "Speaker Diarization",
+    optTranslate: "Translation",
+    outputFormat: "Output Format",
+    fmtText: "📄 Text",
+    fmtReport: "📊 Report",
+    reportTemplate: "Report Template",
+    reportCommon: "General Report",
+    // Usage
+    remaining: "Remaining",
+    usageRemaining: (h, m) => `${h}h ${m}m left`,
+    countdown: (t) => `Remaining ${t}`,
+    // Errors
+    errNoKey: "Invalid URL (API key not found)",
+    errNetwork: "Network error occurred",
+    errApiError: "An error occurred",
+    errNoPortal: "Could not open portal",
+    errNoAddon: "Could not open add-on page",
+    errNoApiKey: "API key not configured",
+    errUsageLimit: "Monthly usage limit reached. Consider purchasing add-on or upgrading.",
+    errTrialLimit: "Free trial limit reached. Please consider upgrading.",
+    trialEmailLabel: "Email address (used to track free usage)",
+    trialEmailPlaceholder: "your@email.com",
+    trialEmailRequired: "Please enter your email address",
+    trialEmailInvalid: "Please enter a valid email address",
+    errMicDenied: "Microphone access denied",
+    liveMaxReached: "Maximum recording time (90 min) reached. Recording stopped automatically.",
+    liveSent: "Submitted. Please wait for the completion email.",
+  }
+};
+function applyI18N() {
+  const t = I18N[locale];
+
+  // ページタイトル・lang属性
+  document.title = t.title;
+  document.documentElement.lang = locale;
+
+  // ロゴ
+  document.querySelector('.logo-mark').textContent = t.appName;
+
+  // タブ
+  document.getElementById('tabFile').textContent = t.fileTab;
+  document.getElementById('tabLive').textContent = t.liveTab;
+
+  // ドロップゾーン
+  document.querySelector('.drop-label strong').textContent = t.dropTitle;
+  document.querySelector('.drop-label').childNodes[2].nodeValue = " " + t.dropSub;
+
+  // 文字起こしボタン
+  document.getElementById('submitBtn').textContent = t.submit;
+
+
+  // 処理ステップ
+  document.getElementById('step1').lastChild.textContent = t.processing1;
+  document.getElementById('step2').lastChild.textContent = t.processing2;
+  document.getElementById('step3').lastChild.textContent = t.processing3;
+  document.getElementById('step4').lastChild.textContent = t.processing4;
+
+  // 完了カード
+  document.querySelector('.result-title').textContent = t.doneTitle;
+  document.querySelector('.result-sub').textContent = t.doneSub;
+  document.getElementById('dlBtn').textContent = t.download;
+  document.querySelector('.result-note').innerHTML = t.resultNote;
+  document.getElementById('againBtn').textContent = t.again;
+
+  // メニュー
+  document.getElementById('menuPortal').textContent = t.menuPortal;
+  document.getElementById('menuAddon').textContent = t.menuAddon;
+  document.getElementById('menuAbout').textContent = t.menuAbout;
+  document.getElementById('menuReset').textContent = t.menuReset;
+
+  // オプション見出し
+  document.querySelector('.option-toggle-left span:last-child').textContent = t.options;
+
+  // オプション項目ラベル
+  document.querySelector('#optTranscript').closest('.opt-row').querySelector('.opt-label').textContent = t.optTranscript;
+  document.querySelector('#optSummary').closest('.opt-row').querySelector('.opt-label').textContent = t.optSummary;
+  document.querySelector('#rowDepth .opt-label').childNodes[0].textContent = t.optDepth + " ";
+  document.querySelector('#optTimestamp').closest('.opt-row').querySelector('.opt-label').textContent = t.optTimestamp;
+  document.querySelector('#rowStructure .opt-label').childNodes[0].textContent = t.optStructure + " ";
+  document.querySelector('#rowDiarize .opt-label').childNodes[0].textContent = t.optDiarize + " ";
+  document.querySelector('#rowTranslate .opt-label').childNodes[0].textContent = t.optTranslate + " ";
+
+  // 要約深度ラジオ
+  const depthOpts = document.querySelectorAll('#rowDepth .radio-opt');
+  depthOpts.forEach((el, i) => { el.textContent = t.optDepthValues[i]; });
+
+  // 出力形式
+  document.querySelector('.opt-section-label').textContent = t.outputFormat;
+  document.getElementById('fmtText').textContent = t.fmtText;
+  document.getElementById('fmtReport').textContent = t.fmtReport;
+
+  // レポートテンプレート
+  document.querySelector('#reportTemplateWrap .opt-section-label').textContent = t.reportTemplate;
+  const commonOpt = document.querySelector('#reportTemplateSelect option[value="common"]');
+  if (commonOpt) commonOpt.textContent = t.reportCommon;
+
+  // カウントダウン初期値
+  document.getElementById('countdown').textContent = t.countdown('—');
+
+  // trial用メール入力ラベル・プレースホルダー
+  const trialLabelEl = document.getElementById('trialEmailLabel');
+  const trialInputEl = document.getElementById('trialEmailInput');
+  if (trialLabelEl) trialLabelEl.textContent = t.trialEmailLabel;
+  if (trialInputEl) trialInputEl.placeholder = t.trialEmailPlaceholder;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // 音声ファイルエリアとライブ録音エリアの高さを同期
+
+  applyI18N();
+
+  initMenu();
+  initTabs();
+  initDropZone();
+  initOptions();
+  applyPlanUI();
+  initRecordBtn();
+  document.getElementById('submitBtn').addEventListener('click', runTranscribe);
+  document.getElementById('againBtn').addEventListener('click', resetUI);
+  if (apiKey) fetchUsage();
+});
+
+// Menu
+function initMenu() {
+  const btn = document.getElementById('menuBtn');
+  const dd  = document.getElementById('dropdown');
+  btn.addEventListener('click', e => { e.stopPropagation(); dd.classList.toggle('open'); });
+  document.addEventListener('click', () => dd.classList.remove('open'));
+  document.getElementById('menuPortal').addEventListener('click', openPortal);
+  document.getElementById('menuAddon').addEventListener('click', openAddon);
+  document.getElementById('menuAbout').addEventListener('click', () => alert(I18N[locale].menuAboutText));
+  document.getElementById('menuReset').addEventListener('click', () => { if(confirm(I18N[locale].menuResetConfirm)) location.href = location.pathname + location.search; });
+}
+
+async function openPortal() {
+  if (!apiKey) return showError(I18N[locale].errNoApiKey);
+  try { const r = await apiFetch('/api/customer-portal'); if(r.url) window.open(r.url,'_blank'); } catch(e) { showError(I18N[locale].errNoPortal); }
+}
+async function openAddon() {
+  if (!apiKey) return showError(I18N[locale].errNoApiKey);
+  try { const r = await apiFetch('/api/checkout/addon'); if(r.url) window.open(r.url,'_blank'); } catch(e) { showError(I18N[locale].errNoAddon); }
+}
+
+// Tabs
+function initTabs() {
+  document.getElementById('tabFile').addEventListener('click', () => switchTab('file'));
+  document.getElementById('tabLive').addEventListener('click', () => switchTab('live'));
+}
+function switchTab(tab) {
+  activeTab = tab;
+  document.getElementById('tabFile').classList.toggle('active', tab==='file');
+  document.getElementById('tabLive').classList.toggle('active', tab==='live');
+
+  const fileEl = document.getElementById('fileMode');
+  const liveEl = document.getElementById('liveMode');
+
+  // フェードアウト → 切替 → フェードイン
+  const outEl = tab === 'file' ? liveEl : fileEl;
+  const inEl  = tab === 'file' ? fileEl : liveEl;
+
+  outEl.style.display = 'none';
+  inEl.style.display  = '';
+  inEl.style.opacity  = '0';
+  inEl.style.transform = 'translateY(4px)';
+  requestAnimationFrame(() => {
+    inEl.style.transition = 'opacity 0.15s ease-in-out, transform 0.15s ease-in-out';
+    inEl.style.opacity   = '1';
+    inEl.style.transform = 'translateY(0)';
+  });
+
+  updateSubmitBtn();
+  hideMessages();
+}
+
+// Drop zone
+function initDropZone() {
+  const zone  = document.getElementById('dropZone');
+  const input = document.getElementById('fileInput');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('dragover'); if(e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]); });
+  input.addEventListener('change', () => { if(input.files[0]) setFile(input.files[0]); });
+}
+function setFile(f) {
+  selectedFile = f;
+  const el = document.getElementById('fileName');
+  el.textContent = f.name; el.style.display = 'inline-block';
+  updateSubmitBtn(); hideMessages();
+  // 残り時間0のチェック
+  if (usageData && usageData.remaining_seconds <= 0) {
+    showError(I18N[locale].errUsageLimit);
+    document.getElementById('submitBtn').disabled = true;
+  }
+}
+
+// Live Recording
+function initRecordBtn() {
+  document.getElementById('recordBtn').addEventListener('click', toggleRecord);
+  drawIdleWave();
+}
+async function toggleRecord() {
+  if (!isRecording) {
+    await startRecord();
+  } else {
+    await stopRecord();
+    runTranscribe();  // 録音停止後に即文字起こし開始
+  }
+}
+async function startRecord() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioCtx = new AudioContext();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    audioCtx.createMediaStreamSource(stream).connect(analyser);
+    mediaRecorder = new MediaRecorder(stream);
+    recordedChunks = [];
+    mediaRecorder.ondataavailable = e => { if(e.data.size>0) recordedChunks.push(e.data); };
+    mediaRecorder.start(100);
+    isRecording = true; elapsedSec = 0;
+    const btn = document.getElementById('recordBtn');
+    btn.textContent = '⏹️'; btn.classList.add('recording');
+    document.getElementById('recordBtnWrap').classList.add('recording');
+    document.getElementById('submitBtn').disabled = true;
+    elapsedTimer = setInterval(async () => {
+      elapsedSec++;
+      updateTimers();
+      if (elapsedSec >= MAX_RECORDING_SEC) {
+        clearInterval(elapsedTimer);
+        showWarn(I18N[locale].liveMaxReached);
+        await stopRecord();
+      }
+    }, 1000);
+    // 波形フェードイン
+    const cvs = document.getElementById('waveCanvas');
+    cvs.style.transition = 'opacity 0.3s ease-in-out';
+    cvs.style.opacity = '0';
+    requestAnimationFrame(() => { cvs.style.opacity = '1'; });
+    drawLiveWave();
+  } catch(e) { showError(I18N[locale].errMicDenied); }
+}
+async function stopRecord() {
+  return new Promise(resolve => {
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+      selectedFile = new File([blob], `rec_${Date.now()}.webm`, { type: 'audio/webm' });
+      selectedFile._duration = elapsedSec;  // duration_sec に使用（getAudioDurationより確実）
+      resolve();
+    };
+    mediaRecorder.stop();
+    mediaRecorder.stream.getTracks().forEach(t => t.stop());
+    isRecording = false;
+    clearInterval(elapsedTimer);
+    cancelAnimationFrame(waveAnimFrame);
+    const btn = document.getElementById('recordBtn');
+    btn.textContent = '🎙️'; btn.classList.remove('recording');
+    document.getElementById('recordBtnWrap').classList.remove('recording');
+    // 波形フェードアウト → idle波形
+    // 収束アニメーション: 振幅を徐々にゼロに近づけてからidle波形へ
+    const cvsStop = document.getElementById('waveCanvas');
+    const ctxStop = cvsStop.getContext('2d');
+    const wStop = cvsStop.offsetWidth, hStop = cvsStop.offsetHeight;
+    let decayFactor = 1.0;
+    function decayDraw() {
+      if (decayFactor <= 0.05) {
+        cvsStop.style.opacity = '0';
+        setTimeout(() => { drawIdleWave(); cvsStop.style.opacity = '1'; }, 150);
+        return;
+      }
+      ctxStop.clearRect(0,0,wStop*devicePixelRatio,hStop*devicePixelRatio);
+      ctxStop.save();
+      ctxStop.scale(devicePixelRatio, devicePixelRatio);
+      ctxStop.beginPath();
+      const isJa = locale === 'ja';
+      ctxStop.strokeStyle = isJa ? `rgba(42,74,127,${decayFactor * 0.5})` : `rgba(232,212,77,${decayFactor * 0.5})`;
+      ctxStop.lineWidth = 1.5;
+      for (let x=0; x<wStop; x++) {
+        const y = hStop/2 + Math.sin(x/wStop*Math.PI*4)*8*decayFactor*Math.sin(x/wStop*Math.PI);
+        x===0 ? ctxStop.moveTo(x,y) : ctxStop.lineTo(x,y);
+      }
+      ctxStop.stroke();
+      ctxStop.restore();
+      decayFactor *= 0.88;
+      requestAnimationFrame(decayDraw);
+    }
+    cancelAnimationFrame(waveAnimFrame);
+    decayDraw();
+  });
+}
+function updateTimers() {
+  const fmt = s => [Math.floor(s/3600),Math.floor((s%3600)/60),s%60].map(n=>String(n).padStart(2,'0')).join(':');
+  document.getElementById('elapsed').textContent = fmt(elapsedSec);
+  if (usageData) {
+    const rem = Math.max(0, Math.floor(usageData.remaining_seconds) - elapsedSec);
+    const el = document.getElementById('countdown');
+    el.textContent = I18N[locale].countdown(fmt(rem));
+    el.className = 'countdown' + (rem < 300 ? ' warn' : '');
+  }
+}
+function drawIdleWave() {
+  const canvas = document.getElementById('waveCanvas');
+  if (!canvas.offsetWidth) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * devicePixelRatio;
+  canvas.height = canvas.offsetHeight * devicePixelRatio;
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+  const w = canvas.offsetWidth, h = canvas.offsetHeight;
+
+  // テーマ別カラー定義
+  const isJa = locale === 'ja';
+  const layers = isJa ? [
+    { color: 'rgba(42,74,127,0.10)',  width: 2.5, amp: 5,  freq: 3, speed: 0.025, phase: 0 },
+    { color: 'rgba(42,74,127,0.18)',  width: 1.5, amp: 8,  freq: 4, speed: 0.035, phase: 1.2 },
+    { color: 'rgba(155,35,53,0.08)',  width: 1.0, amp: 3,  freq: 6, speed: 0.045, phase: 2.4 },
+  ] : [
+    { color: 'rgba(232,212,77,0.10)', width: 2.5, amp: 5,  freq: 3, speed: 0.025, phase: 0 },
+    { color: 'rgba(232,212,77,0.20)', width: 1.5, amp: 8,  freq: 4, speed: 0.035, phase: 1.2 },
+    { color: 'rgba(255,255,255,0.05)',width: 1.0, amp: 3,  freq: 6, speed: 0.045, phase: 2.4 },
+  ];
+
+  let t = 0;
+  function draw() {
+    if (isRecording) return;
+    ctx.clearRect(0,0,w,h);
+    layers.forEach(layer => {
+      ctx.beginPath();
+      ctx.strokeStyle = layer.color;
+      ctx.lineWidth   = layer.width;
+      for (let x=0; x<w; x++) {
+        const envelope = Math.sin(x/w * Math.PI); // 両端でフェード
+        const y = h/2 + Math.sin((x/w)*Math.PI*layer.freq + t*layer.speed*100 + layer.phase)
+                      * layer.amp * envelope;
+        x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    });
+    t += 1;
+    waveAnimFrame = requestAnimationFrame(draw);
+  }
+  cancelAnimationFrame(waveAnimFrame);
+  draw();
+}
+function drawLiveWave() {
+  const canvas = document.getElementById('waveCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth * devicePixelRatio;
+  canvas.height = canvas.offsetHeight * devicePixelRatio;
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+  const w = canvas.offsetWidth, h = canvas.offsetHeight;
+  const data = new Uint8Array(analyser.frequencyBinCount);
+
+  const isJa = locale === 'ja';
+  // メイン波形色
+  const mainColor   = isJa ? '#2a4a7f'              : '#e8d44d';
+  const glowColor   = isJa ? 'rgba(42,74,127,0.25)' : 'rgba(232,212,77,0.25)';
+  const mirrorColor = isJa ? 'rgba(42,74,127,0.10)' : 'rgba(232,212,77,0.10)';
+
+  function draw() {
+    if (!isRecording) return;
+    analyser.getByteTimeDomainData(data);
+    ctx.clearRect(0,0,w,h);
+
+    const step = w / data.length;
+
+    // レイヤー1: glow（太め・半透明）
+    ctx.beginPath();
+    ctx.strokeStyle = glowColor;
+    ctx.lineWidth   = 4;
+    data.forEach((v,i) => {
+      const x = i * step;
+      const y = h/2 + (v - 128) / 128 * (h/2) * 0.9;
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+
+    // レイヤー2: メイン波形（細・鮮明）
+    ctx.beginPath();
+    ctx.strokeStyle = mainColor;
+    ctx.lineWidth   = 1.5;
+    data.forEach((v,i) => {
+      const x = i * step;
+      const y = h/2 + (v - 128) / 128 * (h/2) * 0.9;
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+
+    // レイヤー3: ミラー波形（下半分・薄め）
+    ctx.beginPath();
+    ctx.strokeStyle = mirrorColor;
+    ctx.lineWidth   = 1;
+    data.forEach((v,i) => {
+      const x = i * step;
+      // 上下反転 + 少し小さく
+      const y = h/2 - (v - 128) / 128 * (h/2) * 0.4;
+      i===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+
+    waveAnimFrame = requestAnimationFrame(draw);
+  }
+  cancelAnimationFrame(waveAnimFrame);
+  draw();
+}
+
+// Options
+function initOptions() {
+  document.getElementById('optToggle').addEventListener('click', () => {
+    document.getElementById('optPanel').classList.toggle('open');
+    document.getElementById('optArrow').classList.toggle('open');
+  });
+  document.getElementById('fmtText').addEventListener('click', () => setFormat('text'));
+  document.getElementById('fmtReport').addEventListener('click', () => setFormat('report'));
+  
+  // ▼ 要約深度 radio の active 切替
+  document.querySelectorAll('#rowDepth .radio-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      // Proでない場合は無視
+      if (currentUser.plan !== 'pro') return;
+
+      // disabledが付いている場合は無視
+      if (opt.classList.contains('disabled')) return;
+
+      // 兄弟から active を外す
+      const group = opt.closest('.radio-group');
+      group.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('active'));
+
+      // クリックされた要素に active 付与
+      opt.classList.add('active');
+    });
+  });
+}
+function setFormat(fmt) {
+  currentFormat = fmt;
+
+  document.getElementById('fmtText').classList.toggle('active', fmt==='text');
+  document.getElementById('fmtReport').classList.toggle('active', fmt==='report');
+
+  const wrap = document.getElementById('reportTemplateWrap');
+  if (fmt === 'report') {
+    wrap.style.display = 'block';
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+// Usage
+async function fetchUsage() {
+  try {
+    const d = await apiFetch('/me');
+    usageData = d;
+
+    // plan_type を内部フラグへ反映（将来Firestore/Stripeでもここを変えるだけ）
+    // currentUser.plan = (d.plan_type === 'pro') ? 'pro' : 'standard';
+
+    if (d.plan_type === 'pro') {
+      currentUser.plan = 'pro';
+    } else if (d.remaining_count > 0) {
+      currentUser.plan = 'trial';
+    } else {
+      currentUser.plan = 'standard';
+    }
+
+    if (currentUser.plan === 'trial' && usageData.remaining_count <= 0) {
+      showError(I18N[locale].errTrialLimit);
+      document.getElementById('submitBtn').disabled = true;
+    }
+
+    updateUsageBar();
+    updateProOptions();
+    document.getElementById('emailDisplay').textContent = d.email || '—';
+  } catch(e) {}
+}
+function updateUsageBar() {
+  if (!usageData) return;
+  document.getElementById('usageBar').classList.add('visible');
+  const max = usageData.max_seconds_per_month || 1;
+  const rem = usageData.remaining_seconds || 0;
+  const pct = Math.min(100, ((max-rem)/max)*100);
+  const h = Math.floor(rem/3600), m = Math.floor((rem%3600)/60);
+  // document.getElementById('usagePlan').textContent = (usageData.plan_type||'standard').toUpperCase();
+  if (currentUser.plan === 'pro') {
+    label = 'PRO';
+  } else if (currentUser.plan === 'trial') {
+    label = `TRIAL (${usageData.remaining_count} left)`;
+  }
+  document.getElementById('usagePlan').textContent = label;
+
+  const timeEl = document.getElementById('usageTime');
+  timeEl.textContent = I18N[locale].usageRemaining(h, m);
+  const fill = document.getElementById('barFill');
+  fill.style.width = pct + '%';
+  fill.className = 'bar-fill' + (pct>=90?' danger':pct>=70?' warn':'');
+  timeEl.className = 'usage-time' + (pct>=90?' danger':pct>=70?' warn':'');
+}
+function updateProOptions() {
+  applyPlanUI();
+}
+
+// Submit
+function updateSubmitBtn() {
+  document.getElementById('submitBtn').disabled = !selectedFile;
+}
+
+async function runTranscribe() {
+  if (!selectedFile) return;
+  if (document.getElementById('submitBtn').disabled && activeTab !== 'live') return;  // 二重送信防止
+  hideMessages();
+
+  // ── trial / 有料 の分岐 ──────────────────────────
+  if (currentUser.plan === 'trial') {
+    // trial: メールアドレス必須チェック
+    const emailInput = document.getElementById('trialEmailInput');
+    const emailVal   = emailInput ? emailInput.value.trim() : '';
+    const t          = I18N[locale];
+
+    if (!emailVal) {
+      emailInput && emailInput.classList.add('error');
+      return showError(t.trialEmailRequired);
+    }
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRe.test(emailVal)) {
+      emailInput && emailInput.classList.add('error');
+      return showError(t.trialEmailInvalid);
+    }
+    emailInput && emailInput.classList.remove('error');
+
+    setUIState('processing');
+    try {
+      const base64   = await fileToBase64(selectedFile);
+      const duration = await getAudioDuration(selectedFile);
+      const body = {
+        job_id: `FREE-${Date.now()}`,
+        audio: { data_base64: base64.split(',')[1], duration_sec: duration },
+        options: {
+          language:            'ja',
+          ui_locale:           locale,
+          include_transcript:  document.getElementById('optTranscript')?.checked ?? true,
+          include_summary:     document.getElementById('optSummary')?.checked    ?? false,
+          summary_depth:       (() => {
+            const active = document.querySelector('#rowDepth .radio-opt.active');
+            const map = { '簡潔':'brief','Brief':'brief','標準':'standard','Standard':'standard','詳細':'detailed','Detailed':'detailed' };
+            return active ? (map[active.textContent.trim()] || 'standard') : 'standard';
+          })(),
+          include_structure:   false,  // trial=Pro相当だが構成はOFFで体験
+          speaker_diarization: false,
+          include_translation: false,
+          include_timestamp:   document.getElementById('optTimestamp')?.checked ?? false,
+          output_format:       currentFormat,
+          report_template:     document.getElementById('reportTemplateSelect')?.value || 'common',
+        }
+      };
+      animateSteps();
+      const result = await fetch(`${SERVICE_URL}/api/free/transcribe`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Email': emailVal
+        },
+        body: JSON.stringify(body)
+      }).then(r => r.json());
+
+      if (result.success) {
+        setUIState('done');
+        if (result.download_url) {
+          const dl = document.getElementById('dlBtn');
+          dl.href = `${SERVICE_URL}${result.download_url}`;
+          dl.style.display = 'flex';
+        } else {
+          document.getElementById('dlBtn').style.display = 'none';
+        }
+        // 残回数を更新
+        if (usageData) {
+          usageData.remaining_count = Math.max(0, (usageData.remaining_count || 1) - 1);
+          updateUsageBar();
+        }
+      } else {
+        setUIState('idle');
+        showError(result.error?.message || I18N[locale].errApiError);
+      }
+    } catch(e) { setUIState('idle'); showError(I18N[locale].errNetwork); }
+    return;
+  }
+
+  // ── ライブ録音タブからの送信 ────────────────────────
+  if (activeTab === 'live') {
+    if (!apiKey) return showError(I18N[locale].errNoKey);
+    setUIState('processing');
+    try {
+      const duration = selectedFile._duration ?? elapsedSec;
+      const formData = new FormData();
+      formData.append('audio_blob', selectedFile);
+      formData.append('duration_sec', String(duration));
+      formData.append('language', 'ja');
+      formData.append('ui_locale', locale);
+      formData.append('speaker_diarization', String(document.getElementById('optDiarize')?.checked ?? false));
+      formData.append('include_transcript', String(document.getElementById('optTranscript')?.checked ?? true));
+      formData.append('include_summary', String(document.getElementById('optSummary')?.checked ?? false));
+      formData.append('summary_depth', (() => {
+        const active = document.querySelector('#rowDepth .radio-opt.active');
+        const map = { '簡潔':'brief','Brief':'brief','標準':'standard','Standard':'standard','詳細':'detailed','Detailed':'detailed' };
+        return active ? (map[active.textContent.trim()] || 'standard') : 'standard';
+      })());
+      formData.append('include_structure', String(document.getElementById('optStructure')?.checked ?? false));
+      formData.append('include_translation', String(document.getElementById('optTranslate')?.checked ?? false));
+      formData.append('include_timestamp', String(document.getElementById('optTimestamp')?.checked ?? false));
+      formData.append('output_format', currentFormat);
+      formData.append('report_template', document.getElementById('reportTemplateSelect')?.value || 'common');
+      animateSteps();
+      const res = await fetch(SERVICE_URL + "/api/live/transcribe", {
+        method: 'POST',
+        headers: { 'X-API-KEY': apiKey },
+        body: formData
+      });
+      const result = await res.json();
+      if (result.success) {
+        setUIState('done');
+        if (result.download_url) {
+          const dl = document.getElementById('dlBtn');
+          dl.href = SERVICE_URL + result.download_url;
+          dl.style.display = 'flex';
+        } else {
+          document.getElementById('dlBtn').style.display = 'none';
+        }
+        fetchUsage();
+      } else {
+        setUIState('idle');
+        showError(result.error?.message || I18N[locale].errApiError);
+      }
+    } catch(e) { setUIState('idle'); showError(I18N[locale].errNetwork); }
+    return;
+  }
+
+  // ── 有料プラン ────────────────────────────────────
+  if (!apiKey) return showError(I18N[locale].errNoKey);
+  setUIState('processing');
+  try {
+    const base64   = await fileToBase64(selectedFile);
+    const duration = await getAudioDuration(selectedFile);
+    const body = {
+      job_id: `WEB-${Date.now()}`,
+      audio: { data_base64: base64.split(',')[1], duration_sec: duration },
+      options: {
+          language:            'ja',
+          ui_locale:           locale,
+          include_transcript:  document.getElementById('optTranscript')?.checked ?? true,
+        include_summary:     document.getElementById('optSummary')?.checked    ?? false,
+        summary_depth:       (() => {
+          const active = document.querySelector('#rowDepth .radio-opt.active');
+          const map = { '簡潔':'brief','Brief':'brief','標準':'standard','Standard':'standard','詳細':'detailed','Detailed':'detailed' };
+          return active ? (map[active.textContent.trim()] || 'standard') : 'standard';
+        })(),
+        include_structure:   document.getElementById('optStructure')?.checked  ?? false,
+        speaker_diarization: document.getElementById('optDiarize')?.checked    ?? false,
+        include_translation: document.getElementById('optTranslate')?.checked  ?? false,
+        include_timestamp:   document.getElementById('optTimestamp')?.checked  ?? false,
+        output_format:       currentFormat,
+        report_template:     document.getElementById('reportTemplateSelect')?.value || 'common',
+      }
+    };
+    animateSteps();
+    const result = await apiFetch('/api/transcribe', { method:'POST', body: JSON.stringify(body) });
+    if (result.success) {
+      setUIState('done');
+      if (result.download_url) {
+        const dl = document.getElementById('dlBtn');
+        dl.href = `${SERVICE_URL}${result.download_url}`;
+        dl.style.display = 'flex';
+      } else {
+        document.getElementById('dlBtn').style.display = 'none';
+      }
+      fetchUsage();
+    } else {
+      setUIState('idle');
+      showError(result.error?.message || I18N[locale].errApiError);
+    }
+  } catch(e) { setUIState('idle'); showError(I18N[locale].errNetwork); }
+}
+
+function animateSteps() {
+  const steps = ['step1','step2','step3','step4'];
+  let i = 0;
+  let subTimer = null;
+  steps.forEach(s => { const el=document.getElementById(s); el.classList.remove('active','done'); });
+  document.getElementById('step1').classList.add('active');
+
+  // 処理開始直後にclose-noticeを表示
+  setTimeout(() => {
+    const notice = document.getElementById('closeNotice');
+    const t = I18N[locale];
+    document.getElementById('closeNoticeTitle').textContent = t.closeNoticeTitle;
+    document.getElementById('closeNoticeBody').textContent  = t.closeNoticeBody;
+    if (notice) notice.classList.add('visible');
+  }, 600);
+
+  const t = I18N[locale];
+  const step4Texts = [
+    t.processing4,
+    t.processing4_sub1,
+    t.processing4_sub2,
+    t.processing4_sub3,
+  ];
+  let subIdx = 0;
+
+  stepTimer = setInterval(() => {
+    if (i < steps.length - 2) {
+      // step1 -> step2 -> step3
+      document.getElementById(steps[i]).classList.replace('active','done');
+      i++;
+      document.getElementById(steps[i]).classList.add('active');
+
+    } else if (i === steps.length - 2) {
+      // step3 -> step4 に移行: サブテキストループ開始
+      document.getElementById(steps[i]).classList.replace('active','done');
+      i++;
+      const step4El = document.getElementById('step4');
+      step4El.classList.add('active');
+      clearInterval(stepTimer);
+      // step4到達後は1.8秒ごとにサブテキストをローテーション
+      subTimer = setInterval(() => {
+        subIdx = (subIdx + 1) % step4Texts.length;
+        step4El.lastChild.textContent = step4Texts[subIdx];
+      }, 1800);
+      stepTimer = subTimer;
+    }
+  }, 2500);
+}
+
+function setUIState(state) {
+  const statusCard  = document.getElementById('statusCard');
+  const resultCard  = document.getElementById('resultCard');
+  const submitBtn   = document.getElementById('submitBtn');
+  statusCard.classList.remove('visible');
+  resultCard.classList.remove('visible');
+  if (state === 'processing') {
+    submitBtn.disabled = true;
+    document.getElementById('fileMode').style.display = 'none';
+    document.getElementById('liveMode').style.display = 'none';
+    statusCard.classList.add('visible');
+  } else if (state === 'done') {
+    clearInterval(stepTimer);
+    const notice = document.getElementById('closeNotice'); if(notice) notice.classList.remove('visible');
+    ['step1','step2','step3','step4'].forEach(s => {
+      const el = document.getElementById(s);
+      el.classList.remove('active'); el.classList.add('done');
+    });
+    setTimeout(() => { statusCard.classList.remove('visible'); resultCard.classList.add('visible'); }, 600);
+  } else {
+    submitBtn.disabled = !selectedFile;
+    document.getElementById('fileMode').style.display = activeTab==='file' ? '' : 'none';
+    document.getElementById('liveMode').style.display = activeTab==='live' ? '' : 'none';
+  }
+}
+
+function resetUI() {
+  selectedFile = null;
+  document.getElementById('fileName').style.display = 'none';
+  document.getElementById('fileInput').value = '';
+  setUIState('idle');
+  updateSubmitBtn();
+  hideMessages();
+}
+
+// Helpers
+async function apiFetch(path, opts={}) {
+  const res = await fetch(`${SERVICE_URL}${path}`, {
+    ...opts,
+    headers: { 'Content-Type':'application/json', 'X-API-KEY': apiKey, ...(opts.headers||{}) }
+  });
+  return res.json();
+}
+function fileToBase64(file) {
+  return new Promise((res,rej) => { const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); });
+}
+function getAudioDuration(file) {
+  return new Promise(res => {
+    const a = new Audio();
+    a.src = URL.createObjectURL(file);
+    a.onloadedmetadata = () => { URL.revokeObjectURL(a.src); res(isFinite(a.duration)?a.duration:60); };
+    a.onerror = () => res(60);
+  });
+}
+function showError(msg) { const el=document.getElementById('msgError'); el.textContent=msg; el.classList.add('visible'); }
+function showWarn(msg)  { const el=document.getElementById('msgWarn');  el.textContent=msg; el.classList.add('visible'); }
+function hideMessages() { document.getElementById('msgError').classList.remove('visible'); document.getElementById('msgWarn').classList.remove('visible'); }
+
+</script>
+</body>
+</html>

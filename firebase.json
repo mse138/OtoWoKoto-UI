@@ -8,16 +8,28 @@
     ],
     "rewrites": [
       {
+        "source": "/ja/app",
+        "destination": "/app/index.html"
+      },
+      {
+        "source": "/ja/app/**",
+        "destination": "/app/index.html"
+      },
+      {
+        "source": "/en/app",
+        "destination": "/app/index.html"
+      },
+      {
+        "source": "/en/app/**",
+        "destination": "/app/index.html"
+      },
+      {
         "source": "/ja",
-        "destination": "/index.html"
+        "destination": "/ja/index.html"
       },
       {
         "source": "/en",
-        "destination": "/index.html"
-      },
-      {
-        "source": "**",
-        "destination": "/index.html"
+        "destination": "/en/index.html"
       }
     ]
   }
