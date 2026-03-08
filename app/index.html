@@ -3,6 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="OtoWoKoto">
+  <meta name="theme-color" content="#2a4a7f">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
   <title>OtoWoKoto</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Outfit:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;700&family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -1866,5 +1873,78 @@ function showWarn(msg)  { const el=document.getElementById('msgWarn');  el.textC
 function hideMessages() { document.getElementById('msgError').classList.remove('visible'); document.getElementById('msgWarn').classList.remove('visible'); }
 
 </script>
+
+  <!-- PWA: Service Worker登録 -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log('SW registered'))
+          .catch(err => console.log('SW failed:', err));
+      });
+    }
+
+    // ホーム画面追加バナー
+    let deferredPrompt = null;
+    const banner = document.createElement('div');
+    banner.id = 'pwa-banner';
+    banner.style.cssText = [
+      'display:none',
+      'position:fixed',
+      'bottom:16px',
+      'left:50%',
+      'transform:translateX(-50%)',
+      'background:#2a4a7f',
+      'color:#fff',
+      'padding:12px 20px',
+      'border-radius:12px',
+      'font-size:14px',
+      'z-index:9999',
+      'box-shadow:0 4px 16px rgba(0,0,0,0.3)',
+      'display:flex',
+      'align-items:center',
+      'gap:12px',
+      'max-width:90vw',
+    ].join(';');
+    banner.innerHTML = `
+      <span>📱 ホーム画面に追加して<br>アプリとして使えます</span>
+      <button id="pwa-install-btn" style="
+        background:#fff;color:#2a4a7f;border:none;
+        padding:8px 14px;border-radius:8px;
+        font-weight:bold;cursor:pointer;font-size:13px;white-space:nowrap;">
+        追加する
+      </button>
+      <button id="pwa-close-btn" style="
+        background:transparent;color:#fff;border:none;
+        font-size:18px;cursor:pointer;padding:0 4px;">✕</button>
+    `;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      // 初回のみバナー表示（閉じたら24時間表示しない）
+      const dismissed = localStorage.getItem('pwa-banner-dismissed');
+      if (!dismissed || Date.now() - parseInt(dismissed) > 86400000) {
+        setTimeout(() => {
+          document.body.appendChild(banner);
+          banner.style.display = 'flex';
+        }, 3000);
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (e.target.id === 'pwa-install-btn' && deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => {
+          deferredPrompt = null;
+          banner.style.display = 'none';
+        });
+      }
+      if (e.target.id === 'pwa-close-btn') {
+        banner.style.display = 'none';
+        localStorage.setItem('pwa-banner-dismissed', Date.now().toString());
+      }
+    });
+  </script>
 </body>
 </html>
