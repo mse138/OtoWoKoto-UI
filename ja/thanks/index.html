@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登録完了 | OtoWoKoto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:     #f6f3ee;
+      --ink:    #1c1814;
+      --ink3:   #6b6258;
+      --ink4:   #a09689;
+      --accent: #b34e16;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 20px;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+    }
+    .logo {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 18px;
+      font-weight: 400;
+      letter-spacing: .15em;
+      color: var(--ink3);
+      margin-bottom: 48px;
+    }
+    .logo span { color: var(--accent); font-weight: 500; }
+    .check-wrap {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 2px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 32px;
+      animation: fadeIn .6s ease both;
+    }
+    .check-wrap svg {
+      width: 32px;
+      height: 32px;
+      stroke: var(--accent);
+      stroke-width: 2.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 50;
+      stroke-dashoffset: 50;
+      animation: drawCheck .5s .4s ease forwards;
+    }
+    @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(.8); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    h1 {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 24px;
+      font-weight: 400;
+      letter-spacing: .08em;
+      margin-bottom: 16px;
+      animation: slideUp .5s .3s ease both;
+    }
+    .desc {
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--ink3);
+      margin-bottom: 32px;
+      animation: slideUp .5s .4s ease both;
+    }
+    .desc strong { color: var(--ink); font-weight: 500; }
+    .status-box {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 32px;
+      animation: slideUp .5s .5s ease both;
+      box-shadow: 0 2px 16px rgba(28,24,20,.06);
+    }
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      color: var(--ink3);
+    }
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #e5e0d5;
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .status-text { flex: 1; text-align: left; }
+    .manual-link {
+      display: none;
+      font-size: 13px;
+      color: var(--ink4);
+      line-height: 1.7;
+    }
+    .manual-link.show { display: block; }
+    .note {
+      font-size: 13px;
+      color: var(--ink4);
+      line-height: 1.7;
+      margin-top: 24px;
+      animation: slideUp .5s .6s ease both;
+    }
+    .note a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="logo">Oto<span>Wo</span>Koto <small style="font-size:11px; letter-spacing:.2em;">BY OTOWOLAB</small></div>
+
+    <div class="check-wrap">
+      <svg viewBox="0 0 24 24"><polyline points="4,12 9,17 20,7"/></svg>
+    </div>
+
+    <h1>登録が完了しました</h1>
+
+    <p class="desc">
+      ご登録ありがとうございます。<br>
+      <strong>アプリの準備をしています…</strong>
+    </p>
+
+    <div class="status-box">
+      <div class="status-row">
+        <div class="spinner" id="spinner"></div>
+        <div class="status-text" id="statusText">アプリを起動しています（数秒かかります）</div>
+      </div>
+    </div>
+
+    <div class="manual-link" id="manualLink">
+      自動で遷移しない場合は、<br>
+      登録メールのリンクからアプリを開いてください。<br>
+      <small>迷惑メールフォルダもご確認ください</small>
+    </div>
+
+    <p class="note">
+      メールが届かない場合は<br>
+      <a href="/ja/">トップページ</a>からお問い合わせください
+    </p>
+  </div>
+
+  <script>
+    const API = 'https://api.koto.otowolab.com';
+    const params = new URLSearchParams(location.search);
+    const sessionId = params.get('session_id');
+
+    const spinner    = document.getElementById('spinner');
+    const statusText = document.getElementById('statusText');
+    const manualLink = document.getElementById('manualLink');
+
+    let attempts = 0;
+    const MAX_ATTEMPTS = 20; // 20回 × 2秒 = 最大40秒待機
+
+    async function pollKey() {
+      if (!sessionId) {
+        location.replace('/ja/');
+        return;
+      }
+
+      try {
+        const res  = await fetch(`${API}/api/get-key?session_id=${encodeURIComponent(sessionId)}`);
+        const data = await res.json();
+
+        if (data.key) {
+          // keyが取得できたら即遷移
+          statusText.textContent = 'アプリの準備ができました！移動します…';
+          spinner.style.borderTopColor = '#b34e16';
+          setTimeout(() => {
+            location.replace(`/ja/app/?key=${data.key}`);
+          }, 800);
+          return;
+        }
+      } catch (e) {
+        console.warn('poll error:', e);
+      }
+
+      attempts++;
+      if (attempts >= MAX_ATTEMPTS) {
+        // タイムアウト: 手動案内を表示
+        spinner.style.display = 'none';
+        statusText.textContent = 'まもなくメールでリンクをお送りします';
+        manualLink.classList.add('show');
+        return;
+      }
+
+      setTimeout(pollKey, 2000);
+    }
+
+    setTimeout(pollKey, 1000);
+  </script>
+</body>
+</html>

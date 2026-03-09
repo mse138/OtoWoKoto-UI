@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="/ja/manifest.json">
+  <link rel="manifest" href="/manifest.json">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -757,6 +757,16 @@
   <div class="msg error" id="msgError"></div>
   <div class="msg warning" id="msgWarn"></div>
 
+  <!-- keyなし: 利用不可バナー -->
+  <div id="noKeyBanner" style="display:none; background:#f2ede4; border:1.5px solid #b34e16; border-radius:12px; padding:16px; margin-bottom:12px; text-align:center;">
+    <div style="font-size:15px; color:#1c1814; margin-bottom:10px;">
+      このアプリを利用するには<br>無料トライアル登録が必要です
+    </div>
+    <a href="/ja/" style="display:inline-block; background:#b34e16; color:#fff; padding:10px 24px; border-radius:8px; text-decoration:none; font-size:14px; font-weight:600;">
+      無料で試す（3回）→
+    </a>
+  </div>
+
   <!-- File mode -->
   <div id="fileMode">
     <div class="drop-zone" id="dropZone">
@@ -916,6 +926,13 @@
 const SERVICE_URL = 'https://api.koto.otowolab.com';
 const MAX_RECORDING_SEC = 5400;  // 90分（サーバ側と統一）
 let apiKey = new URLSearchParams(window.location.search).get('key') || '';
+
+// PWA対応: keyをlocalStorageに保存・復元
+if (apiKey) {
+  localStorage.setItem('otowoKotoKey', apiKey);
+} else {
+  apiKey = localStorage.getItem('otowoKotoKey') || '';
+}
 let selectedFile = null;
 let isRecording = false;
 let mediaRecorder = null;
@@ -961,7 +978,7 @@ function applyPlanUI() {
 
   // trial用メール入力エリアの表示切り替え
   const trialArea = document.getElementById('trialEmailArea');
-  if (trialArea) trialArea.style.display = isTrial ? '' : 'none';
+  if (trialArea) trialArea.style.display = 'none';  // keyアクセス前提のためメール欄不要
 }
 
 // ===== Locale Detection =====
@@ -1206,6 +1223,15 @@ document.addEventListener('DOMContentLoaded', () => {
   initRecordBtn();
   document.getElementById('submitBtn').addEventListener('click', runTranscribe);
   document.getElementById('againBtn').addEventListener('click', resetUI);
+
+  // DLボタン: 1回押したら無効化
+  document.getElementById('dlBtn').addEventListener('click', function() {
+    setTimeout(() => {
+      this.style.pointerEvents = 'none';
+      this.style.opacity = '0.4';
+      this.textContent = '✓ ダウンロード済み';
+    }, 300);
+  });
   if (apiKey) fetchUsage();
 });
 
@@ -1844,6 +1870,12 @@ function resetUI() {
   selectedFile = null;
   document.getElementById('fileName').style.display = 'none';
   document.getElementById('fileInput').value = '';
+  // DLボタンをリセット
+  const dl = document.getElementById('dlBtn');
+  dl.style.pointerEvents = '';
+  dl.style.opacity = '';
+  dl.style.display = 'none';
+  dl.textContent = document.documentElement.lang === 'en' ? '⬇️ Download Result' : '⬇️ 結果ファイルをダウンロード';
   setUIState('idle');
   updateSubmitBtn();
   hideMessages();
@@ -1876,7 +1908,21 @@ function hideMessages() { document.getElementById('msgError').classList.remove('
 
   <!-- PWA: Service Worker登録 -->
   <script>
-    if ('serviceWorker' in navigator) {
+    // keyなし: バナー表示＋ボタン無効化
+if (!apiKey) {
+  window.addEventListener('DOMContentLoaded', () => {
+    const banner = document.getElementById('noKeyBanner');
+    if (banner) banner.style.display = 'block';
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.style.opacity = '0.4'; }
+    const recordBtn = document.getElementById('recordBtn');
+    if (recordBtn) { recordBtn.disabled = true; recordBtn.style.opacity = '0.4'; }
+    const dropZone = document.getElementById('dropZone');
+    if (dropZone) { dropZone.style.opacity = '0.4'; dropZone.style.pointerEvents = 'none'; }
+  });
+}
+
+if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
           .then(reg => console.log('SW registered'))
