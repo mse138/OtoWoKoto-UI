@@ -945,6 +945,7 @@ let audioCtx = null;
 let usageData = null;
 let currentFormat = 'text';
 let activeTab = 'file';
+let tabSwitchedDuringProcessing = false;  // タブ切替で結果を破棄するフラグ
 let stepTimer = null;
 let label = 'STANDARD';
 // ===== Plan / Feature gating (Standard vs Pro) =====
@@ -959,20 +960,20 @@ function applyPlanUI() {
 
   proElements.forEach(el => {
     // locked class toggle
-    el.classList.toggle('locked', !isPro);
+    el.classList.toggle('locked', !isPro && !isTrial);
 
     el.querySelectorAll('.opt-label').forEach(label => {
-      label.classList.toggle('muted', !isPro);
+      label.classList.toggle('muted', !isPro && !isTrial);
     });
     
     // enable/disable inputs inside
     el.querySelectorAll('input').forEach(inp => {
-      inp.disabled = !isPro;
+      inp.disabled = !isPro && !isTrial;
     });
 
     // enable/disable pseudo radios
     el.querySelectorAll('.radio-opt').forEach(opt => {
-      opt.classList.toggle('disabled', !isPro);
+      opt.classList.toggle('disabled', !isPro && !isTrial);
     });
   });
 
@@ -1249,11 +1250,20 @@ function initMenu() {
 
 async function openPortal() {
   if (!apiKey) return showError(I18N[locale].errNoApiKey);
-  try { const r = await apiFetch('/api/customer-portal'); if(r.url) window.open(r.url,'_blank'); } catch(e) { showError(I18N[locale].errNoPortal); }
+  try {
+    const res = await fetch(SERVICE_URL + '/api/customer-portal', { method:'GET', headers:{'X-API-KEY': apiKey} });
+    const r = await res.json();
+    if (r.url) window.open(r.url, '_blank');
+  } catch(e) { showError(I18N[locale].errNoPortal); }
 }
 async function openAddon() {
   if (!apiKey) return showError(I18N[locale].errNoApiKey);
-  try { const r = await apiFetch('/api/checkout/addon'); if(r.url) window.open(r.url,'_blank'); } catch(e) { showError(I18N[locale].errNoAddon); }
+  try {
+    const res = await fetch(SERVICE_URL + '/api/checkout/addon', { method:'GET', headers:{'X-API-KEY': apiKey} });
+    if (res.redirected) { window.open(res.url, '_blank'); return; }
+    const r = await res.json();
+    if (r.url) window.open(r.url, '_blank');
+  } catch(e) { showError(I18N[locale].errNoAddon); }
 }
 
 // Tabs
@@ -1265,6 +1275,25 @@ function switchTab(tab) {
   activeTab = tab;
   document.getElementById('tabFile').classList.toggle('active', tab==='file');
   document.getElementById('tabLive').classList.toggle('active', tab==='live');
+
+  // タブ切替時: 処理中・完了状態をリセット（前の結果は捨てる）
+  tabSwitchedDuringProcessing = true;
+  const statusCard = document.getElementById('statusCard');
+  const resultCard = document.getElementById('resultCard');
+  if (statusCard) statusCard.classList.remove('visible');
+  if (resultCard) resultCard.classList.remove('visible');
+  selectedFile = null;
+  document.getElementById('fileName').style.display = 'none';
+  document.getElementById('fileInput').value = '';
+  const dl = document.getElementById('dlBtn');
+  if (dl) { dl.style.display = 'none'; dl.style.pointerEvents = ''; dl.style.opacity = ''; }
+  // タブロック解除
+  document.getElementById('tabFile').style.pointerEvents = '';
+  document.getElementById('tabFile').style.opacity = '';
+  document.getElementById('tabLive').style.pointerEvents = '';
+  document.getElementById('tabLive').style.opacity = '';
+  hideMessages();
+  updateSubmitBtn();
 
   const fileEl = document.getElementById('fileMode');
   const liveEl = document.getElementById('liveMode');
@@ -1530,7 +1559,7 @@ function initOptions() {
   document.querySelectorAll('#rowDepth .radio-opt').forEach(opt => {
     opt.addEventListener('click', () => {
       // Proでない場合は無視
-      if (currentUser.plan !== 'pro') return;
+      if (currentUser.plan !== 'pro' && currentUser.plan !== 'trial') return;
 
       // disabledが付いている場合は無視
       if (opt.classList.contains('disabled')) return;
@@ -1567,17 +1596,18 @@ async function fetchUsage() {
     // plan_type を内部フラグへ反映（将来Firestore/Stripeでもここを変えるだけ）
     // currentUser.plan = (d.plan_type === 'pro') ? 'pro' : 'standard';
 
+    // plan_typeをFirestoreから取得した値で判定（remaining_countに依存しない）
     if (d.plan_type === 'pro') {
       currentUser.plan = 'pro';
-    } else if (d.remaining_count > 0) {
+    } else if (d.plan_type === 'trial') {
       currentUser.plan = 'trial';
     } else {
       currentUser.plan = 'standard';
     }
 
+    // Trial残0回: 操作を無効化してメッセージ表示
     if (currentUser.plan === 'trial' && usageData.remaining_count <= 0) {
-      showError(I18N[locale].errTrialLimit);
-      document.getElementById('submitBtn').disabled = true;
+      showTrialExpired();
     }
 
     updateUsageBar();
@@ -1611,6 +1641,20 @@ function updateProOptions() {
   applyPlanUI();
 }
 
+function showTrialExpired() {
+  // 操作を無効化
+  const submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.style.opacity = '0.4'; }
+  const recordBtn = document.getElementById('recordBtn');
+  if (recordBtn) { recordBtn.disabled = true; recordBtn.style.opacity = '0.4'; }
+  const dropZone  = document.getElementById('dropZone');
+  if (dropZone)  { dropZone.style.opacity = '0.4'; dropZone.style.pointerEvents = 'none'; }
+  const tabLive = document.getElementById('tabLive');
+  if (tabLive) { tabLive.style.opacity = '0.4'; tabLive.style.pointerEvents = 'none'; }
+  // 終了バナー表示
+  showError(I18N[locale].errTrialLimit || '無料トライアルの3回分をすべて使い切りました。');
+}
+
 // Submit
 function updateSubmitBtn() {
   document.getElementById('submitBtn').disabled = !selectedFile;
@@ -1623,28 +1667,12 @@ async function runTranscribe() {
 
   // ── trial / 有料 の分岐 ──────────────────────────
   if (currentUser.plan === 'trial') {
-    // trial: メールアドレス必須チェック
-    const emailInput = document.getElementById('trialEmailInput');
-    const emailVal   = emailInput ? emailInput.value.trim() : '';
-    const t          = I18N[locale];
-
-    if (!emailVal) {
-      emailInput && emailInput.classList.add('error');
-      return showError(t.trialEmailRequired);
-    }
-    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRe.test(emailVal)) {
-      emailInput && emailInput.classList.add('error');
-      return showError(t.trialEmailInvalid);
-    }
-    emailInput && emailInput.classList.remove('error');
-
+    // trial: keyアクセス前提、通常APIを使用
     setUIState('processing');
     try {
       const base64   = await fileToBase64(selectedFile);
       const duration = await getAudioDuration(selectedFile);
       const body = {
-        job_id: `FREE-${Date.now()}`,
         audio: { data_base64: base64.split(',')[1], duration_sec: duration },
         options: {
           language:            'ja',
@@ -1656,24 +1684,20 @@ async function runTranscribe() {
             const map = { '簡潔':'brief','Brief':'brief','標準':'standard','Standard':'standard','詳細':'detailed','Detailed':'detailed' };
             return active ? (map[active.textContent.trim()] || 'standard') : 'standard';
           })(),
-          include_structure:   false,  // trial=Pro相当だが構成はOFFで体験
-          speaker_diarization: false,
-          include_translation: false,
-          include_timestamp:   document.getElementById('optTimestamp')?.checked ?? false,
+          include_structure:   document.getElementById('optStructure')?.checked  ?? false,
+          speaker_diarization: document.getElementById('optDiarize')?.checked    ?? false,
+          include_translation: document.getElementById('optTranslate')?.checked  ?? false,
+          include_timestamp:   document.getElementById('optTimestamp')?.checked  ?? false,
           output_format:       currentFormat,
           report_template:     document.getElementById('reportTemplateSelect')?.value || 'common',
         }
       };
       animateSteps();
-      const result = await fetch(`${SERVICE_URL}/api/free/transcribe`, {
+      const result = await fetch(`${SERVICE_URL}/api/transcribe`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Email': emailVal
-        },
+        headers: { 'Content-Type': 'application/json', 'X-API-KEY': apiKey },
         body: JSON.stringify(body)
       }).then(r => r.json());
-
       if (result.success) {
         setUIState('done');
         if (result.download_url) {
@@ -1683,10 +1707,10 @@ async function runTranscribe() {
         } else {
           document.getElementById('dlBtn').style.display = 'none';
         }
-        // 残回数を更新
         if (usageData) {
           usageData.remaining_count = Math.max(0, (usageData.remaining_count || 1) - 1);
           updateUsageBar();
+          if (usageData.remaining_count <= 0) showTrialExpired();
         }
       } else {
         setUIState('idle');
@@ -1847,19 +1871,33 @@ function setUIState(state) {
   statusCard.classList.remove('visible');
   resultCard.classList.remove('visible');
   if (state === 'processing') {
+    tabSwitchedDuringProcessing = false;  // 新しい処理開始でフラグリセット
     submitBtn.disabled = true;
     document.getElementById('fileMode').style.display = 'none';
     document.getElementById('liveMode').style.display = 'none';
     statusCard.classList.add('visible');
   } else if (state === 'done') {
     clearInterval(stepTimer);
+    // タブ切替済みなら結果を表示しない
+    if (tabSwitchedDuringProcessing) {
+      tabSwitchedDuringProcessing = false;
+      return;
+    }
     const notice = document.getElementById('closeNotice'); if(notice) notice.classList.remove('visible');
     ['step1','step2','step3','step4'].forEach(s => {
       const el = document.getElementById(s);
       el.classList.remove('active'); el.classList.add('done');
     });
+    document.getElementById('tabFile').style.pointerEvents = 'none';
+    document.getElementById('tabFile').style.opacity = '0.4';
+    document.getElementById('tabLive').style.pointerEvents = 'none';
+    document.getElementById('tabLive').style.opacity = '0.4';
     setTimeout(() => { statusCard.classList.remove('visible'); resultCard.classList.add('visible'); }, 600);
   } else {
+    document.getElementById('tabFile').style.pointerEvents = '';
+    document.getElementById('tabFile').style.opacity = '';
+    document.getElementById('tabLive').style.pointerEvents = '';
+    document.getElementById('tabLive').style.opacity = '';
     submitBtn.disabled = !selectedFile;
     document.getElementById('fileMode').style.display = activeTab==='file' ? '' : 'none';
     document.getElementById('liveMode').style.display = activeTab==='live' ? '' : 'none';
