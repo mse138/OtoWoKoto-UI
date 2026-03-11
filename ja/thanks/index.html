@@ -198,7 +198,20 @@
         const data = await res.json();
 
         if (data.key) {
-          // keyが取得できたら即遷移
+          // remaining_count === 0 → 再登録ユーザー（使い切り済み）
+          if (data.remaining_count === 0) {
+            spinner.style.display = 'none';
+            statusText.textContent = '無料トライアルはすでにご利用済みです';
+            document.querySelector('.desc').innerHTML =
+              'このメールアドレスではすでに無料トライアル（3回）をご利用いただいています。<br>' +
+              '引き続きご利用いただくには、有料プランへのご登録をお願いします。';
+            manualLink.innerHTML =
+              '<a href="/ja/#pricing" style="color:var(--accent);text-decoration:none;font-weight:500;">▶ 有料プランを見る</a>';
+            manualLink.classList.add('show');
+            return;
+          }
+
+          // 通常ユーザー: keyが取得できたら即遷移
           statusText.textContent = 'アプリの準備ができました！移動します…';
           spinner.style.borderTopColor = '#b34e16';
           setTimeout(() => {

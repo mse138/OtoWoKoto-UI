@@ -1707,10 +1707,10 @@ async function runTranscribe() {
         } else {
           document.getElementById('dlBtn').style.display = 'none';
         }
-        if (usageData) {
-          usageData.remaining_count = Math.max(0, (usageData.remaining_count || 1) - 1);
-          updateUsageBar();
-          if (usageData.remaining_count <= 0) showTrialExpired();
+        // サーバーから最新の残回数を取得して表示を更新
+        await fetchUsage();
+        if (currentUser.plan === 'trial' && usageData && usageData.remaining_count <= 0) {
+          showTrialExpired();
         }
       } else {
         setUIState('idle');
