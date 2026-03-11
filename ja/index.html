@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OtoWoKoto — 音声は残さない。必要なのはテキストだけ。</title>
+<title id="pageTitle">OtoWoKoto — 音声は残さない。必要なのはテキストだけ。</title>
 <meta name="description" content="音声データを保存しない文字起こしサービス。処理が終われば音声は削除。残るのはテキストだけ。Pro機能3回無料・カード登録なしで開始。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -971,7 +971,7 @@ footer {
 
 <!-- NAV -->
 <nav id="mainnav">
-  <a href="#" class="logo">OtoWoKoto <small>by OtoWoLab</small></a>
+  <a href="#" class="logo"><span class="svc-name">OtoWoKoto</span> <small>by OtoWoLab</small></a>
   <div class="nav-right">
     <a href="#pricing" class="nav-link">料金</a>
     <a href="#faq" class="nav-link">FAQ</a>
@@ -989,7 +989,7 @@ footer {
     <p class="hero-h2">必要なのはテキストだけ。</p>
     <p class="hero-lead">
       会議、メモ、ブレインストーミング。<br>
-      OtoWoKotoは<strong>一度きりの処理</strong>で音声をテキスト化します。<br>
+      <span class="svc-name">OtoWoKoto</span>は<strong>一度きりの処理</strong>で音声をテキスト化します。<br>
       処理が終われば、音声は削除。履歴も残りません。
     </p>
     <div class="cta-cluster">
@@ -1033,7 +1033,7 @@ footer {
       <div class="mock-shell" id="mockPhone">
 
         <div class="mk-nav">
-          <div class="mk-logo">OtoWoKoto <small>by OtoWoLab</small></div>
+          <div class="mk-logo"><span class="svc-name">OtoWoKoto</span> <small>by OtoWoLab</small></div>
           <div class="mk-btn">無料で試す</div>
         </div>
 
@@ -1130,7 +1130,7 @@ footer {
       </div>
       <div class="ba-col after" style="position:relative;">
         <div class="ba-arrow">→</div>
-        <span class="ba-tag a">OtoWoKoto</span>
+        <span class="ba-tag a svc-name">OtoWoKoto</span>
         <div class="ba-title">テキストだけが<br>手元に残る</div>
         <ul class="ba-list">
           <li>処理後、音声はメモリから即時消去</li>
@@ -1414,7 +1414,7 @@ footer {
       </div>
       <div class="faq-item">
         <button class="faq-q">音声データはどのように管理されますか？<span class="faq-icon">+</span></button>
-        <div class="faq-a">OtoWoKotoはゼロリテンションポリシーを採用しています。アップロードされた音声は処理のためだけに使用され、完了後は即時メモリから消去されます。履歴・ログの記録もありません。</div>
+        <div class="faq-a"><span class="svc-name">OtoWoKoto</span>はゼロリテンションポリシーを採用しています。アップロードされた音声は処理のためだけに使用され、完了後は即時メモリから消去されます。履歴・ログの記録もありません。</div>
       </div>
       <div class="faq-item">
         <button class="faq-q">何語に対応していますか？<span class="faq-icon">+</span></button>
@@ -1438,7 +1438,7 @@ footer {
 
 <!-- ═══ FINAL CTA ═══ -->
 <section class="final-cta">
-  <div class="final-ghost" aria-hidden="true">OtoWoKoto</div>
+  <div class="final-ghost svc-name" aria-hidden="true">OtoWoKoto</div>
   <div class="final-inner">
     <h2 class="final-h rv">音声は残さない。<br>必要なのはテキストだけ。</h2>
     <p class="final-sub rv">Pro機能を3回まで、カード登録なしでお試しいただけます。</p>
@@ -1455,7 +1455,7 @@ footer {
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo">OtoWoKoto</div>
+  <div class="footer-logo svc-name">OtoWoKoto</div>
   <ul class="footer-links">
     <li><a href="#pricing">料金</a></li>
     <li><a href="#faq">FAQ</a></li>
@@ -1466,6 +1466,22 @@ footer {
 </footer>
 
 <script>
+
+// ===== サービス名定義（ここを変えるだけで全箇所に反映） =====
+const APP_NAME = "オトヲコト";  // ← ここだけ変更する
+
+// ===== サービス名をDOM要素に適用 =====
+(function() {
+  // .svc-name クラスを持つ全要素のテキストを置換
+  document.querySelectorAll('.svc-name').forEach(el => {
+    el.textContent = APP_NAME;
+  });
+  // titleタグ
+  const titleEl = document.getElementById('pageTitle');
+  if (titleEl) {
+    titleEl.textContent = titleEl.textContent.replace('OtoWoKoto', APP_NAME);
+  }
+})();
 
 (function(){
   const screens = {

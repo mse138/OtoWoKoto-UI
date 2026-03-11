@@ -7,10 +7,10 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="OtoWoKoto">
+  <meta name="apple-mobile-web-app-title" id="metaAppTitle" content="OtoWoKoto">
   <meta name="theme-color" content="#2a4a7f">
   <link rel="apple-touch-icon" href="/ja/icons/icon-192.png">
-  <title>OtoWoKoto</title>
+  <title id="pageTitle">OtoWoKoto</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Outfit:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;700&family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
@@ -733,7 +733,7 @@
 
   <header>
     <div class="logo">
-      <span class="logo-mark">OtoWoKoto</span>
+      <span class="logo-mark" id="logoMark">OtoWoKoto</span>
       <span class="logo-sub">by otowolab</span>
     </div>
     <div class="menu-wrap">
@@ -989,12 +989,26 @@ const locale = /^\/en(\/|$|\?)/.test(location.pathname) ? 'en' : 'ja';
 const theme = locale === 'ja' ? 'sara' : 'modern';
 document.documentElement.setAttribute('data-theme', theme);
 
+// ===== サービス名定義（ここを変えるだけで全箇所に反映） =====
+const APP_NAME_JA = "オトヲコト";  // 日本語版サービス名
+const APP_NAME_EN = "EchoLess";   // 英語版サービス名
+
+// ===== サービス名をDOM要素に適用 =====
+(function() {
+  const locale = document.documentElement.lang || 'ja';
+  const name = locale === 'en' ? APP_NAME_EN : APP_NAME_JA;
+  document.getElementById('pageTitle').textContent = name;
+  document.getElementById('logoMark').textContent = name;
+  const metaTitle = document.getElementById('metaAppTitle');
+  if (metaTitle) metaTitle.setAttribute('content', name);
+})();
+
 // ===== I18N Dictionary =====
 const I18N = {
   ja: {
     // ページ
-    title: "OtoWoKoto",
-    appName: "OtoWoKoto",
+    title: APP_NAME_JA,
+    appName: APP_NAME_JA,
     // タブ
     fileTab: "📁 音声ファイル",
     liveTab: "🎙️ ライブ録音",
@@ -1024,7 +1038,7 @@ const I18N = {
     menuAddon: "➕ 追加購入",
     menuAbout: "ℹ️ about",
     menuReset: "🔄 設定リセット",
-    menuAboutText: "OtoWoKoto\nZero Retention Voice Transcription\nby otowolab.com",
+    menuAboutText: `${APP_NAME_JA}\nZero Retention Voice Transcription\nby otowolab.com`,
     menuResetConfirm: "設定をリセットしますか？",
     // オプション
     options: "オプション",
@@ -1064,8 +1078,8 @@ const I18N = {
   },
   en: {
     // Page
-    title: "EchoLess",
-    appName: "EchoLess",
+    title: APP_NAME_EN,
+    appName: APP_NAME_EN,
     // Tabs
     fileTab: "📁 Audio File",
     liveTab: "🎙️ Live Recording",
@@ -1095,7 +1109,7 @@ const I18N = {
     menuAddon: "➕ Add-on Purchase",
     menuAbout: "ℹ️ about",
     menuReset: "🔄 Reset Settings",
-    menuAboutText: "EchoLess\nZero Retention Voice Transcription\nby otowolab.com",
+    menuAboutText: `${APP_NAME_EN}\nZero Retention Voice Transcription\nby otowolab.com`,
     menuResetConfirm: "Reset settings?",
     // Options
     options: "Options",

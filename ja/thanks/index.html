@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>登録完了 | OtoWoKoto</title>
+  <title id="pageTitle">登録完了 | OtoWoKoto</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500&family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
@@ -143,7 +143,7 @@
 </head>
 <body>
   <div class="wrap">
-    <div class="logo">Oto<span>Wo</span>Koto <small style="font-size:11px; letter-spacing:.2em;">BY OTOWOLAB</small></div>
+    <div class="logo" id="logoEl"></div>
 
     <div class="check-wrap">
       <svg viewBox="0 0 24 24"><polyline points="4,12 9,17 20,7"/></svg>
@@ -176,6 +176,21 @@
   </div>
 
   <script>
+    // ===== サービス名定義（ここを変えるだけで全箇所に反映） =====
+    const APP_NAME_JA = "オトヲコト";  // 日本語版サービス名
+    const APP_NAME_EN = "EchoLess";   // 英語版サービス名
+
+    // ロゴとtitleに適用
+    (function() {
+      const locale = location.pathname.startsWith('/en') ? 'en' : 'ja';
+      const name = locale === 'en' ? APP_NAME_EN : APP_NAME_JA;
+      // title
+      document.getElementById('pageTitle').textContent = `登録完了 | ${name}`;
+      // ロゴ生成（サービス名をそのまま表示）
+      const logoEl = document.getElementById('logoEl');
+      logoEl.innerHTML = `${name} <small style="font-size:11px; letter-spacing:.2em;">BY OTOWOLAB</small>`;
+    })();
+
     const API = 'https://api.koto.otowolab.com';
     const params = new URLSearchParams(location.search);
     const sessionId = params.get('session_id');
