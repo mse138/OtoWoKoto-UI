@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">ご利用前の重要事項への同意 — OtoWoKoto</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&family=Zen+Kaku+Gothic+New:wght@300;400;700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:          #f6f3ee;
+  --bg2:         #eeead3;
+  --surface:     #fdfcf9;
+  --border:      #ddd6c8;
+  --border2:     #c5bdb0;
+  --ink:         #1c1814;
+  --ink2:        #3a3328;
+  --ink3:        #6b6258;
+  --ink4:        #a09689;
+  --accent:      #b34e16;
+  --accent2:     #8a3a0e;
+  --accent-pale: rgba(179,78,22,.08);
+  --accent-mid:  rgba(179,78,22,.22);
+  --red-pale:    rgba(160,50,50,.07);
+  --red-text:    #924040;
+  --green:       #3d7a50;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-weight: 400;
+  line-height: 1.75;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── ヘッダー ── */
+header {
+  padding: 20px 32px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.logo {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: .04em;
+}
+
+/* ── メインレイアウト ── */
+main {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 20px 80px;
+}
+
+.consent-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  max-width: 640px;
+  width: 100%;
+  padding: 48px 48px 40px;
+}
+
+/* ── タイトル ── */
+.consent-kicker {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .18em;
+  color: var(--ink4);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.consent-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--ink);
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── 重要事項ブロック ── */
+.notice-block {
+  background: var(--red-pale);
+  border: 1px solid rgba(160,50,50,.18);
+  border-radius: 3px;
+  padding: 20px 22px;
+  margin-bottom: 28px;
+}
+.notice-block-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--red-text);
+  margin-bottom: 12px;
+  letter-spacing: .04em;
+}
+.notice-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.notice-list li {
+  font-size: 13.5px;
+  color: var(--ink2);
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.6;
+}
+.notice-list li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--red-text);
+  font-size: 11px;
+  top: 3px;
+}
+
+/* ── AI精度ブロック ── */
+.ai-block {
+  background: var(--accent-pale);
+  border: 1px solid var(--accent-mid);
+  border-radius: 3px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  font-size: 13px;
+  color: var(--ink3);
+  line-height: 1.65;
+}
+.ai-block strong {
+  color: var(--accent2);
+  font-weight: 700;
+}
+
+/* ── 規約リンク ── */
+.doc-links {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.doc-link {
+  font-size: 12.5px;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color .15s;
+}
+.doc-link:hover { color: var(--accent2); }
+
+/* ── チェックボックス ── */
+.checks {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+.check-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.6;
+}
+.check-label input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  border: 1.5px solid var(--border2);
+  border-radius: 2px;
+  background: var(--bg);
+  cursor: pointer;
+  margin-top: 2px;
+  position: relative;
+  transition: border-color .15s, background .15s;
+}
+.check-label input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.check-label input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 6px;
+  height: 10px;
+  border: 2px solid #fff;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+.check-label:hover input[type="checkbox"]:not(:checked) {
+  border-color: var(--accent);
+}
+
+/* ── 送信ボタン ── */
+.submit-btn {
+  display: block;
+  width: 100%;
+  padding: 15px 24px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  cursor: pointer;
+  transition: background .15s, transform .12s, opacity .15s;
+  text-align: center;
+}
+.submit-btn:disabled {
+  opacity: .38;
+  cursor: not-allowed;
+  transform: none;
+}
+.submit-btn:not(:disabled):hover {
+  background: var(--accent2);
+  transform: translateY(-1px);
+}
+
+.submit-note {
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--ink4);
+  margin-top: 14px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .04em;
+}
+
+/* ── フッター ── */
+footer {
+  background: var(--ink);
+  color: rgba(246,243,238,.45);
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer-logo {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(246,243,238,.75);
+}
+.footer-links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+.footer-links a {
+  font-size: 11.5px;
+  color: rgba(246,243,238,.32);
+  text-decoration: none;
+  transition: color .2s;
+}
+.footer-links a:hover { color: rgba(246,243,238,.7); }
+.footer-copy {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .05em;
+}
+
+/* ── レスポンシブ ── */
+@media (max-width: 600px) {
+  .consent-card { padding: 32px 22px 28px; }
+  .consent-title { font-size: 19px; }
+  footer { flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/ja/" class="logo"><span class="svc-name">OtoWoKoto</span></a>
+</header>
+
+<main>
+  <div class="consent-card">
+
+    <p class="consent-kicker">Important Notice / ご利用前に</p>
+    <h1 class="consent-title">ご利用前の重要事項への<br>同意が必要です</h1>
+
+    <!-- 重要事項 -->
+    <div class="notice-block">
+      <p class="notice-block-title">⚠️ データ保持に関する重要事項</p>
+      <ul class="notice-list">
+        <li>音声データはサーバーに保存されません。処理完了後、即時削除されます。</li>
+        <li>文字起こし結果は生成後 <strong>60分で自動削除</strong> されます。</li>
+        <li>削除されたデータは <strong>いかなる手段でも復元できません。</strong></li>
+        <li>必要な場合は、必ず60分以内にダウンロードしてください。</li>
+        <li>DLできなかった・時間切れで消えた場合の補償・復元対応はできません。</li>
+        <li>ライブ録音中の通信切断・ブラウザ終了・機器不具合により録音が中断・消失した場合も、データの復元・再処理はできません。</li>
+        <li>録音データのリアルタイムバックアップ・リトライ処理は行いません。録音の成否はユーザーの通信・機器環境に依存します。</li>
+      </ul>
+    </div>
+
+    <!-- AI精度 -->
+    <div class="ai-block">
+      <strong>AIによる処理の精度について：</strong>
+      音声環境・発音・背景雑音・録音品質などにより、文字起こし結果に誤りが含まれる場合があります。
+      結果の正確性・完全性を当社は保証しません。重要な用途ではご自身での確認をお願いします。
+    </div>
+
+    <!-- 規約リンク -->
+    <div class="doc-links">
+      <a href="/ja/terms/" class="doc-link" target="_blank">利用規約 →</a>
+      <a href="/ja/privacy/" class="doc-link" target="_blank">プライバシーポリシー →</a>
+    </div>
+
+    <!-- チェックボックス -->
+    <div class="checks">
+      <label class="check-label">
+        <input type="checkbox" id="chk1">
+        <span>
+          音声・文字起こし結果が保存されないこと、60分で自動削除されること、削除後の復元が不可能であること、
+          ライブ録音中の通信切断・機器不具合による録音失敗・消失についても当社は責任を負わないことを理解し、同意します。
+        </span>
+      </label>
+      <label class="check-label">
+        <input type="checkbox" id="chk2">
+        <span>
+          <a href="/ja/terms/" class="doc-link" target="_blank">利用規約</a> および
+          <a href="/ja/privacy/" class="doc-link" target="_blank">プライバシーポリシー</a>
+          を読み、内容に同意します。
+        </span>
+      </label>
+    </div>
+
+    <!-- 送信ボタン -->
+    <button class="submit-btn" id="submitBtn" disabled>
+      同意して続ける
+    </button>
+    <p class="submit-note">同意後、お申し込みページへ移動します</p>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-logo svc-name">OtoWoKoto</div>
+  <ul class="footer-links">
+    <li><a href="/ja/">トップ</a></li>
+    <li><a href="/ja/terms/">利用規約</a></li>
+    <li><a href="/ja/privacy/">プライバシーポリシー</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 OtoWoLab.</span>
+</footer>
+
+<script>
+  // クエリパラメータからplanを取得してStripe URLを決定
+  const STRIPE = {
+    trial:    'https://api.koto.otowolab.com/api/checkout/trial',
+    standard: 'https://api.koto.otowolab.com/api/checkout/standard',
+    pro:      'https://api.koto.otowolab.com/api/checkout/pro',
+  };
+
+  const params  = new URLSearchParams(window.location.search);
+  const plan    = params.get('plan') || 'trial';
+  const destUrl = STRIPE[plan] || STRIPE.trial;
+
+  const chk1   = document.getElementById('chk1');
+  const chk2   = document.getElementById('chk2');
+  const btn    = document.getElementById('submitBtn');
+
+  function updateBtn() {
+    btn.disabled = !(chk1.checked && chk2.checked);
+  }
+
+  chk1.addEventListener('change', updateBtn);
+  chk2.addEventListener('change', updateBtn);
+
+  btn.addEventListener('click', () => {
+    if (chk1.checked && chk2.checked) {
+      // 同意済みフラグをsessionStorageに記録（アプリUI側でも参照可能）
+      sessionStorage.setItem('consent_agreed', '1');
+      sessionStorage.setItem('consent_plan', plan);
+      sessionStorage.setItem('consent_at', new Date().toISOString());
+      window.location.href = destUrl;
+    }
+  });
+</script>
+
+<script>
+  const APP_NAME = "オトヲコト";  // ← ここだけ変更する
+  document.querySelectorAll(".svc-name").forEach(el => {
+    el.textContent = el.textContent.replace("OtoWoKoto", APP_NAME);
+  });
+  const titleEl = document.getElementById("pageTitle");
+  if (titleEl) titleEl.textContent = titleEl.textContent.replace("OtoWoKoto", APP_NAME);
+</script>
+</body>
+</html>

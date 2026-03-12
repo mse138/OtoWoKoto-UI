@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">プライバシーポリシー — OtoWoKoto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&family=Zen+Kaku+Gothic+New:wght@300;400;700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:          #f6f3ee;
+  --surface:     #fdfcf9;
+  --border:      #ddd6c8;
+  --border2:     #c5bdb0;
+  --ink:         #1c1814;
+  --ink2:        #3a3328;
+  --ink3:        #6b6258;
+  --ink4:        #a09689;
+  --accent:      #b34e16;
+  --accent2:     #8a3a0e;
+  --accent-pale: rgba(179,78,22,.08);
+  --red-pale:    rgba(160,50,50,.07);
+  --red-text:    #924040;
+  --green-pale:  rgba(61,122,80,.07);
+  --green-text:  #3d7a50;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  line-height: 1.8;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+header {
+  padding: 20px 32px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+}
+.back-link {
+  font-size: 12.5px;
+  color: var(--accent);
+  text-decoration: none;
+}
+.back-link:hover { color: var(--accent2); }
+
+main {
+  flex: 1;
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 56px 24px 100px;
+}
+
+.doc-kicker {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .18em;
+  color: var(--ink4);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.doc-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.doc-date {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--ink4);
+  margin-bottom: 24px;
+}
+.doc-lead {
+  font-size: 14px;
+  color: var(--ink3);
+  padding: 16px 20px;
+  background: var(--green-pale);
+  border-left: 3px solid var(--green-text);
+  border-radius: 0 3px 3px 0;
+  margin-bottom: 40px;
+  line-height: 1.75;
+}
+.doc-lead strong {
+  color: var(--green-text);
+}
+
+.article {
+  margin-bottom: 40px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+.article:last-child {
+  border-bottom: none;
+}
+.article-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.article p {
+  font-size: 14px;
+  color: var(--ink2);
+  margin-bottom: 10px;
+  line-height: 1.8;
+}
+.article ul, .article ol {
+  margin: 10px 0 10px 20px;
+  font-size: 14px;
+  color: var(--ink2);
+}
+.article li {
+  margin-bottom: 6px;
+  line-height: 1.75;
+}
+.highlight-block {
+  background: var(--red-pale);
+  border-left: 3px solid var(--red-text);
+  padding: 14px 18px;
+  margin: 14px 0;
+  border-radius: 0 3px 3px 0;
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.7;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 14px 0;
+}
+.data-table th {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 700;
+  color: var(--ink2);
+}
+.data-table td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  color: var(--ink3);
+  vertical-align: top;
+}
+
+footer {
+  background: var(--ink);
+  color: rgba(246,243,238,.45);
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer-logo {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(246,243,238,.75);
+}
+.footer-links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+.footer-links a {
+  font-size: 11.5px;
+  color: rgba(246,243,238,.32);
+  text-decoration: none;
+  transition: color .2s;
+}
+.footer-links a:hover { color: rgba(246,243,238,.7); }
+.footer-copy {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .05em;
+}
+@media (max-width: 600px) {
+  .doc-title { font-size: 22px; }
+  footer { flex-direction: column; text-align: center; }
+  .data-table { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/ja/" class="logo"><span class="svc-name">OtoWoKoto</span></a>
+  <a href="/ja/" class="back-link">← トップに戻る</a>
+</header>
+
+<main>
+  <p class="doc-kicker">Privacy Policy</p>
+  <h1 class="doc-title">プライバシーポリシー</h1>
+  <p class="doc-date">制定日：2026年3月12日　／　最終更新：2026年3月12日　／　Version 1.0</p>
+
+  <div class="doc-lead">
+    <strong><span class="svc-name">OtoWoKoto</span>はプライバシー保護を設計の核心に置いています。</strong><br>
+    音声データはサーバーに保存されません。処理は一時的に行われ、完了後は削除されます。
+    これは機能上の制約ではなく、意図的な設計方針です。
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第1条（取得する情報）</h2>
+    <p>本サービスが取得・処理する情報は以下の通りです。</p>
+    <table class="data-table">
+      <tr>
+        <th>情報の種類</th>
+        <th>取得目的</th>
+        <th>保存期間</th>
+      </tr>
+      <tr>
+        <td>音声データ</td>
+        <td>文字起こし処理のみ</td>
+        <td>処理完了後、即時削除</td>
+      </tr>
+      <tr>
+        <td>文字起こし結果</td>
+        <td>ダウンロード提供のみ</td>
+        <td>生成後60分で自動削除</td>
+      </tr>
+      <tr>
+        <td>メールアドレス</td>
+        <td>結果送付・アカウント管理</td>
+        <td>Stripeの規約に準拠</td>
+      </tr>
+      <tr>
+        <td>決済情報</td>
+        <td>サブスクリプション管理</td>
+        <td>Stripeが管理（当社は保持しない）</td>
+      </tr>
+      <tr>
+        <td>アクセスログ</td>
+        <td>サービス安定運用・不正防止</td>
+        <td>90日間</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第2条（音声データの処理方針）</h2>
+    <div class="highlight-block">
+      音声データは文字起こし処理のためにのみ一時的に処理されます。当社のサーバーに恒久的に保存されることはありません。
+    </div>
+    <p>音声データは処理完了後ただちに削除されます。当社の従業員・委託先を含め、いかなる人間も音声データの内容を閲覧・聴取することはありません。</p>
+    <p>音声データを第三者へ提供・販売・共有することは一切ありません。</p>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第3条（文字起こし結果の保持）</h2>
+    <p>文字起こし結果は、ユーザーがダウンロードできるよう、生成後60分間のみ一時的に保持されます。</p>
+    <div class="highlight-block">
+      60分経過後、文字起こし結果は自動的かつ完全に削除されます。削除後の復元は技術的に不可能であり、当社はいかなる場合も復元に応じません。
+    </div>
+    <p>ダウンロード完了後は即時削除されます。</p>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第4条（メールアドレスの取り扱い）</h2>
+    <p>メールアドレスは以下の目的にのみ使用します。</p>
+    <ul>
+      <li>文字起こし結果のダウンロードリンク送付</li>
+      <li>サービスに関する重要なお知らせの送付</li>
+      <li>Stripe経由のサブスクリプション管理</li>
+    </ul>
+    <p>メールアドレスをマーケティング目的で第三者へ提供・販売することはありません。</p>
+    <p>無料トライアルのご利用履歴は、同一メールアドレスによる重複利用を防ぐためにハッシュ値（不可逆変換値）として保存します。生のメールアドレスは保存されません。</p>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第5条（決済情報）</h2>
+    <p>クレジットカード情報その他の決済情報は、Stripe, Inc.が管理します。当社はカード番号等の決済情報を取得・保存しません。Stripeのプライバシーポリシーは <a href="https://stripe.com/jp/privacy" style="color:var(--accent);" target="_blank">stripe.com/jp/privacy</a> をご参照ください。</p>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第6条（第三者提供）</h2>
+    <p>当社は、以下の場合を除き、ユーザーの情報を第三者へ提供しません。</p>
+    <ul>
+      <li>ユーザー本人の同意がある場合</li>
+      <li>法令に基づく開示要求がある場合</li>
+      <li>サービス提供に必要な業務委託先への提供（守秘義務契約締結済み）</li>
+    </ul>
+    <p>本サービスが利用する主な外部サービスは以下の通りです。</p>
+    <ul>
+      <li>Stripe, Inc.（決済処理）</li>
+      <li>Google Cloud Platform（インフラ・音声処理）</li>
+      <li>OpenAI, LLC（AI文字起こし・要約処理）</li>
+      <li>Resend, Inc.（メール送信）</li>
+    </ul>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第7条（Cookie・トラッキング）</h2>
+    <p>本サービスは、サービス機能の維持に必要な最小限のセッション情報のみを使用します。広告目的のトラッキングCookieは使用しません。</p>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第8条（ユーザーの権利）</h2>
+    <p>ユーザーは以下の権利を有します。</p>
+    <ul>
+      <li>保有する個人情報の開示請求</li>
+      <li>不正確な個人情報の訂正請求</li>
+      <li>個人情報の削除請求（ただし音声データ・文字起こし結果は自動削除のため対象外）</li>
+      <li>メールマガジン等の配信停止</li>
+    </ul>
+    <p>権利行使のご要望は、当社ウェブサイトのお問い合わせフォームよりご連絡ください。</p>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第9条（セキュリティ）</h2>
+    <p>当社は、ユーザー情報の漏洩・滅失・毀損を防止するため、適切なセキュリティ対策を実施します。ただし、インターネット上の通信における完全な安全性を保証するものではありません。</p>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第10条（プライバシーポリシーの変更）</h2>
+    <p>当社は、必要に応じて本ポリシーを変更することがあります。重要な変更がある場合は、本サービス上でお知らせします。変更後も本サービスをご利用いただいた場合、変更後のポリシーに同意したものとみなします。</p>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第11条（お問い合わせ）</h2>
+    <p>プライバシーに関するお問い合わせは、当社ウェブサイトのお問い合わせフォームよりご連絡ください。</p>
+    <p>運営：OtoWoLab　／　サービス：<span class="svc-name">OtoWoKoto</span></p>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-logo svc-name">OtoWoKoto</div>
+  <ul class="footer-links">
+    <li><a href="/ja/">トップ</a></li>
+    <li><a href="/ja/terms/">利用規約</a></li>
+    <li><a href="/ja/consent/">同意ページ</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 OtoWoLab.</span>
+</footer>
+
+<script>
+  const APP_NAME = "オトヲコト";  // ← ここだけ変更する
+  document.querySelectorAll(".svc-name").forEach(el => {
+    el.textContent = el.textContent.replace("OtoWoKoto", APP_NAME);
+  });
+  const titleEl = document.getElementById("pageTitle");
+  if (titleEl) titleEl.textContent = titleEl.textContent.replace("OtoWoKoto", APP_NAME);
+</script>
+</body>
+</html>

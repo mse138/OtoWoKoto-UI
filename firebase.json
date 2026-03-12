@@ -30,6 +30,38 @@
       {
         "source": "/en",
         "destination": "/en/index.html"
+      },
+      {
+        "source": "/ja/consent",
+        "destination": "/ja/consent/index.html"
+      },
+      {
+        "source": "/ja/consent/**",
+        "destination": "/ja/consent/index.html"
+      },
+      {
+        "source": "/ja/terms",
+        "destination": "/ja/terms/index.html"
+      },
+      {
+        "source": "/ja/terms/**",
+        "destination": "/ja/terms/index.html"
+      },
+      {
+        "source": "/ja/privacy",
+        "destination": "/ja/privacy/index.html"
+      },
+      {
+        "source": "/ja/privacy/**",
+        "destination": "/ja/privacy/index.html"
+      },
+      {
+        "source": "/ja/deleted",
+        "destination": "/ja/deleted/index.html"
+      },
+      {
+        "source": "/ja/deleted/**",
+        "destination": "/ja/deleted/index.html"
       }
     ]
   }

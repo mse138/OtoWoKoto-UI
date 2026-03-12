@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">利用規約 — OtoWoKoto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&family=Zen+Kaku+Gothic+New:wght@300;400;700&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:          #f6f3ee;
+  --surface:     #fdfcf9;
+  --border:      #ddd6c8;
+  --border2:     #c5bdb0;
+  --ink:         #1c1814;
+  --ink2:        #3a3328;
+  --ink3:        #6b6258;
+  --ink4:        #a09689;
+  --accent:      #b34e16;
+  --accent2:     #8a3a0e;
+  --accent-pale: rgba(179,78,22,.08);
+  --red-pale:    rgba(160,50,50,.07);
+  --red-text:    #924040;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  line-height: 1.8;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+header {
+  padding: 20px 32px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+}
+.back-link {
+  font-size: 12.5px;
+  color: var(--accent);
+  text-decoration: none;
+}
+.back-link:hover { color: var(--accent2); }
+
+main {
+  flex: 1;
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 56px 24px 100px;
+}
+
+.doc-kicker {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .18em;
+  color: var(--ink4);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.doc-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.doc-date {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--ink4);
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* 条文スタイル */
+.article {
+  margin-bottom: 40px;
+}
+.article-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.article p {
+  font-size: 14px;
+  color: var(--ink2);
+  margin-bottom: 10px;
+  line-height: 1.8;
+}
+.article ul, .article ol {
+  margin: 10px 0 10px 20px;
+  font-size: 14px;
+  color: var(--ink2);
+}
+.article li {
+  margin-bottom: 6px;
+  line-height: 1.75;
+}
+
+/* 重要条文ハイライト */
+.highlight-block {
+  background: var(--red-pale);
+  border-left: 3px solid var(--red-text);
+  padding: 14px 18px;
+  margin: 14px 0;
+  border-radius: 0 3px 3px 0;
+  font-size: 13.5px;
+  color: var(--ink2);
+  line-height: 1.7;
+}
+
+footer {
+  background: var(--ink);
+  color: rgba(246,243,238,.45);
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer-logo {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(246,243,238,.75);
+}
+.footer-links {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+.footer-links a {
+  font-size: 11.5px;
+  color: rgba(246,243,238,.32);
+  text-decoration: none;
+  transition: color .2s;
+}
+.footer-links a:hover { color: rgba(246,243,238,.7); }
+.footer-copy {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .05em;
+}
+@media (max-width: 600px) {
+  .doc-title { font-size: 22px; }
+  footer { flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/ja/" class="logo"><span class="svc-name">OtoWoKoto</span></a>
+  <a href="/ja/" class="back-link">← トップに戻る</a>
+</header>
+
+<main>
+  <p class="doc-kicker">Terms of Service</p>
+  <h1 class="doc-title">利用規約</h1>
+  <p class="doc-date">制定日：2026年3月12日　／　最終更新：2026年3月12日　／　Version 1.0</p>
+
+  <div class="article">
+    <h2 class="article-title">第1条（総則・適用）</h2>
+    <p>本利用規約（以下「本規約」）は、OtoWoLab（以下「当社」）が提供する音声文字起こしサービス「<span class="svc-name">OtoWoKoto</span>」（以下「本サービス」）の利用に関する条件を定めるものです。</p>
+    <p>ユーザーは、本サービスの利用を開始した時点、または本規約への同意操作を行った時点で、本規約の全条項に同意したものとみなされます。同意いただけない場合は、本サービスをご利用いただけません。</p>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第2条（サービスの内容）</h2>
+    <p>本サービスは、ユーザーがアップロードまたは録音した音声データをAI技術により自動的に文字起こしし、その結果をダウンロード可能な形式で一時的に提供するサービスです。</p>
+    <p>本サービスは以下の特性を持ちます。</p>
+    <ul>
+      <li>音声データはサーバーに恒久的に保存されません</li>
+      <li>文字起こし結果は生成後60分間のみ利用可能です</li>
+      <li>当社はユーザー識別情報を原則として保持しません</li>
+      <li>ライブ録音機能は、録音データのリアルタイムバックアップ・リトライ処理を行いません</li>
+      <li>録音中のデータは処理完了まで中間保存されないため、録音中断時はそれまでのデータが消失します</li>
+    </ul>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第3条（データ保持および削除）</h2>
+    <div class="highlight-block">
+      本サービスは、ユーザーのプライバシー保護を目的として、音声データおよび文字起こし結果を恒久的に保存しません。
+    </div>
+    <p>音声データは文字起こし処理のためにのみ一時的に処理され、処理完了後は保持されません。</p>
+    <p>文字起こし結果は生成後60分間のみ利用可能であり、その後自動的に削除されます。</p>
+    <div class="highlight-block">
+      削除されたデータは、いかなる手段によっても復元することができません。当社はデータの復元要求に応じる義務を負いません。
+    </div>
+    <p>ユーザーは、必要な場合、削除前に結果をダウンロードする責任を自ら負います。時間切れ・通信障害・操作ミスその他いかなる理由によるダウンロード失敗についても、当社は責任を負いません。</p>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第4条（ライブ録音機能の特性と免責）</h2>
+    <p>本サービスのライブ録音機能は、以下の設計上の特性を持ちます。ユーザーはこれらを理解した上でご利用ください。</p>
+    <ul>
+      <li>録音データのリアルタイムバックアップは行いません</li>
+      <li>録音中の中間データはサーバーに保存されません</li>
+      <li>リトライ処理（録音失敗時の自動再試行）は行いません</li>
+      <li>録音の成否はユーザーの通信環境・使用機器・ブラウザの状態に依存します</li>
+    </ul>
+    <div class="highlight-block">
+      ライブ録音中に通信切断・ブラウザの終了・端末の不具合・マイク権限の変化などが発生した場合、それまでの録音データは消失します。消失したデータの復元・再処理・補償は、いかなる場合も行いません。
+    </div>
+    <p>長時間録音（最大90分）を行う場合は、安定した通信環境・十分な電池残量・マイク権限の維持を事前に確認してください。これらの確認はユーザーの責任において行うものとします。</p>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第5条（AIによる処理の特性と免責）</h2>
+    <p>本サービスはAI技術を利用して音声の文字起こしを行います。AIによる処理には技術的な制限があり、以下の要因により文字起こし結果に誤りや不正確な内容が含まれる場合があります。</p>
+    <ul>
+      <li>音声の録音品質・ビットレート・フォーマット</li>
+      <li>話者の発音・方言・専門用語</li>
+      <li>背景雑音・複数人同時発話</li>
+      <li>通信環境・機器の特性</li>
+    </ul>
+    <div class="highlight-block">
+      当社は、文字起こし結果の正確性・完全性・特定目的への適合性について、いかなる保証もしません。結果を重要な用途（法的文書・医療・契約等）に使用する場合は、必ずユーザー自身が内容を確認・修正してください。
+    </div>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第6条（免責事項）</h2>
+    <p>当社は、本サービスの利用に関連してユーザーに生じた損害について、当社に故意または重大な過失がある場合を除き、一切の責任を負いません。</p>
+    <p>特に、以下の事由により生じた損害については、当社は責任を負いません。</p>
+    <ul>
+      <li>音声データまたは文字起こし結果の自動削除によるデータ消失</li>
+      <li>ユーザーが60分以内にダウンロードしなかったことによるデータ消失</li>
+      <li>通信障害・機器不具合・サービス障害によるダウンロード失敗</li>
+      <li>ライブ録音中の通信切断・ブラウザまたはアプリの終了・端末不具合による録音データの消失または不完全な処理</li>
+      <li>ライブ録音のリトライ・中間保存を行わない設計に起因するデータ損失</li>
+      <li>マイク権限の変化・無音データの送信・録音環境に起因する処理失敗</li>
+      <li>文字起こし結果の誤認識・誤訳・不正確な内容</li>
+      <li>本サービスの停止・中断・変更・終了</li>
+      <li>不正アクセスその他第三者による行為</li>
+    </ul>
+    <p>当社の損害賠償責任が認められる場合においても、その賠償額はユーザーが当社に支払った直近1ヶ月分の利用料金を上限とします。</p>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第7条（禁止事項）</h2>
+    <p>ユーザーは、本サービスの利用にあたり、以下の行為を行ってはなりません。</p>
+    <ul>
+      <li>法令または公序良俗に違反する行為</li>
+      <li>第三者の著作権・プライバシー・肖像権その他の権利を侵害する音声データのアップロード</li>
+      <li>第三者の同意を得ずにその会話・発言を録音・文字起こしする行為</li>
+      <li>本サービスへの不正アクセス・過負荷をかける行為</li>
+      <li>本サービスを通じて取得した情報を不正に利用・転売する行為</li>
+      <li>その他当社が不適切と判断する行為</li>
+    </ul>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第8条（サービスの変更・停止・終了）</h2>
+    <p>当社は、ユーザーへの事前通知なく、本サービスの内容を変更し、または本サービスの提供を一時停止もしくは終了することができます。これによってユーザーに損害が生じた場合であっても、当社は責任を負いません。</p>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第9条（規約の変更）</h2>
+    <p>当社は、必要と判断した場合、本規約をいつでも変更できます。変更後の規約は、当社ウェブサイトへの掲載をもって効力を生じ、ユーザーが変更後も本サービスを継続利用した場合、変更後の規約に同意したものとみなします。</p>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第10条（準拠法・管轄裁判所）</h2>
+    <p>本規約の解釈および適用は、日本法に準拠します。本サービスに関して生じた紛争については、当社所在地を管轄する裁判所を第一審の専属的合意管轄裁判所とします。</p>
+  </div>
+
+  <div class="article">
+    <h2 class="article-title">第11条（お問い合わせ）</h2>
+    <p>本規約に関するお問い合わせは、当社ウェブサイトのお問い合わせフォームよりご連絡ください。</p>
+    <p>運営：OtoWoLab　／　サービス：<span class="svc-name">OtoWoKoto</span></p>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-logo svc-name">OtoWoKoto</div>
+  <ul class="footer-links">
+    <li><a href="/ja/">トップ</a></li>
+    <li><a href="/ja/privacy/">プライバシーポリシー</a></li>
+    <li><a href="/ja/consent/">同意ページ</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 OtoWoLab.</span>
+</footer>
+
+<script>
+  const APP_NAME = "オトヲコト";  // ← ここだけ変更する
+  document.querySelectorAll(".svc-name").forEach(el => {
+    el.textContent = el.textContent.replace("OtoWoKoto", APP_NAME);
+  });
+  const titleEl = document.getElementById("pageTitle");
+  if (titleEl) titleEl.textContent = titleEl.textContent.replace("OtoWoKoto", APP_NAME);
+</script>
+</body>
+</html>

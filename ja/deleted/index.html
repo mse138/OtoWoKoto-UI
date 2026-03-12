@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">ファイルは削除されました — OtoWoKoto</title>
+<style>
+  :root {
+    --bg: #f6f3ee; --ink: #1a1612; --ink3: #6b5f52;
+    --accent: #b34e16; --border: #e0d8ce;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+  }
+  nav {
+    padding: 18px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .logo {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 18px; font-weight: 700;
+    color: var(--ink); text-decoration: none;
+  }
+  .logo small { font-size: 11px; font-weight: 400; color: var(--ink3); margin-left: 6px; }
+  main {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 48px 24px;
+  }
+  .card {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 4px; padding: 52px 48px;
+    max-width: 520px; width: 100%; text-align: center;
+  }
+  .icon {
+    width: 56px; height: 56px; margin: 0 auto 28px;
+    background: #fdf0e8; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+  }
+  h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 22px; font-weight: 700;
+    margin-bottom: 16px; color: var(--ink);
+  }
+  p {
+    font-size: 14px; line-height: 1.8;
+    color: var(--ink3); margin-bottom: 12px;
+  }
+  .note {
+    margin-top: 28px; padding: 16px 20px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 3px; font-size: 13px;
+    color: var(--ink3); line-height: 1.7; text-align: left;
+  }
+  .note strong { color: var(--ink); }
+  .back-btn {
+    display: inline-block; margin-top: 32px;
+    padding: 12px 28px; background: var(--accent); color: #fff;
+    text-decoration: none; border-radius: 3px;
+    font-size: 14px; font-weight: 700; letter-spacing: .04em;
+  }
+  footer {
+    padding: 20px 32px; text-align: center;
+    font-size: 12px; color: var(--ink3);
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+<nav>
+  <a href="/ja/" class="logo"><span class="svc-name">OtoWoKoto</span> <small>by OtoWoLab</small></a>
+</nav>
+<main>
+  <div class="card">
+    <div class="icon">🗑</div>
+    <h1>このファイルはすでに削除されました</h1>
+    <p>ダウンロードリンクの有効期限（60分）が切れたか、<br>すでにダウンロード済みのためファイルが削除されています。</p>
+    <p>削除されたファイルを復元することはできません。</p>
+    <div class="note">
+      <strong>ご注意</strong><br>
+      <span class="svc-name">OtoWoKoto</span>はゼロリテンション設計のため、処理後の音声データおよび文字起こし結果はサーバーに保存されません。
+      必要なファイルは、メール受信後60分以内にダウンロードしてください。
+    </div>
+    <a href="/ja/" class="back-btn">トップページへ戻る</a>
+  </div>
+</main>
+<footer>
+  <span class="svc-name">OtoWoKoto</span> by OtoWoLab — Zero Retention Voice Transcription
+</footer>
+<script>
+  const APP_NAME = "オトヲコト";
+  document.querySelectorAll(".svc-name").forEach(el => {
+    el.textContent = el.textContent.replace("OtoWoKoto", APP_NAME);
+  });
+  const titleEl = document.getElementById("pageTitle");
+  if (titleEl) titleEl.textContent = titleEl.textContent.replace("OtoWoKoto", APP_NAME);
+</script>
+</body>
+</html>
